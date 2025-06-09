@@ -24,3 +24,7 @@ export function getPosts(page: number, limit: number): Post[] {
 export function getPostById(id: number): Post {
   return mockPost(id);
 }
+
+export function getNextPosts(startId: number, limit: number): Post[] {
+  return Array.from({ length: limit }, (_, i) => mockPost(startId + i + 1));
+}
