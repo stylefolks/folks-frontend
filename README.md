@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Folks-Frontend
 
-## Getting Started
+## 사용 기술
 
-First, run the development server:
+| 기술       | 선택 이유                                                 |
+| ---------- | --------------------------------------------------------- |
+| **Nextjs** | 가장 대중적이고 많은 기능을 지원하여 MVP에 적합하다 판단. |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 진행 상황
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 회원가입/로그인
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [ ] 로그인 페이지
+- [ ] 회원가입 페이지
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 게시글 작성/조회
 
-## Learn More
+- [ ] 메인 페이지 게시글 최신순 나열
+- [ ] 게시글 작성 페이지(Prosemirror)
+- [ ] 작성된 게시글 조회 페이지 (CRUD)
+  - [ ] 댓글 작성(CRUD)
+  - [ ] 게시글 임시저장 기능 (isDraft) [임시저장 글 개수 3가지 제한]
 
-To learn more about Next.js, take a look at the following resources:
+### 💬 댓글 기능
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [ ] 댓글/대댓글 CRUD UI
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎪 CREW 페이지 생성/조회
 
-## Deploy on Vercel
+- [ ] Crew 생성, 수정 (CRUD)
+  - [ ] Crew원 관리 기능
+  - [ ] Crew원이 작성한 글 조회
+  - [ ] Crew 조회 기능
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧑‍💼 유저 프로필 페이지
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] 개인 페이지
+  - [ ] 내가 쓴 글, 좋아요, 팔로우 등 모델 정리
+  - [ ] 유저 정보 수정 API 확장 (소개글, 이미지 등)
