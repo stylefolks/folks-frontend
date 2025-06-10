@@ -11,6 +11,11 @@ export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+export function logout() {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.removeItem(TOKEN_KEY);
+}
+
 export async function login(email: string, password: string) {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',

@@ -1,4 +1,4 @@
-import { setToken, getToken, TOKEN_KEY, login, signup } from '../src/lib/auth';
+import { setToken, getToken, TOKEN_KEY, login, signup, logout } from '../src/lib/auth';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -35,6 +35,12 @@ describe('auth helpers', () => {
   it('returns null when removed', () => {
     localStorage.setItem(TOKEN_KEY, 'xyz');
     localStorage.removeItem(TOKEN_KEY);
+    expect(getToken()).toBeNull();
+  });
+
+  it('logout removes the token', () => {
+    setToken('bye');
+    logout();
     expect(getToken()).toBeNull();
   });
 

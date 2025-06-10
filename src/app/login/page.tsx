@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -24,28 +25,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-      <h1 className="text-2xl font-bold">Login</h1>
-      <form onSubmit={handleSubmit} className="w-full max-w-xs space-y-2">
-        <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" className="w-full">
-          Login
-        </Button>
-      </form>
+    <div className="flex justify-center">
+      <div className="w-full max-w-md py-10 space-y-6">
+        <h1 className="text-2xl font-bold text-center">Welcome Back!</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label htmlFor="email" className="block text-sm font-medium">
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="password" className="block text-sm font-medium">
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <Button type="submit" className="w-full">
+            Login
+          </Button>
+        </form>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <span className="h-px flex-1 bg-gray-300" />
+          OR
+          <span className="h-px flex-1 bg-gray-300" />
+        </div>
+        <p className="text-center text-sm">
+          {"Don't have an account?"}{' '}
+          <Link href="/signup" className="underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
