@@ -1,0 +1,59 @@
+import { setToken, getToken, TOKEN_KEY, login, signup } from '../src/lib/auth';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var localStorage: Storage;
+  var fetch: jest.Mock;
+}
+
+class LocalStorageMock {
+  private store: Record<string, string> = {};
+  getItem(key: string) {
+    return this.store[key] ?? null;
+  }
+  setItem(key: string, value: string) {
+    this.store[key] = String(value);
+  }
+  removeItem(key: string) {
+    delete this.store[key];
+  }
+}
+
+describe('auth helpers', () => {
+  beforeEach(() => {
+    global.localStorage = new LocalStorageMock() as any;
+    global.fetch = jest.fn();
+  });
+
+  it('stores and retrieves tokens', () => {
+    setToken('abc');
+    expect(getToken()).toBe('abc');
+    setToken('def');
+    expect(getToken()).toBe('def');
+  });
+
+  it('returns null when removed', () => {
+    localStorage.setItem(TOKEN_KEY, 'xyz');
+    localStorage.removeItem(TOKEN_KEY);
+    expect(getToken()).toBeNull();
+  });
+
+  it('login saves token from API', async () => {
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ accessToken: 'token123' }),
+    });
+    await login('a@a.com', 'pass');
+    expect(getToken()).toBe('token123');
+  });
+
+  it('signup then login stores token', async () => {
+    global.fetch
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ accessToken: 't' }) });
+    await signup('b@b.com', 'user', 'pw');
+    expect(getToken()).toBe('t');
+    expect(global.fetch.mock.calls[0][0]).toContain('/auth/signup');
+    expect(global.fetch.mock.calls[1][0]).toContain('/auth/login');
+  });
+});
