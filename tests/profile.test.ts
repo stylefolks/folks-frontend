@@ -1,7 +1,6 @@
 import { setToken } from '../src/lib/auth';
 import {
   getMyProfile,
-  getProfile,
   updateMyProfile,
   changeMyPassword,
   getMyPosts,
