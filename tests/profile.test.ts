@@ -5,6 +5,7 @@ import {
   changeMyPassword,
   getMyPosts,
   getFollowedCrews,
+  getProfile,
 } from '../src/lib/profile';
 
 declare global {

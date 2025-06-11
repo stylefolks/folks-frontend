@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import MswInit from "@/mocks/MswInit";
 
 const pretendard = localFont({
   src: [
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pretendard.variable} antialiased`}>
+        <MswInit />
         <Navbar />
         <main className="pt-4">{children}</main>
       </body>

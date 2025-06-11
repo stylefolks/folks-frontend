@@ -48,4 +48,20 @@
 - [x] auth/profile 유닛 테스트
 - [ ] 추가적인 Unit Test 및 Integration Test
 
+### Mock API
+개발 편의를 위해 [MSW](https://mswjs.io/) 기반의 목 API가 준비되어 있습니다.
+다음 명령으로 실행할 수 있습니다.
+
+```bash
+NEXT_PUBLIC_API_MOCKING=enabled npm run dev
+```
+
+로그인은 아래 계정으로 가능합니다.
+
+- 이메일: `folks@gmail.com`
+- 사용자명: `folks`
+- 비밀번호: `folks-password`
+
+`/profile/[userId]` 경로로 접근하면 임의의 랜덤 프로필 정보를 확인할 수 있습니다.
+
 본 프로젝트는 [stylefolks-frontend](https://github.com/stylefolks/stylefolks-frontend) 의 명세를 참고하여 개발되고 있습니다.
