@@ -10,6 +10,14 @@ export interface Profile {
 
 import { API_BASE, getToken } from './auth';
 
+export async function getProfile(userId: string): Promise<Profile> {
+  const res = await fetch(`${API_BASE}/user/${userId}`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load profile');
+  }
+  return res.json();
+}
+
 export async function getMyProfile(): Promise<Profile> {
   const token = getToken();
   if (!token) {

@@ -36,6 +36,12 @@ describe('profile api', () => {
     expect(global.fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer token');
   });
 
+  it('fetches another user profile', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => ({ userId: '2', email: 'b', username: 'v' }) });
+    await getProfile('2');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/2');
+  });
+
   it('updates profile with PATCH', async () => {
     global.fetch.mockResolvedValue({ ok: true, json: async () => ({ userId: '1', email: 'a', username: 'x' }) });
     await updateMyProfile({ username: 'x' });
