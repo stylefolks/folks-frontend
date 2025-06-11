@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
@@ -36,42 +36,42 @@ function randomProfile(id: string): Profile {
 }
 
 export const handlers = [
-  rest.post(`${API_BASE}/auth/login`, async (req, res, ctx) => {
-    const { email, password } = await req.json();
+  http.post(`${API_BASE}/auth/login`, async ({ request }) => {
+    const { email, password } = await request.json();
     if (email === 'folks@gmail.com' && password === 'folks-password') {
-      return res(ctx.json({ accessToken: 'mock-token', userId: currentProfile.userId }));
+      return HttpResponse.json({ accessToken: 'mock-token', userId: currentProfile.userId });
     }
-    return res(ctx.status(401), ctx.json({ message: 'Invalid credentials' }));
+    return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
   }),
 
-  rest.post(`${API_BASE}/auth/signup`, async (_req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({}));
+  http.post(`${API_BASE}/auth/signup`, async () => {
+    return HttpResponse.json({}, { status: 200 });
   }),
 
-  rest.get(`${API_BASE}/user/me`, (_req, res, ctx) => {
-    return res(ctx.json(currentProfile));
+  http.get(`${API_BASE}/user/me`, () => {
+    return HttpResponse.json(currentProfile);
   }),
 
-  rest.patch(`${API_BASE}/user/me`, async (req, res, ctx) => {
-    const data = await req.json();
+  http.patch(`${API_BASE}/user/me`, async ({ request }) => {
+    const data = await request.json();
     currentProfile = { ...currentProfile, ...data };
-    return res(ctx.json(currentProfile));
+    return HttpResponse.json(currentProfile);
   }),
 
-  rest.patch(`${API_BASE}/user/me/password`, async (_req, res, ctx) => {
-    return res(ctx.status(200));
+  http.patch(`${API_BASE}/user/me/password`, async () => {
+    return new HttpResponse(null, { status: 200 });
   }),
 
-  rest.get(`${API_BASE}/user/me/posts`, (_req, res, ctx) => {
-    return res(ctx.json([]));
+  http.get(`${API_BASE}/user/me/posts`, () => {
+    return HttpResponse.json([]);
   }),
 
-  rest.get(`${API_BASE}/user/me/following`, (_req, res, ctx) => {
-    return res(ctx.json([]));
+  http.get(`${API_BASE}/user/me/following`, () => {
+    return HttpResponse.json([]);
   }),
 
-  rest.get(`${API_BASE}/user/:id`, (req, res, ctx) => {
-    const { id } = req.params as { id: string };
-    return res(ctx.json(randomProfile(id)));
+  http.get(`${API_BASE}/user/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    return HttpResponse.json(randomProfile(id));
   }),
 ];
