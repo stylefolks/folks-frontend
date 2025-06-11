@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getMyProfile, updateMyProfile, type Profile } from '@/lib/profile';
+import {
+  getMyProfile,
+  updateMyProfile,
+  changeMyPassword,
+  type Profile,
+} from '@/lib/profile';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -13,6 +18,10 @@ export default function ProfilePage() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [website, setWebsite] = useState('');
+  const [backgroundUrl, setBackgroundUrl] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     getMyProfile()
@@ -21,6 +30,8 @@ export default function ProfilePage() {
         setUsername(p.username);
         setBio(p.bio ?? '');
         setImageUrl(p.imageUrl ?? '');
+        setWebsite(p.website ?? '');
+        setBackgroundUrl(p.backgroundUrl ?? '');
       })
       .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'))
       .finally(() => setLoading(false));
@@ -29,8 +40,19 @@ export default function ProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const updated = await updateMyProfile({ username, bio, imageUrl });
+      const updated = await updateMyProfile({
+        username,
+        bio,
+        imageUrl,
+        website,
+        backgroundUrl,
+      });
       setProfile(updated);
+      if (newPassword) {
+        await changeMyPassword(oldPassword, newPassword);
+        setOldPassword('');
+        setNewPassword('');
+      }
       setError('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update');
@@ -72,6 +94,48 @@ export default function ProfilePage() {
             id="imageUrl"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-sm font-medium" htmlFor="website">
+            Website
+          </label>
+          <Input
+            id="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-sm font-medium" htmlFor="backgroundUrl">
+            Background Image URL
+          </label>
+          <Input
+            id="backgroundUrl"
+            value={backgroundUrl}
+            onChange={(e) => setBackgroundUrl(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-sm font-medium" htmlFor="oldPassword">
+            Current Password
+          </label>
+          <Input
+            id="oldPassword"
+            type="password"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="block text-sm font-medium" htmlFor="newPassword">
+            New Password
+          </label>
+          <Input
+            id="newPassword"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
           />
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}

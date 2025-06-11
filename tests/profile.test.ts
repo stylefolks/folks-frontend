@@ -1,5 +1,11 @@
 import { setToken } from '../src/lib/auth';
-import { getMyProfile, updateMyProfile } from '../src/lib/profile';
+import {
+  getMyProfile,
+  updateMyProfile,
+  changeMyPassword,
+  getMyPosts,
+  getFollowedCrews,
+} from '../src/lib/profile';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -35,5 +41,26 @@ describe('profile api', () => {
     await updateMyProfile({ username: 'x' });
     expect(global.fetch.mock.calls[0][0]).toContain('/user/me');
     expect(global.fetch.mock.calls[0][1].method).toBe('PATCH');
+  });
+
+  it('changes password', async () => {
+    global.fetch.mockResolvedValue({ ok: true });
+    await changeMyPassword('old', 'new');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/me/password');
+    expect(global.fetch.mock.calls[0][1].method).toBe('PATCH');
+  });
+
+  it('gets posts with category', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getMyPosts('OOTD');
+    const calledUrl = new URL(global.fetch.mock.calls[0][0]);
+    expect(calledUrl.pathname).toContain('/user/me/posts');
+    expect(calledUrl.searchParams.get('category')).toBe('OOTD');
+  });
+
+  it('fetches followed crews', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getFollowedCrews();
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/me/following');
   });
 });
