@@ -29,5 +29,10 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.1.1",
     "typescript": "^5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
