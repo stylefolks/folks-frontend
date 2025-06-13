@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import {
-  getMyProfile,
   getProfile,
   updateMyProfile,
   changeMyPassword,
   type Profile,
 } from '@/lib/profile';
+import { getMyId } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -43,8 +43,8 @@ export default function ProfilePage() {
         setError(err instanceof Error ? err.message : 'Failed to load');
       }
       try {
-        const me = await getMyProfile();
-        setMyId(me.userId);
+        const id = await getMyId();
+        setMyId(id);
       } catch {
         setMyId(null);
       }
