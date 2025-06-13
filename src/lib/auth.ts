@@ -1,4 +1,5 @@
 export const TOKEN_KEY = 'auth_token';
+export const USER_ID_KEY = 'user_id';
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export function setToken(token: string) {
@@ -6,14 +7,25 @@ export function setToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
+export function setUserId(id: string) {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(USER_ID_KEY, id);
+}
+
 export function getToken(): string | null {
   if (typeof localStorage === 'undefined') return null;
   return localStorage.getItem(TOKEN_KEY);
 }
 
+export function getUserId(): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  return localStorage.getItem(USER_ID_KEY);
+}
+
 export function logout() {
   if (typeof localStorage === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_ID_KEY);
 }
 
 export async function login(email: string, password: string) {
@@ -32,6 +44,9 @@ export async function login(email: string, password: string) {
     throw new Error('No token returned');
   }
   setToken(data.accessToken);
+  if (data.userId) {
+    setUserId(data.userId);
+  }
 }
 
 export async function signup(email: string, username: string, password: string) {
@@ -47,4 +62,24 @@ export async function signup(email: string, username: string, password: string) 
   }
   // automatically log in after successful signup
   await login(email, password);
+}
+
+export async function getMyId(): Promise<string | null> {
+  const stored = getUserId();
+  if (stored) return stored;
+  const token = getToken();
+  if (!token) return null;
+  const res = await fetch(`${API_BASE}/user/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to fetch id');
+  }
+  const data = await res.json();
+  if (data.userId) {
+    setUserId(data.userId);
+    return data.userId;
+  }
+  return null;
 }

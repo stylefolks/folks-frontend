@@ -1,4 +1,14 @@
-import { setToken, getToken, TOKEN_KEY, login, signup, logout } from '../src/lib/auth';
+import {
+  setToken,
+  getToken,
+  TOKEN_KEY,
+  login,
+  signup,
+  logout,
+  getUserId,
+  USER_ID_KEY,
+  getMyId,
+} from '../src/lib/auth';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -47,10 +57,11 @@ describe('auth helpers', () => {
   it('login saves token from API', async () => {
     global.fetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ accessToken: 'token123' }),
+      json: async () => ({ accessToken: 'token123', userId: 'me' }),
     });
     await login('a@a.com', 'pass');
     expect(getToken()).toBe('token123');
+    expect(getUserId()).toBe('me');
   });
 
   it('signup then login stores token', async () => {
@@ -61,5 +72,26 @@ describe('auth helpers', () => {
     expect(getToken()).toBe('t');
     expect(global.fetch.mock.calls[0][0]).toContain('/auth/signup');
     expect(global.fetch.mock.calls[1][0]).toContain('/auth/login');
+  });
+
+  it('getMyId returns stored id without calling API', async () => {
+    localStorage.setItem(USER_ID_KEY, 'stored');
+    const id = await getMyId();
+    expect(id).toBe('stored');
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('getMyId fetches id when not stored', async () => {
+    global.localStorage = new LocalStorageMock() as any;
+    setToken('tok');
+    localStorage.removeItem(USER_ID_KEY);
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ userId: 'fetched' }),
+    });
+    const id = await getMyId();
+    expect(id).toBe('fetched');
+    expect(localStorage.getItem(USER_ID_KEY)).toBe('fetched');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/me');
   });
 });
