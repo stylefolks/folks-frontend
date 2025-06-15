@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/server",
+    "module": "commonjs",
+    "target": "ES2019",
+    "lib": ["ES2019"],
+    "noEmit": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"]
+}

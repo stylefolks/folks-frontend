@@ -1,5 +1,4 @@
-"use client";
-import { useParams } from "next/navigation";
+import { useParams } from 'react-router-dom';
 
 export default function CrewPage() {
   const params = useParams();

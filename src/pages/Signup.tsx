@@ -1,14 +1,11 @@
-"use client";
-
 import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function SignupPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +15,7 @@ export default function SignupPage() {
     e.preventDefault();
     try {
       await signup(email, username, password);
-      router.push('/');
+      navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign up failed';
       setError(message);
@@ -78,7 +75,7 @@ export default function SignupPage() {
         </div>
         <p className="text-center text-sm">
           {"Already have an account?"}{' '}
-          <Link href="/login" className="underline">
+          <Link to="/login" className="underline">
             Login
           </Link>
         </p>
