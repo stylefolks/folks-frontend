@@ -6,6 +6,11 @@ import {
   getMyPosts,
   getFollowedCrews,
   getProfile,
+  getUserPosts,
+  getFollowers,
+  getFollowing,
+  getUserCrews,
+  getFollowedBrands,
 } from '../src/lib/profile';
 
 declare global {
@@ -69,5 +74,37 @@ describe('profile api', () => {
     global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
     await getFollowedCrews();
     expect(global.fetch.mock.calls[0][0]).toContain('/user/me/following');
+  });
+
+  it('fetches posts for a user', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getUserPosts('99', 'OOTD');
+    const url = new URL(global.fetch.mock.calls[0][0]);
+    expect(url.pathname).toContain('/user/99/posts');
+    expect(url.searchParams.get('category')).toBe('OOTD');
+  });
+
+  it('fetches followers', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getFollowers('1');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/1/followers');
+  });
+
+  it('fetches following', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getFollowing('1');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/1/following');
+  });
+
+  it('fetches user crews', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getUserCrews('1');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/1/crews');
+  });
+
+  it('fetches followed brands', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await getFollowedBrands('1');
+    expect(global.fetch.mock.calls[0][0]).toContain('/user/1/brands');
   });
 });

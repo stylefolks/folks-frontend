@@ -117,3 +117,56 @@ export async function getFollowedCrews(): Promise<Crew[]> {
   }
   return res.json();
 }
+
+export async function getUserPosts(userId: string, category?: string): Promise<PostSummary[]> {
+  const url = new URL(`${API_BASE}/user/${userId}/posts`);
+  if (category) url.searchParams.set('category', category);
+  const res = await fetch(url.toString(), { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load posts');
+  }
+  return res.json();
+}
+
+export interface SimpleUser {
+  userId: string;
+  username: string;
+  imageUrl?: string;
+}
+
+export async function getFollowers(userId: string): Promise<SimpleUser[]> {
+  const res = await fetch(`${API_BASE}/user/${userId}/followers`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load followers');
+  }
+  return res.json();
+}
+
+export async function getFollowing(userId: string): Promise<SimpleUser[]> {
+  const res = await fetch(`${API_BASE}/user/${userId}/following`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load following');
+  }
+  return res.json();
+}
+
+export async function getUserCrews(userId: string): Promise<Crew[]> {
+  const res = await fetch(`${API_BASE}/user/${userId}/crews`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load crews');
+  }
+  return res.json();
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+}
+
+export async function getFollowedBrands(userId: string): Promise<Brand[]> {
+  const res = await fetch(`${API_BASE}/user/${userId}/brands`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load brands');
+  }
+  return res.json();
+}

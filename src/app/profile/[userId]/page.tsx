@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
   getProfile,
   updateMyProfile,
   changeMyPassword,
   type Profile,
+  getUserPosts,
+  getFollowers,
+  getFollowing,
+  getUserCrews,
+  getFollowedBrands,
+  type Crew,
+  type PostSummary,
+  type Brand,
+  type SimpleUser,
 } from '@/lib/profile';
 import { getMyId } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
@@ -28,6 +38,11 @@ export default function ProfilePage() {
   const [backgroundUrl, setBackgroundUrl] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [crews, setCrews] = useState<Crew[]>([]);
+  const [followers, setFollowers] = useState<SimpleUser[]>([]);
+  const [following, setFollowing] = useState<SimpleUser[]>([]);
+  const [posts, setPosts] = useState<PostSummary[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -39,6 +54,18 @@ export default function ProfilePage() {
         setImageUrl(p.imageUrl ?? '');
         setWebsite(p.website ?? '');
         setBackgroundUrl(p.backgroundUrl ?? '');
+        const [userPosts, fwr, fwg, cr, br] = await Promise.all([
+          getUserPosts(userId),
+          getFollowers(userId),
+          getFollowing(userId),
+          getUserCrews(userId),
+          getFollowedBrands(userId),
+        ]);
+        setPosts(userPosts);
+        setFollowers(fwr);
+        setFollowing(fwg);
+        setCrews(cr);
+        setBrands(br);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load');
       }
@@ -178,6 +205,68 @@ export default function ProfilePage() {
           )}
         </div>
       )}
+      <div className="space-y-4">
+        {crews.length > 0 && (
+          <div>
+            <h2 className="font-semibold">Crews</h2>
+            <ul className="list-disc pl-5">
+              {crews.map((c) => (
+                <li key={c.id}>
+                  <Link href={`/crew/${c.id}`}>{c.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {following.length > 0 && (
+          <div>
+            <h2 className="font-semibold">Following</h2>
+            <ul className="list-disc pl-5">
+              {following.map((u) => (
+                <li key={u.userId}>
+                  <Link href={`/profile/${u.userId}`}>{u.username}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {followers.length > 0 && (
+          <div>
+            <h2 className="font-semibold">Followers</h2>
+            <ul className="list-disc pl-5">
+              {followers.map((u) => (
+                <li key={u.userId}>
+                  <Link href={`/profile/${u.userId}`}>{u.username}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {brands.length > 0 && (
+          <div>
+            <h2 className="font-semibold">Brands</h2>
+            <ul className="list-disc pl-5">
+              {brands.map((b) => (
+                <li key={b.id}>
+                  <Link href={`/brand/${b.id}`}>{b.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {posts.length > 0 && (
+          <div>
+            <h2 className="font-semibold">Posts</h2>
+            <ul className="list-disc pl-5">
+              {posts.map((p) => (
+                <li key={p.id}>
+                  <Link href={`/posts/${p.id}`}>{p.title}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
