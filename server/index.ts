@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import fs from 'fs';
@@ -15,7 +15,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
     app.use('/public', express.static(path.join(root, 'public')));
-    app.use('*', async (req, res) => {
+    app.use('*', async (req: Request, res: Response) => {
       try {
         const url = req.originalUrl;
         let template = fs.readFileSync(path.join(root, 'index.html'), 'utf-8');
@@ -31,11 +31,14 @@ async function startServer() {
       }
     });
   } else {
-    app.use('/assets', express.static(path.join(root, 'dist/client/assets')));
+    app.use('/assets', express.static(path.join(root, 'client/assets')));
     app.use('/public', express.static(path.join(root, 'public')));
-    const template = fs.readFileSync(path.join(root, 'dist/client/index.html'), 'utf-8');
-    const { render } = await import('../dist/server/entry-server.js');
-    app.use('*', async (req, res) => {
+    const template = fs.readFileSync(path.join(root, 'client/index.html'), 'utf-8');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { render } = require('./entry-server.mjs') as {
+      render: (url: string) => Promise<string>;
+    };
+    app.use('*', async (req: Request, res: Response) => {
       const appHtml = await render(req.originalUrl);
       const html = template.replace('<!--app-->', appHtml);
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);

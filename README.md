@@ -4,7 +4,9 @@
 
 | 기술 | 선택 이유 |
 | ---- | -------- |
-| **Next.js** | 가장 대중적이고 많은 기능을 지원하여 MVP에 적합하다 판단. |
+| **React + Vite** | 빠른 개발 환경과 모던 번들링 |
+| **Express** | 간단한 SSR 환경 구현 |
+| **Tailwind CSS** | 빠른 스타일링 |
 
 ## 진행 상황
 
@@ -46,7 +48,7 @@
 
 ### Testing
 - [x] auth/profile 유닛 테스트
-- [ ] 추가적인 Unit Test 및 Integration Test
+- [ ] Playwright 기반 E2E 테스트 (빌드 후 `npm run test:e2e`)
 
 ### Mock API
 개발 편의를 위해 [MSW](https://mswjs.io/) 기반의 목 API가 준비되어 있습니다.
