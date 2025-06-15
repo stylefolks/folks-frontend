@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 export default function MswInit() {
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+    if (process.env.PUBLIC_API_MOCKING === 'enabled') {
       import('./browser').then(({ worker }) => {
         worker.start({
           serviceWorker: {

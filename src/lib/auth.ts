@@ -1,6 +1,6 @@
 export const TOKEN_KEY = 'auth_token';
 export const USER_ID_KEY = 'user_id';
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+export const API_BASE = process.env.PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export function setToken(token: string) {
   if (typeof localStorage === 'undefined') return;

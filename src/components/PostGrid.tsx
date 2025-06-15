@@ -1,17 +1,16 @@
 "use client";
-
-import { useCallback, useState } from "react";
-import PostCard from "./PostCard";
-import useInfiniteScroll from "./useInfiniteScroll";
-import { getPosts, type Post } from "@/lib/posts";
-import { useRouter } from "next/navigation"; // Import Next.js router
+import { useCallback, useState } from 'react';
+import PostCard from './PostCard';
+import useInfiniteScroll from './useInfiniteScroll';
+import { getPosts, type Post } from '@/lib/posts';
+import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 20;
 
 export default function PostGrid() {
   const [posts, setPosts] = useState<Post[]>(() => getPosts(0, PAGE_SIZE));
   const [page, setPage] = useState(1);
-  const router = useRouter(); // Initialize router
+  const navigate = useNavigate();
 
   const loadMore = useCallback(() => {
     const newPosts = getPosts(page, PAGE_SIZE);
@@ -23,7 +22,7 @@ export default function PostGrid() {
 
   const handlePostClick = (id: string) => {
     document.startViewTransition(() => {
-      router.push(`/posts/${id}`); // Navigate to the post page
+      navigate(`/posts/${id}`);
     });
   };
 
@@ -33,8 +32,8 @@ export default function PostGrid() {
         <div
           key={`post-${post.id}`}
           className="break-inside-avoid"
-          onClick={() => handlePostClick(String(post.id))} // Add click handler
-          style={{ cursor: "pointer" }} // Optional: Add pointer cursor
+          onClick={() => handlePostClick(String(post.id))}
+          style={{ cursor: 'pointer' }}
         >
           <PostCard post={post} />
         </div>

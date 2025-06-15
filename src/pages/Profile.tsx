@@ -1,8 +1,5 @@
-"use client";
-
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { Link, useParams } from 'react-router-dom';
 import {
   getProfile,
   updateMyProfile,
@@ -116,77 +113,77 @@ export default function ProfilePage() {
       <h1 className="text-xl font-bold">Profile</h1>
       {isMe ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="username">
-            Username
-          </label>
-          <Input
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="bio">
-            Bio
-          </label>
-          <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="imageUrl">
-            Image URL
-          </label>
-          <Input
-            id="imageUrl"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="website">
-            Website
-          </label>
-          <Input
-            id="website"
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="backgroundUrl">
-            Background Image URL
-          </label>
-          <Input
-            id="backgroundUrl"
-            value={backgroundUrl}
-            onChange={(e) => setBackgroundUrl(e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="oldPassword">
-            Current Password
-          </label>
-          <Input
-            id="oldPassword"
-            type="password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="block text-sm font-medium" htmlFor="newPassword">
-            New Password
-          </label>
-          <Input
-            id="newPassword"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit">Save</Button>
-      </form>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="username">
+              Username
+            </label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="bio">
+              Bio
+            </label>
+            <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="imageUrl">
+              Image URL
+            </label>
+            <Input
+              id="imageUrl"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="website">
+              Website
+            </label>
+            <Input
+              id="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="backgroundUrl">
+              Background Image URL
+            </label>
+            <Input
+              id="backgroundUrl"
+              value={backgroundUrl}
+              onChange={(e) => setBackgroundUrl(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="oldPassword">
+              Current Password
+            </label>
+            <Input
+              id="oldPassword"
+              type="password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium" htmlFor="newPassword">
+              New Password
+            </label>
+            <Input
+              id="newPassword"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <Button type="submit">Save</Button>
+        </form>
       ) : (
         <div className="space-y-2">
           {profile.imageUrl && (
@@ -212,7 +209,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {crews.map((c) => (
                 <li key={c.id}>
-                  <Link href={`/crew/${c.id}`}>{c.name}</Link>
+                  <Link to={`/crew/${c.id}`}>{c.name}</Link>
                 </li>
               ))}
             </ul>
@@ -224,7 +221,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {following.map((u) => (
                 <li key={u.userId}>
-                  <Link href={`/profile/${u.userId}`}>{u.username}</Link>
+                  <Link to={`/profile/${u.userId}`}>{u.username}</Link>
                 </li>
               ))}
             </ul>
@@ -236,7 +233,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {followers.map((u) => (
                 <li key={u.userId}>
-                  <Link href={`/profile/${u.userId}`}>{u.username}</Link>
+                  <Link to={`/profile/${u.userId}`}>{u.username}</Link>
                 </li>
               ))}
             </ul>
@@ -248,7 +245,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {brands.map((b) => (
                 <li key={b.id}>
-                  <Link href={`/brand/${b.id}`}>{b.name}</Link>
+                  <Link to={`/brand/${b.id}`}>{b.name}</Link>
                 </li>
               ))}
             </ul>
@@ -260,7 +257,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {posts.map((p) => (
                 <li key={p.id}>
-                  <Link href={`/posts/${p.id}`}>{p.title}</Link>
+                  <Link to={`/posts/${p.id}`}>{p.title}</Link>
                 </li>
               ))}
             </ul>

@@ -1,14 +1,11 @@
-"use client";
-
 import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function LoginPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(email, password);
-      router.push('/');
+      navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);
@@ -65,7 +62,7 @@ export default function LoginPage() {
         </div>
         <p className="text-center text-sm">
           {"Don't have an account?"}{' '}
-          <Link href="/signup" className="underline">
+          <Link to="/signup" className="underline">
             Sign up
           </Link>
         </p>
