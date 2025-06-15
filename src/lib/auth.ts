@@ -1,6 +1,11 @@
 export const TOKEN_KEY = 'auth_token';
 export const USER_ID_KEY = 'user_id';
-export const API_BASE = process.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+// Support both Node.js and browser environments for environment variables
+const PUBLIC_API_URL =
+  typeof window === 'undefined'
+    ? process.env.PUBLIC_API_URL
+    : (import.meta as any).env.PUBLIC_API_URL;
+export const API_BASE = PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export function setToken(token: string) {
   if (typeof localStorage === 'undefined') return;

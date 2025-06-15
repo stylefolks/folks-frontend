@@ -1,6 +1,10 @@
 import { http, HttpResponse } from 'msw';
 
-const API_BASE = process.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+const PUBLIC_API_URL =
+  typeof window === 'undefined'
+    ? process.env.PUBLIC_API_URL
+    : (import.meta as any).env.PUBLIC_API_URL;
+const API_BASE = PUBLIC_API_URL ?? 'http://localhost:3000';
 
 interface Profile {
   userId: string;
