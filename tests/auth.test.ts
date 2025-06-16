@@ -9,11 +9,13 @@ import {
   USER_ID_KEY,
   getMyId,
 } from '../src/lib/auth';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 declare global {
   // eslint-disable-next-line no-var
   var localStorage: Storage;
-  var fetch: jest.Mock;
+  // using 'any' to simplify mock typing
+  var fetch: any;
 }
 
 class LocalStorageMock {
@@ -32,7 +34,7 @@ class LocalStorageMock {
 describe('auth helpers', () => {
   beforeEach(() => {
     global.localStorage = new LocalStorageMock() as any;
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
   });
 
   it('stores and retrieves tokens', () => {
