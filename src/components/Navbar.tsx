@@ -1,14 +1,21 @@
 'use client';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { getToken, logout } from '@/lib/auth';
 
 export default function Navbar() {
+  const location = useLocation();
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     setLoggedIn(!!getToken());
+  }, [location]);
+
+  useEffect(() => {
+    const handler = () => setLoggedIn(!!getToken());
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
   }, []);
 
   const handleLogout = () => {

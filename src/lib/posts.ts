@@ -6,12 +6,14 @@ export interface Post {
   content: string;
 }
 
+const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
+
 export function mockPost(id: number): Post {
   return {
     id,
     title: `Post ${id}`,
     image: `https://picsum.photos/seed/${id}/600/400`,
-    date: new Date(Date.now() - id * 24 * 60 * 60 * 1000).toISOString(),
+    date: new Date(BASE_TIME - id * 24 * 60 * 60 * 1000).toISOString(),
     content: `This is the content for post ${id}.`,
   };
 }
