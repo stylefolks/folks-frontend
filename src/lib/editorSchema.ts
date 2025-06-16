@@ -1,9 +1,15 @@
 import { Schema } from 'prosemirror-model';
 import { schema as basic } from 'prosemirror-schema-basic';
-import { schema as list } from 'prosemirror-schema-list';
+import { addListNodes } from 'prosemirror-schema-list';
 
-const nodes = basic.spec.nodes.update('paragraph', {
-  ...basic.spec.nodes.get('paragraph')!,
+const baseNodes = addListNodes(
+  basic.spec.nodes,
+  'paragraph block*',
+  'block'
+);
+
+const nodes = baseNodes.update('paragraph', {
+  ...baseNodes.get('paragraph')!,
   attrs: { indent: { default: 0 } },
   toDOM(node) {
     const { indent } = node.attrs as any;
@@ -43,6 +49,6 @@ const fontMark = {
 };
 
 export const editorSchema = new Schema({
-  nodes: nodes.append(list.spec.nodes),
+  nodes,
   marks: basic.spec.marks.addToEnd('color', colorMark).addToEnd('font', fontMark),
 });
