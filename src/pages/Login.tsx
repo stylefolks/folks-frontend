@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,7 +15,8 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate('/');
+      const from = (location.state as any)?.from?.pathname || '/';
+      navigate(from);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);

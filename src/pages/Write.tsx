@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getToken } from '@/lib/auth';
 import WriteEditor from '@/components/WriteEditor';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,6 +19,8 @@ export default function WritePage() {
   const [bigCategory, setBigCategory] = useState('OOTD');
   const [hashtags, setHashtags] = useState('');
   const [content, setContent] = useState<any>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const raw = localStorage.getItem(DRAFT_KEY);
@@ -33,6 +37,17 @@ export default function WritePage() {
     const draft: Draft = { title, bigCategory, hashtags, content };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     alert('Draft saved');
+  };
+
+  const handleSubmit = () => {
+    const draft: Draft = { title, bigCategory, hashtags, content };
+    if (!getToken()) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    clearDraft();
+    alert('Post submitted');
   };
 
   const clearDraft = () => {
@@ -64,6 +79,9 @@ export default function WritePage() {
       />
       <WriteEditor content={content} onChange={setContent} />
       <div className="flex gap-2">
+        <Button type="button" onClick={handleSubmit}>
+          Submit
+        </Button>
         <Button type="button" onClick={saveDraft} variant="outline">
           Save Draft
         </Button>
