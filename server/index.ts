@@ -15,6 +15,9 @@ async function startServer() {
     });
     app.use(vite.middlewares);
     app.use('/public', express.static(path.join(root, 'public')));
+    app.get('/mockServiceWorker.js', (_req, res) => {
+      res.sendFile(path.join(root, 'public/mockServiceWorker.js'));
+    });
     app.use('*', async (req: Request, res: Response) => {
       try {
         const url = req.originalUrl;
@@ -33,6 +36,9 @@ async function startServer() {
   } else {
     app.use('/assets', express.static(path.join(root, 'client/assets')));
     app.use('/public', express.static(path.join(root, 'public')));
+    app.get('/mockServiceWorker.js', (_req, res) => {
+      res.sendFile(path.join(root, 'public/mockServiceWorker.js'));
+    });
     const template = fs.readFileSync(path.join(root, 'client/index.html'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require('./entry-server.mjs') as {
