@@ -55,7 +55,7 @@
 다음 명령으로 실행할 수 있습니다.
 
 ```bash
-NEXT_PUBLIC_API_MOCKING=enabled npm run dev
+PUBLIC_API_MOCKING=enabled npm run dev
 ```
 
 로그인은 아래 계정으로 가능합니다.
