@@ -40,7 +40,9 @@ export default function WritePage() {
   };
 
   const handleSubmit = () => {
+    
     const draft: Draft = { title, bigCategory, hashtags, content };
+    console.log("@?@?@?",draft)
     if (!getToken()) {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
       navigate('/login', { state: { from: location } });

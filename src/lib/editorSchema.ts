@@ -1,4 +1,4 @@
-import { Schema } from 'prosemirror-model';
+import { MarkSpec, Schema } from 'prosemirror-model';
 import { schema as basic } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 
@@ -26,7 +26,7 @@ const nodes = baseNodes.update('paragraph', {
   }],
 });
 
-const colorMark = {
+const colorMark: MarkSpec = {
   attrs: { color: {} },
   parseDOM: [{
     style: 'color',
@@ -35,7 +35,7 @@ const colorMark = {
   toDOM: (mark: any) => ['span', { style: `color:${mark.attrs.color}` }, 0],
 };
 
-const fontMark = {
+const fontMark: MarkSpec = {
   attrs: { name: {} },
   parseDOM: [{
     style: 'font-family',
