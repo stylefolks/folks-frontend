@@ -34,8 +34,8 @@ export default function App() {
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/profile/:userId" element={<Profile />} />
-            <Route path="/write" element={<Write />} />
           </Route>
+          <Route path="/write" element={<Write />} />
         </Routes>
       </main>
     </>

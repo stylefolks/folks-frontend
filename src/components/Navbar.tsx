@@ -35,13 +35,13 @@ export default function Navbar() {
         <Link to="/crews" className="hidden sm:inline-block">
           Crews
         </Link>
+        <Link to="/write" className="hidden sm:inline-block">
+          Write
+        </Link>
         {loggedIn ? (
           <>
             <Link to="/profile" className="hidden sm:inline-block">
               Profile
-            </Link>
-            <Link to="/write" className="hidden sm:inline-block">
-              Write
             </Link>
             <Button variant="outline" onClick={handleLogout} className="text-sm">
               Logout
