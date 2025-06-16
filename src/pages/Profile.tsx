@@ -257,7 +257,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {posts.map((p) => (
                 <li key={p.id}>
-                  <Link to={`/posts/${p.id}`}>{p.title}</Link>
+                  <Link to={`/post/${p.id}`}>{p.title}</Link>
                 </li>
               ))}
             </ul>

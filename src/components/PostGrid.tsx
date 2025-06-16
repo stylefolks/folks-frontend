@@ -22,7 +22,7 @@ export default function PostGrid() {
 
   const handlePostClick = (id: string) => {
     document.startViewTransition(() => {
-      navigate(`/posts/${id}`);
+      navigate(`/post/${id}`);
     });
   };
 
