@@ -13,7 +13,9 @@
   "dependencies": {
     "express": "^4.21.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "prosemirror-model": "^1.25.1",
+    "prosemirror-schema-basic": "^1.2.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

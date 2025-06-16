@@ -1,16 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPostById, getNextPosts } from '@/lib/posts';
+import ProseMirrorRenderer from '@/components/ProseMirrorRenderer';
+import Comments from '@/components/Comments';
 
 export default function PostPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const id = Number(params.id);
+  const id = Number(params.postId ?? params.id);
   const post = getPostById(id);
   const nextPosts = getNextPosts(id, 3);
 
   const go = (postId: number) => {
     document.startViewTransition(() => {
-      navigate(`/posts/${postId}`);
+      navigate(`/post/${postId}`);
     });
   };
 
@@ -25,7 +27,8 @@ export default function PostPage() {
         <div style={{ viewTransitionName: `post-${post.id}` }}>
           <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
         </div>
-        <p>{post.content}</p>
+        <ProseMirrorRenderer content={post.content} />
+        <Comments postId={String(id)} />
       </article>
       <aside className="ml-8 hidden w-64 space-y-4 md:block">
         {nextPosts.map((p) => (

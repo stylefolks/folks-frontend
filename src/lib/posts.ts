@@ -3,7 +3,7 @@ export interface Post {
   title: string;
   image: string;
   date: string;
-  content: string;
+  content: any; // ProseMirror JSON
 }
 
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
@@ -14,7 +14,17 @@ export function mockPost(id: number): Post {
     title: `Post ${id}`,
     image: `https://picsum.photos/seed/${id}/600/400`,
     date: new Date(BASE_TIME - id * 24 * 60 * 60 * 1000).toISOString(),
-    content: `This is the content for post ${id}.`,
+    content: {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: `This is the content for post ${id}.` },
+          ],
+        },
+      ],
+    },
   };
 }
 
