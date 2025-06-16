@@ -4,16 +4,21 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 const container = document.getElementById('root')!;
-if (container.hasChildNodes()) {
-  hydrateRoot(container, (
+const hasMarkup =
+  container.innerHTML.trim() !== '' &&
+  !container.innerHTML.includes('<!--app-->');
+
+if (hasMarkup) {
+  hydrateRoot(
+    container,
     <BrowserRouter>
       <App />
-    </BrowserRouter>
-  ));
+    </BrowserRouter>,
+  );
 } else {
   createRoot(container).render(
     <BrowserRouter>
       <App />
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 }
