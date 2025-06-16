@@ -65,7 +65,20 @@ export async function signup(email: string, username: string, password: string) 
   if (!res.ok) {
     throw new Error('Sign up failed');
   }
-  // automatically log in after successful signup
+  let data: any = {};
+  try {
+    data = await res.json();
+  } catch {
+    // some APIs may return no body
+  }
+  if (data.accessToken) {
+    setToken(data.accessToken);
+    if (data.userId) {
+      setUserId(data.userId);
+    }
+    return;
+  }
+  // automatically log in after successful signup when no token is returned
   await login(email, password);
 }
 

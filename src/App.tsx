@@ -9,6 +9,8 @@ import Crews from '@/pages/Crews';
 import Crew from '@/pages/Crew';
 import Brand from '@/pages/Brand';
 import Profile from '@/pages/Profile';
+import MyProfile from '@/pages/MyProfile';
+import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
 
@@ -27,7 +29,10 @@ export default function App() {
           <Route path="/crews" element={<Crews />} />
           <Route path="/crew/:crewId" element={<Crew />} />
           <Route path="/brand/:brandId" element={<Brand />} />
-          <Route path="/profile/:userId" element={<Profile />} />
+          <Route element={<RequireAuth />}> 
+            <Route path="/profile" element={<MyProfile />} />
+            <Route path="/profile/:userId" element={<Profile />} />
+          </Route>
         </Routes>
       </main>
     </>
