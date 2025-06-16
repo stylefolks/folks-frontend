@@ -49,7 +49,7 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE}/auth/signup`, async () => {
-    return HttpResponse.json({}, { status: 200 });
+    return HttpResponse.json({ accessToken: 'mock-token', userId: currentProfile.userId }, { status: 200 });
   }),
 
   http.get(`${API_BASE}/user/me`, () => {
