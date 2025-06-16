@@ -4,6 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import { editorSchema } from '@/lib/editorSchema';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap, toggleMark } from 'prosemirror-commands';
+import { wrapInList } from 'prosemirror-schema-list';
 import { history } from 'prosemirror-history';
 import { dropCursor } from 'prosemirror-dropcursor';
 
@@ -58,6 +59,18 @@ export default function WriteEditor({ content, onChange }: Props) {
     viewRef.current.focus();
   };
 
+  const toggle = (mark: any) => {
+    if (!viewRef.current) return;
+    toggleMark(mark)(viewRef.current.state, viewRef.current.dispatch);
+    viewRef.current.focus();
+  };
+
+  const wrapList = (listType: any) => {
+    if (!viewRef.current) return;
+    wrapInList(listType)(viewRef.current.state, viewRef.current.dispatch);
+    viewRef.current.focus();
+  };
+
   return (
     <div>
       <div className="mb-2 flex gap-2 flex-wrap">
@@ -74,6 +87,24 @@ export default function WriteEditor({ content, onChange }: Props) {
           <option value="serif">Serif</option>
           <option value="monospace">Monospace</option>
         </select>
+        <button type="button" onClick={() => toggle(editorSchema.marks.strong)} className="border px-2">
+          Bold
+        </button>
+        <button type="button" onClick={() => toggle(editorSchema.marks.em)} className="border px-2">
+          Italic
+        </button>
+        <button type="button" onClick={() => toggle(editorSchema.marks.underline)} className="border px-2">
+          Underline
+        </button>
+        <button type="button" onClick={() => toggle(editorSchema.marks.strike)} className="border px-2">
+          Strike
+        </button>
+        <button type="button" onClick={() => wrapList(editorSchema.nodes.bullet_list)} className="border px-2">
+          Bullets
+        </button>
+        <button type="button" onClick={() => wrapList(editorSchema.nodes.ordered_list)} className="border px-2">
+          Numbered
+        </button>
         <button
           type="button"
           onClick={() => increaseIndent(viewRef.current!.state, viewRef.current!.dispatch)}
