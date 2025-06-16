@@ -37,10 +37,12 @@ const colorMark: MarkSpec = {
 
 const fontMark: MarkSpec = {
   attrs: { name: {} },
-  parseDOM: [{
-    style: 'font-family',
-    getAttrs: (value: string) => ({ name: value }),
-  }],
+  parseDOM: [
+    {
+      style: 'font-family',
+      getAttrs: (value: string) => ({ name: value }),
+    },
+  ],
   toDOM: (mark: any) => [
     'span',
     { style: `font-family:${mark.attrs.name}` },
@@ -48,7 +50,27 @@ const fontMark: MarkSpec = {
   ],
 };
 
+const underlineMark: MarkSpec = {
+  parseDOM: [
+    { tag: 'u' },
+    { style: 'text-decoration=underline' },
+  ],
+  toDOM: () => ['span', { style: 'text-decoration:underline' }, 0],
+};
+
+const strikeMark: MarkSpec = {
+  parseDOM: [
+    { tag: 's' },
+    { style: 'text-decoration=line-through' },
+  ],
+  toDOM: () => ['span', { style: 'text-decoration:line-through' }, 0],
+};
+
 export const editorSchema = new Schema({
   nodes,
-  marks: basic.spec.marks.addToEnd('color', colorMark).addToEnd('font', fontMark),
+  marks: basic.spec.marks
+    .addToEnd('color', colorMark)
+    .addToEnd('font', fontMark)
+    .addToEnd('underline', underlineMark)
+    .addToEnd('strike', strikeMark),
 });

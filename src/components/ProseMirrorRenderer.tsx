@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { DOMSerializer } from 'prosemirror-model';
-import { schema } from 'prosemirror-schema-basic';
+import { editorSchema } from '@/lib/editorSchema';
 
 interface Props {
   content: any;
@@ -12,8 +12,8 @@ export default function ProseMirrorRenderer({ content }: Props) {
   useEffect(() => {
     if (!ref.current) return;
     try {
-      const node = schema.nodeFromJSON(content);
-      const fragment = DOMSerializer.fromSchema(schema).serializeFragment(
+      const node = editorSchema.nodeFromJSON(content);
+      const fragment = DOMSerializer.fromSchema(editorSchema).serializeFragment(
         node.content,
       );
       const container = ref.current;
