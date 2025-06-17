@@ -1,12 +1,47 @@
 import { useEffect, useRef } from 'react';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorState, Plugin } from 'prosemirror-state';
+import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { editorSchema } from '@/lib/editorSchema';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap, toggleMark } from 'prosemirror-commands';
 import { wrapInList } from 'prosemirror-schema-list';
 import { history } from 'prosemirror-history';
 import { dropCursor } from 'prosemirror-dropcursor';
+
+const placeholderPlugin = new Plugin<DecorationSet>({
+  state: {
+    init() {
+      return DecorationSet.empty;
+    },
+    apply(tr, set) {
+      set = set.map(tr.mapping, tr.doc);
+      const action = tr.getMeta(this);
+      if (action && action.add) {
+        const widget = document.createElement('placeholder');
+        const deco = Decoration.widget(action.add.pos, widget, {
+          id: action.add.id,
+        });
+        set = set.add(tr.doc, [deco]);
+      } else if (action && action.remove) {
+        set = set.remove(
+          set.find(null, null, (spec) => (spec as any).id === action.remove.id),
+        );
+      }
+      return set;
+    },
+  },
+  props: {
+    decorations(state) {
+      return (this as any).getState(state);
+    },
+  },
+});
+
+function findPlaceholder(state: EditorState, id: object) {
+  const decos = placeholderPlugin.getState(state);
+  const found = decos.find(null, null, (spec) => (spec as any).id === id);
+  return found.length ? found[0].from : null;
+}
 
 interface Props {
   content: any;
@@ -25,6 +60,7 @@ export default function WriteEditor({ content, onChange }: Props) {
       plugins: [
         history(),
         dropCursor(),
+        placeholderPlugin,
         keymap({
           Tab: increaseIndent,
           'Shift-Tab': decreaseIndent,
@@ -125,14 +161,7 @@ export default function WriteEditor({ content, onChange }: Props) {
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (!file || !viewRef.current) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-              const { state, dispatch } = viewRef.current!;
-              const node = editorSchema.nodes.image.create({ src: reader.result });
-              const tr = state.tr.replaceSelectionWith(node);
-              dispatch(tr);
-            };
-            reader.readAsDataURL(file);
+            startImageUpload(viewRef.current, file);
           }}
         />
       </div>
@@ -163,4 +192,36 @@ function increaseIndent(state: EditorState, dispatch: any) {
 
 function decreaseIndent(state: EditorState, dispatch: any) {
   return updateIndent(state, dispatch, -1);
+}
+
+function uploadFile(file: File) {
+  const reader = new FileReader();
+  return new Promise<string>((resolve, reject) => {
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    setTimeout(() => reader.readAsDataURL(file), 1500);
+  });
+}
+
+function startImageUpload(view: EditorView, file: File) {
+  const id = {};
+  let tr = view.state.tr;
+  if (!tr.selection.empty) tr.deleteSelection();
+  tr.setMeta(placeholderPlugin, { add: { id, pos: tr.selection.from } });
+  view.dispatch(tr);
+
+  uploadFile(file).then(
+    (url) => {
+      const pos = findPlaceholder(view.state, id);
+      if (pos == null) return;
+      view.dispatch(
+        view.state.tr
+          .replaceWith(pos, pos, editorSchema.nodes.image.create({ src: url }))
+          .setMeta(placeholderPlugin, { remove: { id } }),
+      );
+    },
+    () => {
+      view.dispatch(tr.setMeta(placeholderPlugin, { remove: { id } }));
+    },
+  );
 }
