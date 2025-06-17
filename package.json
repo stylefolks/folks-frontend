@@ -11,7 +11,13 @@
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.3"
+    "next": "15.3.3",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-view": "^1.40.0",
+    "prosemirror-model": "^1.25.1",
+    "prosemirror-schema-basic": "^1.2.4",
+    "prosemirror-schema-list": "^1.5.1",
+    "prosemirror-example-setup": "^1.2.3"
   },
   "devDependencies": {
     "typescript": "^5",
