@@ -3,20 +3,17 @@ import { setup } from './Editor/core';
 import useProseMirror from '@/hooks/useProseMirror';
 import '@/styles/editor.css';
 
-
 interface Props {
   content: any;
-  onChange: (content: any) => void;
 }
 
-export default function WriteEditor({ content, onChange }: Props) {
+export default function Viewer({ content }: Props) {
   const ref = useProseMirror({
     schema: editorSchema,
     doc: content,
-    plugins: setup({ schema: editorSchema }),
-    onChange,
+    plugins: setup({ schema: editorSchema, menuBar: false, history: false }),
+    editable: false,
   });
 
   return <div ref={ref} className="min-h-[300px] border p-2" />;
 }
-

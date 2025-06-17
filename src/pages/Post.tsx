@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPostById, getNextPosts } from '@/lib/posts';
-import ProseMirrorRenderer from '@/components/ProseMirrorRenderer';
+import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
 
 export default function PostPage() {
@@ -27,7 +27,7 @@ export default function PostPage() {
         <div style={{ viewTransitionName: `post-${post.id}` }}>
           <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
         </div>
-        <ProseMirrorRenderer content={post.content} />
+        <Viewer content={post.content} />
         <Comments postId={String(id)} />
       </article>
       <aside className="ml-8 hidden w-64 space-y-4 md:block">
