@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 export default function useInfiniteScroll(
   callback: () => void
-): React.RefObject<HTMLDivElement> {
+): React.RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
