@@ -89,6 +89,7 @@ export const handlers = [
           type: 'paragraph',
           content: [
             { type: 'text', text: `Random post ${id}` },
+            { type: 'text', text: `this is new text` },
           ],
         },
         {
@@ -108,7 +109,7 @@ export const handlers = [
         {
           type: 'image',
           attrs: {
-            src: `https://picsum.photos/seed/${seed}/400/300`,
+            src: `https://picsum.photos/seed/${seed+1}/600/400`,
             alt: 'random image',
           },
         },
@@ -128,7 +129,7 @@ export const handlers = [
     };
     return HttpResponse.json({
       id: Number(id),
-      title: `Random Post ${id}`,
+      title: `Post title ${id}`,
       image: `https://picsum.photos/seed/${seed}/600/400`,
       date: new Date().toISOString(),
       content,
