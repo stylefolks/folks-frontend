@@ -94,7 +94,34 @@ export const handlers = [
         {
           type: 'paragraph',
           content: [
-            { type: 'text', text: `Generated ${seed}` },
+            {
+              type: 'text',
+              text: '다양한 스타일의 문단 ' ,
+              marks: [
+                { type: 'font', attrs: { name: 'Georgia' } },
+                { type: 'color', attrs: { color: 'blue' } },
+              ],
+            },
+            { type: 'text', text: '😊' },
+          ],
+        },
+        {
+          type: 'image',
+          attrs: {
+            src: `https://picsum.photos/seed/${seed}/400/300`,
+            alt: 'random image',
+          },
+        },
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Comic Sans 폰트의 문단입니다.',
+              marks: [
+                { type: 'font', attrs: { name: 'Comic Sans MS' } },
+              ],
+            },
           ],
         },
       ],
