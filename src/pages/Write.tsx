@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getToken } from '@/lib/auth';
-import WriteEditor from '@/components/WriteEditor';
+import { Editor } from '@/components/Editor';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { initialDoc } from '@/components/Editor/core/doc';
+import { EditorState } from 'prosemirror-state';
 
 interface Draft {
   title: string;
   bigCategory: string;
   hashtags: string;
-  content: any;
+  editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
 const DRAFT_KEY = 'write_draft';
@@ -18,7 +20,7 @@ export default function WritePage() {
   const [title, setTitle] = useState('');
   const [bigCategory, setBigCategory] = useState('OOTD');
   const [hashtags, setHashtags] = useState('');
-  const [content, setContent] = useState<any>(null);
+  const [editorState, setEditorState] = useState<EditorState | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,20 +31,20 @@ export default function WritePage() {
       setTitle(draft.title);
       setBigCategory(draft.bigCategory);
       setHashtags(draft.hashtags);
-      setContent(draft.content);
+      setEditorState(draft.editorState);
     }
   }, []);
 
   const saveDraft = () => {
-    const draft: Draft = { title, bigCategory, hashtags, content };
+    const draft: Draft = { title, bigCategory, hashtags, editorState };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     alert('Draft saved');
   };
 
   const handleSubmit = () => {
+
+    const draft: Draft = { title, bigCategory, hashtags, editorState };
     
-    const draft: Draft = { title, bigCategory, hashtags, content };
-    console.log("@?@?@?",draft)
     if (!getToken()) {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
       navigate('/login', { state: { from: location } });
@@ -56,6 +58,10 @@ export default function WritePage() {
     localStorage.removeItem(DRAFT_KEY);
     alert('Draft cleared');
   };
+
+  const handleChange = (value: EditorState) => {
+    setEditorState(value);
+  }
 
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
@@ -79,7 +85,7 @@ export default function WritePage() {
         value={hashtags}
         onChange={(e) => setHashtags(e.target.value)}
       />
-      <WriteEditor content={content} onChange={setContent} />
+      <Editor value={initialDoc} onChange={handleChange}  />
       <div className="flex gap-2">
         <Button type="button" onClick={handleSubmit}>
           Submit
