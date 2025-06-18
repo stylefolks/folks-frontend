@@ -1,3 +1,5 @@
+import { API_BASE } from './auth';
+
 export interface Post {
   id: number;
   title: string;
@@ -39,4 +41,12 @@ export function getPostById(id: number): Post {
 
 export function getNextPosts(startId: number, limit: number): Post[] {
   return Array.from({ length: limit }, (_, i) => mockPost(startId + i + 1));
+}
+
+export async function fetchPost(id: number): Promise<Post> {
+  const res = await fetch(`${API_BASE}/posts/${id}`, { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to load post');
+  }
+  return res.json();
 }

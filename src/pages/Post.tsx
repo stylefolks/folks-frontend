@@ -1,20 +1,33 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPostById, getNextPosts } from '@/lib/posts';
+import { getNextPosts, fetchPost, type Post } from '@/lib/posts';
 import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
+import { useEffect, useState } from 'react';
 
 export default function PostPage() {
   const navigate = useNavigate();
   const params = useParams();
   const id = Number(params.postId ?? params.id);
-  const post = getPostById(id);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
   const nextPosts = getNextPosts(id, 3);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchPost(id)
+      .then((p) => setPost(p))
+      .catch(() => setPost(null))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const go = (postId: number) => {
     document.startViewTransition(() => {
       navigate(`/post/${postId}`);
     });
   };
+
+  if (loading) return <p className="p-4">Loading...</p>;
+  if (!post) return <p className="p-4">No post</p>;
 
   return (
     <div className="mx-auto flex max-w-5xl p-4">
