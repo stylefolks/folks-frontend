@@ -78,4 +78,33 @@ export const handlers = [
     const { id } = params as { id: string };
     return HttpResponse.json(randomProfile(id));
   }),
+
+  http.get(`${API_BASE}/posts/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    const seed = Math.random().toString(36).slice(2, 8);
+    const content = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: `Random post ${id}` },
+          ],
+        },
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: `Generated ${seed}` },
+          ],
+        },
+      ],
+    };
+    return HttpResponse.json({
+      id: Number(id),
+      title: `Random Post ${id}`,
+      image: `https://picsum.photos/seed/${seed}/600/400`,
+      date: new Date().toISOString(),
+      content,
+    });
+  }),
 ];
