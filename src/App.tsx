@@ -1,5 +1,4 @@
 import Navbar from '@/components/Navbar';
-import MswInit from '@/mocks/MswInit';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -18,7 +17,6 @@ import './styles/globals.css';
 export default function App() {
   return (
     <>
-      <MswInit />
       <Navbar />
       <main className="pt-4">
         <Routes>
