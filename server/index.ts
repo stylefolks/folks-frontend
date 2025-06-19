@@ -50,7 +50,7 @@ async function startServer() {
         const manifestPath = path.join(root, 'client/manifest.json')
         if (fs.existsSync(manifestPath)) {
           const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-          const entry = manifest['src/entry-client.tsx']
+          const entry = manifest['index.html']
           if (entry && entry['css']) {
             cssLinks = entry['css']
               .map((href: string) => `<link rel="stylesheet" href="${href}">`)
@@ -65,8 +65,8 @@ async function startServer() {
         ...meta.metas.map((m: { name: string; content: string }) => `<meta name="${m.name}" content="${m.content}">`),
       ].join('\n');
       const html = template
-        .replace('<!--head-->', head)
-        .replace('<!--app-->', appHtml);
+        .replace('<!--head-->', `${head}${cssLinks ? `\n${cssLinks}` : ''}`)
+        .replace('<!--app-->', appHtml)
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (e: any) {
       if (!isProd && vite) {
