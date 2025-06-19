@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,14 +24,9 @@ export default function LoginPage() {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>Login | Stylefolks</title>
-        <meta name="description" content="Login to Stylefolks" />
-      </Helmet>
-      <div className="flex justify-center">
-        <div className="w-full max-w-md py-10 space-y-6">
-          <h1 className="text-2xl font-bold text-center">Welcome Back!</h1>
+    <div className="flex justify-center">
+      <div className="w-full max-w-md py-10 space-y-6">
+        <h1 className="text-2xl font-bold text-center">Welcome Back!</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
             <label htmlFor="email" className="block text-sm font-medium">
@@ -76,6 +70,5 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
-    </>
   );
 }

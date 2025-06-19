@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { signup } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,13 +23,8 @@ export default function SignupPage() {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>Sign Up | Stylefolks</title>
-        <meta name="description" content="Create an account" />
-      </Helmet>
-      <div className="flex justify-center">
-        <div className="w-full max-w-md py-10 space-y-6">
+    <div className="flex justify-center">
+      <div className="w-full max-w-md py-10 space-y-6">
         <h1 className="text-2xl font-bold text-center">Create Your Account</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
@@ -87,6 +81,5 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
-    </>
   );
 }

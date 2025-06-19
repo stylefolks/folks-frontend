@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { getToken } from '@/lib/auth';
 import { Editor } from '@/components/Editor';
 import { Input } from '@/components/ui/input';
@@ -65,13 +64,8 @@ export default function WritePage() {
   }
 
   return (
-    <>
-      <Helmet>
-        <title>Write | Stylefolks</title>
-        <meta name="description" content="Write a post" />
-      </Helmet>
-      <div className="mx-auto max-w-2xl p-4 space-y-4">
-        <h1 className="text-xl font-bold">Write a Post</h1>
+    <div className="mx-auto max-w-2xl p-4 space-y-4">
+      <h1 className="text-xl font-bold">Write a Post</h1>
       <Input
         placeholder="Title"
         value={title}
@@ -92,18 +86,17 @@ export default function WritePage() {
         onChange={(e) => setHashtags(e.target.value)}
       />
       <Editor value={initialDoc} onChange={handleChange}  />
-        <div className="flex gap-4 flex-col mt-8">
-          <Button type="button" onClick={handleSubmit} variant="outline">
-            Submit
-          </Button>
-          <Button type="button" onClick={saveDraft} variant="outline">
-            Save Draft
-          </Button>
-          <Button type="button" onClick={clearDraft} variant="outline">
-            Clear Draft
-          </Button>
-        </div>
+      <div className="flex gap-4 flex-col mt-8">
+        <Button type="button" onClick={handleSubmit} variant="outline">
+          Submit
+        </Button>
+        <Button type="button" onClick={saveDraft} variant="outline">
+          Save Draft
+        </Button>
+        <Button type="button" onClick={clearDraft} variant="outline">
+          Clear Draft
+        </Button>
       </div>
-    </>
+    </div>
   );
 }

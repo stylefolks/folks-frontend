@@ -1,3 +1,3 @@
 declare module '../dist/server/entry-server.js' {
-  export function render(url: string): Promise<{ appHtml: string; head: string }>;
+  export async function render(url: string): Promise<string>;
 }
