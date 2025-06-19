@@ -3,6 +3,7 @@ import { fetchPost, type Post } from '@/lib/posts';
 import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const PostTitlePart = ({ post }:{ post : Post   }) => {
   const navigate = useNavigate();
@@ -78,13 +79,19 @@ export default function PostPage() {
   if (!post) return <p className="p-4">No post</p>;
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-4 p-4">
-     <PostTitlePart post={post} />
-      {/* <div style={{ viewTransitionName: `post-${post.id}` }}>
-        <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
-      </div> */}
-      <Viewer content={post.content} className="w-full" />
-      <Comments postId={String(id)} />
-    </div>
+    <>
+      <Helmet>
+        <title>{post.title} | Stylefolks</title>
+        <meta name="description" content={post.title} />
+      </Helmet>
+      <div className="mx-auto max-w-[1440px] space-y-4 p-4">
+       <PostTitlePart post={post} />
+        {/* <div style={{ viewTransitionName: `post-${post.id}` }}>
+          <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
+        </div> */}
+        <Viewer content={post.content} className="w-full" />
+        <Comments postId={String(id)} />
+      </div>
+    </>
   );
 }

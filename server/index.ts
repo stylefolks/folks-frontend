@@ -24,8 +24,10 @@ async function startServer() {
         let template = fs.readFileSync(path.join(root, 'index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
         const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
-        const appHtml = await render(url);
-        const html = template.replace(`<!--app-->`, appHtml);
+        const { appHtml, head } = await render(url);
+        const html = template
+          .replace('<!--app-->', appHtml)
+          .replace('<!--head-->', head);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
       } catch (e) {
         vite.ssrFixStacktrace(e as Error);
@@ -42,11 +44,13 @@ async function startServer() {
     const template = fs.readFileSync(path.join(root, 'client/index.html'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require('./entry-server.mjs') as {
-      render: (url: string) => Promise<string>;
+      render: (url: string) => Promise<{ appHtml: string; head: string }>;
     };
     app.use('*', async (req: Request, res: Response) => {
-      const appHtml = await render(req.originalUrl);
-      const html = template.replace('<!--app-->', appHtml);
+      const { appHtml, head } = await render(req.originalUrl);
+      const html = template
+        .replace('<!--app-->', appHtml)
+        .replace('<!--head-->', head);
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     });
   }
