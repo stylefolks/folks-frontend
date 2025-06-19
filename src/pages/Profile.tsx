@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   getProfile,
   updateMyProfile,
@@ -109,7 +110,12 @@ export default function ProfilePage() {
   const isMe = myId === profile.userId;
 
   return (
-    <div className="p-4 space-y-6 max-w-xl mx-auto">
+    <>
+      <Helmet>
+        <title>Profile | Stylefolks</title>
+        <meta name="description" content="User profile" />
+      </Helmet>
+      <div className="p-4 space-y-6 max-w-xl mx-auto">
       <h1 className="text-xl font-bold">Profile</h1>
       {isMe ? (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -265,5 +271,6 @@ export default function ProfilePage() {
         )}
       </div>
     </div>
+    </>
   );
 }

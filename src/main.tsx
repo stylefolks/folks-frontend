@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 
 async function start() {
@@ -21,15 +22,19 @@ async function start() {
   if (hasMarkup) {
     hydrateRoot(
       container,
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>,
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>,
     );
   } else {
     createRoot(container).render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>,
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>,
     );
   }
 }
