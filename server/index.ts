@@ -24,8 +24,14 @@ async function startServer() {
         let template = fs.readFileSync(path.join(root, 'index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
         const { render } = await vite.ssrLoadModule('/src/entry-server.tsx');
-        const appHtml = await render(url);
-        const html = template.replace(`<!--app-->`, appHtml);
+        const { html: appHtml, meta } = await render(url);
+        const head = [
+          meta.title ? `<title>${meta.title}</title>` : '',
+          ...meta.metas.map(m => `<meta name="${m.name}" content="${m.content}">`),
+        ].join('\n');
+        const html = template
+          .replace('<!--head-->', head)
+          .replace(`<!--app-->`, appHtml);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
       } catch (e) {
         vite.ssrFixStacktrace(e as Error);
@@ -42,11 +48,17 @@ async function startServer() {
     const template = fs.readFileSync(path.join(root, 'client/index.html'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { render } = require('./entry-server.mjs') as {
-      render: (url: string) => Promise<string>;
+      render: (url: string) => Promise<{ html: string; meta: import('../src/lib/meta').MetaState }>;
     };
     app.use('*', async (req: Request, res: Response) => {
-      const appHtml = await render(req.originalUrl);
-      const html = template.replace('<!--app-->', appHtml);
+      const { html: appHtml, meta } = await render(req.originalUrl);
+      const head = [
+        meta.title ? `<title>${meta.title}</title>` : '',
+        ...meta.metas.map(m => `<meta name="${m.name}" content="${m.content}">`),
+      ].join('\n');
+      const html = template
+        .replace('<!--head-->', head)
+        .replace('<!--app-->', appHtml);
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     });
   }

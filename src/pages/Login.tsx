@@ -3,10 +3,12 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { login } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useMeta } from '@/lib/meta';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  useMeta({ title: 'Login - Stylefolks' });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');

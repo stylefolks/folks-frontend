@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { MetaProvider } from './lib/meta';
 
 async function start() {
   const mocking = (import.meta as any).env.PUBLIC_API_MOCKING ?? 'enabled';
@@ -22,13 +23,17 @@ async function start() {
     hydrateRoot(
       container,
       <BrowserRouter>
-        <App />
+        <MetaProvider>
+          <App />
+        </MetaProvider>
       </BrowserRouter>,
     );
   } else {
     createRoot(container).render(
       <BrowserRouter>
-        <App />
+        <MetaProvider>
+          <App />
+        </MetaProvider>
       </BrowserRouter>,
     );
   }

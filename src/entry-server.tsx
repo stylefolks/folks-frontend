@@ -2,11 +2,16 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import App from './App';
+import { MetaProvider, createMetaState } from './lib/meta';
 
 export function render(url: string) {
-  return renderToString(
+  const meta = createMetaState();
+  const html = renderToString(
     <StaticRouter location={url}>
-      <App />
+      <MetaProvider context={meta}>
+        <App />
+      </MetaProvider>
     </StaticRouter>
   );
+  return { html, meta };
 }
