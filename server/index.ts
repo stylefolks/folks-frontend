@@ -27,7 +27,7 @@ async function startServer() {
         const { html: appHtml, meta } = await render(url);
         const head = [
           meta.title ? `<title>${meta.title}</title>` : '',
-          ...meta.metas.map(m => `<meta name="${m.name}" content="${m.content}">`),
+          ...meta.metas.map((m: { name: string; content: string }) => `<meta name="${m.name}" content="${m.content}">`),
         ].join('\n');
         const html = template
           .replace('<!--head-->', head)
@@ -54,7 +54,7 @@ async function startServer() {
       const { html: appHtml, meta } = await render(req.originalUrl);
       const head = [
         meta.title ? `<title>${meta.title}</title>` : '',
-        ...meta.metas.map(m => `<meta name="${m.name}" content="${m.content}">`),
+        ...meta.metas.map((m: { name: string; content: string }) => `<meta name="${m.name}" content="${m.content}">`),
       ].join('\n');
       const html = template
         .replace('<!--head-->', head)
