@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { initialDoc } from '@/components/Editor/core/doc';
 import { EditorState } from 'prosemirror-state';
+import { useMeta } from '@/lib/meta';
 
 interface Draft {
   title: string;
@@ -17,6 +18,7 @@ interface Draft {
 const DRAFT_KEY = 'write_draft';
 
 export default function WritePage() {
+  useMeta({ title: 'Write - Stylefolks' });
   const [title, setTitle] = useState('');
   const [bigCategory, setBigCategory] = useState('OOTD');
   const [hashtags, setHashtags] = useState('');

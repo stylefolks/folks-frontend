@@ -3,6 +3,7 @@ import { fetchPost, type Post } from '@/lib/posts';
 import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
 import { useEffect, useState } from 'react';
+import { useMeta } from '@/lib/meta';
 
 const PostTitlePart = ({ post }:{ post : Post   }) => {
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ export default function PostPage() {
   const id = Number(params.postId ?? params.id);
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  useMeta({ title: post ? `${post.title} - Stylefolks` : 'Post - Stylefolks' });
 
   useEffect(() => {
     setLoading(true);

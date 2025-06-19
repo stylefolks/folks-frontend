@@ -18,6 +18,7 @@ import {
 import { getMyId } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useMeta } from '@/lib/meta';
 
 export default function ProfilePage() {
   const params = useParams();
@@ -40,6 +41,8 @@ export default function ProfilePage() {
   const [following, setFollowing] = useState<SimpleUser[]>([]);
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+
+  useMeta({ title: profile ? `${profile.username} - Stylefolks` : 'Profile - Stylefolks' });
 
   useEffect(() => {
     async function load() {

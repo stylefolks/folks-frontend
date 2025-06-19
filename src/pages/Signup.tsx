@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useMeta } from '@/lib/meta';
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  useMeta({ title: 'Sign Up - Stylefolks' });
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
