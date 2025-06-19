@@ -44,7 +44,11 @@ async function startServer() {
           path.join(root, 'client/index.html'),
           'utf-8'
         )
-        render = require('./entry-server.mjs').render
+        
+        // entry-server.mjs is an ES module, so use dynamic import instead of require
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error no type definitions for mjs module
+        render = (await import('./entry-server.mjs')).render
 
         // manifest.json에서 CSS 파일 추출
         const manifestPath = path.join(root, 'client/manifest.json')

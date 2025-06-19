@@ -1,3 +1,3 @@
-declare module '../dist/server/entry-server.js' {
-  export async function render(url: string): Promise<string>;
+declare module './entry-server.mjs' {
+  export function render(url: string): Promise<{ html: string; meta: { title?: string; metas: { name: string; content: string }[] } }>
 }
