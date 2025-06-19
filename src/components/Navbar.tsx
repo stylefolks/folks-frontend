@@ -22,6 +22,7 @@ export default function Navbar() {
 
 
   return (
+    <>
     <nav className="flex items-center justify-between border-b px-4 py-4">
       <Link to="/" className="font-bold text-xl">
         Stylefolks
@@ -71,6 +72,7 @@ export default function Navbar() {
       onClose={() => setMobileOpen(false)}
       loggedIn={loggedIn}
     />
+    </>
   );
 }
 

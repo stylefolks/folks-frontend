@@ -50,7 +50,7 @@ placeholder:after {
   line-height: 0.1;
   font-weight: bold;
 }
-.ProseMirror img {
-  max-width: 100%;
-  width: 100%;
+
+button {
+  cursor: pointer;
 }

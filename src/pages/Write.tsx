@@ -86,8 +86,8 @@ export default function WritePage() {
         onChange={(e) => setHashtags(e.target.value)}
       />
       <Editor value={initialDoc} onChange={handleChange}  />
-      <div className="flex gap-2">
-        <Button type="button" onClick={handleSubmit}>
+      <div className="flex gap-4 flex-col mt-8">
+        <Button type="button" onClick={handleSubmit} variant="outline">
           Submit
         </Button>
         <Button type="button" onClick={saveDraft} variant="outline">

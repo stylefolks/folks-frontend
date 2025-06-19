@@ -1,6 +1,20 @@
+.ProseMirror img {
+  max-width: 100%;
+  width: 100%;
+}
+
+.editor-viewer-wrapper {
+  width: 100%;
+  ;
+}
+
+.editor-viewer-wrapper > .ProseMirror {
+  padding: 0px;
+}
+
 .editor-wrapper {
   max-width: 100%;
-  min-height: 240px;
+  min-height: 480px;
   margin: 0 auto;
   padding-bottom: 12px;
   border: 1px solid gray;

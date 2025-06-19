@@ -30,5 +30,5 @@ export default function Viewer({ content, className }: Props) {
     }
   }, [state]);
 
-  return <div ref={ref} className={cn('editor-wrapper', className)} />;
+  return <div ref={ref} className={cn('editor-viewer-wrapper', className)} />;
 }

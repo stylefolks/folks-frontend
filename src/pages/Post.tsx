@@ -4,27 +4,22 @@ import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
 import { useEffect, useState } from 'react';
 
-export default function PostPage() {
+const PostTitlePart = ({ post }:{ post : Post   }) => {
   const navigate = useNavigate();
-  const params = useParams();
-  const id = Number(params.postId ?? params.id);
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchPost(id)
-      .then((p) => setPost(p))
-      .catch(() => setPost(null))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) return <p className="p-4">Loading...</p>;
-  if (!post) return <p className="p-4">No post</p>;
+  if (!post) return null;
+  if (!post.author) return null;
+  if (!post.author.userId) return null;
+  if (!post.author.username) return null;
+  if (!post.author.imageUrl) return null;
+  if (!post.date) return null;
+  if (!post.views) return null;
+  if (!post.title) return null;
+  if (!post.content) return null;
+  if (!post.id) return null;  
 
   return (
-    <div className="mx-auto max-w-[1440px] space-y-4 p-4">
-      <button onClick={() => navigate(-1)} className="text-sm text-blue-500">
+    <>
+     <button onClick={() => navigate(-1)} className="text-sm text-blue-500">
         &larr; Back
       </button>
       <div className="flex items-center justify-between">
@@ -60,9 +55,34 @@ export default function PostPage() {
       <p className="text-sm text-gray-500">
         {new Date(post.date).toLocaleString()} · {post.views} views
       </p>
-      <div style={{ viewTransitionName: `post-${post.id}` }}>
+      </>
+  )
+}
+
+export default function PostPage() {
+  const navigate = useNavigate();
+  const params = useParams();
+  const id = Number(params.postId ?? params.id);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchPost(id)
+      .then((p) => setPost(p))
+      .catch(() => setPost(null))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <p className="p-4">Loading...</p>;
+  if (!post) return <p className="p-4">No post</p>;
+
+  return (
+    <div className="mx-auto max-w-[1440px] space-y-4 p-4">
+     <PostTitlePart post={post} />
+      {/* <div style={{ viewTransitionName: `post-${post.id}` }}>
         <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
-      </div>
+      </div> */}
       <Viewer content={post.content} className="w-full" />
       <Comments postId={String(id)} />
     </div>
