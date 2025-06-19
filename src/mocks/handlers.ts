@@ -82,6 +82,7 @@ export const handlers = [
   http.get(`${API_BASE}/posts/:id`, ({ params }) => {
     const { id } = params as { id: string };
     const seed = Math.random().toString(36).slice(2, 8);
+    const author = randomProfile(`user${id}`);
     const content = {
       type: 'doc',
       content: [
@@ -132,6 +133,8 @@ export const handlers = [
       title: `Post title ${id}`,
       image: `https://picsum.photos/seed/${seed}/600/400`,
       date: new Date().toISOString(),
+      views: Number(id) * 10,
+      author: { userId: author.userId, username: author.username, imageUrl: author.imageUrl },
       content,
     });
   }),
