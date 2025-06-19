@@ -3,14 +3,16 @@ import { Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { editorSchema } from '@/lib/editorSchema';
+import { cn } from '@/lib/utils';
 import './Editor/core/editor.css';
 import { setup } from './Editor/core';
 
 interface Props {
   content: any;
+  className?: string;
 }
 
-export default function Viewer({ content }: Props) {
+export default function Viewer({ content, className }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
 
@@ -28,5 +30,5 @@ export default function Viewer({ content }: Props) {
     }
   }, [state]);
 
-  return <div ref={ref} className="editor-wrapper" />;
+  return <div ref={ref} className={cn('editor-wrapper', className)} />;
 }

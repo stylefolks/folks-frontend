@@ -1,21 +1,31 @@
 import { API_BASE } from './auth';
+import type { SimpleUser } from './profile';
 
 export interface Post {
   id: number;
   title: string;
   image: string;
   date: string;
+  views: number;
+  author: SimpleUser;
   content: any; // ProseMirror JSON
 }
 
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
 
 export function mockPost(id: number): Post {
+  const author: SimpleUser = {
+    userId: `user${id}`,
+    username: `User ${id}`,
+    imageUrl: `https://picsum.photos/seed/user${id}/100`,
+  };
   return {
     id,
     title: `Post ${id}`,
     image: `https://picsum.photos/seed/${id}/600/400`,
     date: new Date(BASE_TIME - id * 24 * 60 * 60 * 1000).toISOString(),
+    views: id * 10,
+    author,
     content: {
       type: 'doc',
       content: [
