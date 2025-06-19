@@ -9,6 +9,7 @@ import Crew from '@/pages/Crew';
 import Brand from '@/pages/Brand';
 import Profile from '@/pages/Profile';
 import MyProfile from '@/pages/MyProfile';
+import SettingsPage from '@/pages/Settings';
 import Write from '@/pages/Write';
 import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
@@ -32,6 +33,7 @@ export default function App() {
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
           <Route path="/write" element={<Write />} />
         </Routes>

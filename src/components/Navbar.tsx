@@ -2,11 +2,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { getToken, logout } from '@/lib/auth';
+import MobileNav from './MobileNav';
+import { getToken } from '@/lib/auth';
 
 export default function Navbar() {
   const location = useLocation();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     setLoggedIn(!!getToken());
@@ -18,10 +20,6 @@ export default function Navbar() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    setLoggedIn(false);
-  };
 
   return (
     <nav className="flex items-center justify-between border-b px-4 py-4">
@@ -29,6 +27,13 @@ export default function Navbar() {
         Stylefolks
       </Link>
       <div className="flex gap-4 items-center">
+        <button
+          className="sm:hidden p-2"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+        >
+          &#9776;
+        </button>
         <Link to="/posts" className="hidden sm:inline-block">
           Posts
         </Link>
@@ -43,9 +48,9 @@ export default function Navbar() {
             <Link to="/profile" className="hidden sm:inline-block">
               Profile
             </Link>
-            <Button variant="outline" onClick={handleLogout} className="text-sm">
-              Logout
-            </Button>
+            <Link to="/settings" className="hidden sm:inline-block">
+              Settings
+            </Link>
           </>
         ) : (
           <>
@@ -61,5 +66,11 @@ export default function Navbar() {
         )}
       </div>
     </nav>
+    <MobileNav
+      open={mobileOpen}
+      onClose={() => setMobileOpen(false)}
+      loggedIn={loggedIn}
+    />
   );
 }
+
