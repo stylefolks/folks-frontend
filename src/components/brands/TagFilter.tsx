@@ -8,13 +8,13 @@ interface Props {
 
 export default function TagFilter({ tags, selected, onChange }: Props) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-nowrap gap-2 overflow-x-scroll w-[calc(100%-3rem)]">
       {tags.map((tag) => (
         <button
           key={tag}
           onClick={() => onChange(selected === tag ? null : tag)}
           className={cn(
-            'rounded px-2 py-1 text-sm',
+            'rounded px-2 py-1 text-sm whitespace-nowrap',
             selected === tag ? 'bg-black text-white' : 'bg-gray-200'
           )}
         >
