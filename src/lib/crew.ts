@@ -30,6 +30,18 @@ export interface Crew {
   ownerId: string;
 }
 
+export interface CrewSummary {
+  id: string;
+  name: string;
+  coverImage: string;
+  tags: string[];
+  memberCount: number;
+  upcomingEvent?: {
+    title: string;
+    date: string;
+  };
+}
+
 export async function fetchCrew(id: string): Promise<Crew> {
   const res = await fetch(`${API_BASE}/crews/${id}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to load crew');
@@ -51,5 +63,12 @@ export async function fetchCrewEvents(id: string): Promise<Event[]> {
 export async function fetchCrewNotices(id: string): Promise<Notice[]> {
   const res = await fetch(`${API_BASE}/crews/${id}/notices`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to load notices');
+  return res.json();
+}
+
+export async function fetchCrews(params: Record<string, string> = {}): Promise<CrewSummary[]> {
+  const search = new URLSearchParams(params).toString();
+  const res = await fetch(`${API_BASE}/crews${search ? `?${search}` : ''}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load crews');
   return res.json();
 }
