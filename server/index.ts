@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express'
-import path from 'path'
+import path from 'path';
+import { fileURLToPath } from 'url'
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 import fs from 'fs'
 import { createServer as createViteServer, ViteDevServer } from 'vite'
 
@@ -45,10 +48,10 @@ async function startServer() {
           'utf-8'
         )
         
-        // entry-server.mjs is an ES module, so use dynamic import instead of require
+        // entry-server.js is an ES module, so use dynamic import instead of require
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error no type definitions for mjs module
-        render = (await import('./entry-server.mjs')).render
+        // @ts-expect-error no type definitions for js module
+        render = (await import('./entry-server.js')).render
 
         // manifest.json에서 CSS 파일 추출
         const manifestPath = path.join(root, 'client/manifest.json')

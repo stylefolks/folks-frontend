@@ -2,8 +2,9 @@
   "name": "folks-frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "ts-node --transpile-only --project server/tsconfig.json server/index.ts",
+    "dev": "TS_NODE_PROJECT=server/tsconfig.json node --loader ts-node/esm server/index.ts",
     "build": "vite build && vite build --config vite.ssr.config.ts && tsc -p server",
     "start": "NODE_ENV=production node dist/server/index.js",
     "lint": "eslint .",
