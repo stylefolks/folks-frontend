@@ -5,6 +5,7 @@ import { fetchBrand, fetchBrandPosts, type Brand } from '@/lib/brand';
 import type { Post } from '@/lib/posts';
 import PostCard from '@/components/PostCard';
 import AdBadge from '@/components/AdBadge';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function BrandPage() {
   const params = useParams();
@@ -30,7 +31,11 @@ export default function BrandPage() {
 
   return (
     <div className="mx-auto max-w-[720px] space-y-4 p-4">
-      <img src={brand.logo} alt={brand.name} className="h-24 w-24 rounded object-cover" />
+      <ImageWithSkeleton
+        src={brand.logo}
+        alt={brand.name}
+        className="h-24 w-24 rounded"
+      />
       <div>
         <h1 className="text-xl font-bold">{brand.name}</h1>
         <p className="text-sm text-gray-600">{brand.description}</p>
