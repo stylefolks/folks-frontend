@@ -27,6 +27,9 @@ export default function MobileNav({ open, onClose, loggedIn }: MobileNavProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <nav className="flex flex-col gap-4">
+          <Link to="/search" onClick={onClose} className="py-2">
+            Search
+          </Link>
           <Link to="/posts" onClick={onClose} className="py-2">
             Posts
           </Link>
