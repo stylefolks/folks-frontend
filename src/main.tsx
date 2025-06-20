@@ -5,7 +5,8 @@ import App from './App';
 import { MetaProvider } from './lib/meta';
 
 async function start() {
-  const mocking = (import.meta as any).env.PUBLIC_API_MOCKING ?? 'enabled';
+  const env = (import.meta as any).env;
+  const mocking = env.PUBLIC_API_MOCKING ?? (env.DEV ? 'enabled' : 'disabled');
   if (mocking === 'enabled') {
     const { worker } = await import('./mocks/browser');
     await worker.start({

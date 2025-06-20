@@ -54,11 +54,16 @@
 
 ### Mock API
 개발 편의를 위해 [MSW](https://mswjs.io/) 기반의 목 API가 준비되어 있습니다.
-다음 명령으로 실행할 수 있습니다.
+개발 모드에서는 기본적으로 MSW가 활성화되며, 필요한 경우 아래와 같이 명시적으로 설정할 수 있습니다.
 
 ```bash
+# MSW 사용
 PUBLIC_API_MOCKING=enabled npm run dev
+# 실제 API 사용
+PUBLIC_API_MOCKING=disabled npm run dev
 ```
+
+프로덕션 빌드에서는 기본적으로 MSW가 비활성화됩니다.
 
 로그인은 아래 계정으로 가능합니다.
 
