@@ -4,6 +4,7 @@ import { useMeta } from '@/lib/meta';
 import { fetchCrew, fetchCrewPosts, type Crew } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
 import PostCard from '@/components/PostCard';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function CrewPage() {
   const params = useParams();
@@ -29,7 +30,11 @@ export default function CrewPage() {
 
   return (
     <div className="mx-auto max-w-[720px] space-y-4 p-4">
-      <img src={crew.coverImage} alt={crew.name} className="h-40 w-full rounded object-cover" />
+      <ImageWithSkeleton
+        src={crew.coverImage}
+        alt={crew.name}
+        className="h-40 w-full rounded"
+      />
       <div>
         <h1 className="text-xl font-bold">{crew.name}</h1>
         <p className="text-sm text-gray-600">{crew.description}</p>

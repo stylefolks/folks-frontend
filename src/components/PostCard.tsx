@@ -1,4 +1,5 @@
 import type { Post } from "@/lib/posts";
+import ImageWithSkeleton from './ImageWithSkeleton';
 
 interface Props {
   post: Post;
@@ -15,10 +16,10 @@ export default function PostCard({ post }: Props) {
         className="relative w-full overflow-hidden rounded-lg bg-gray-100"
       >
         {post.image ? (
-          <img
+          <ImageWithSkeleton
             src={post.image}
             alt={post.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full"
           />
         ) : (
           <h3 className="mt-2 text-sm font-medium">{post.title}</h3>
