@@ -25,7 +25,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/posts" element={<Posts />} />
-          <Route path="/posts/:id" element={<Post />} />
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/crews" element={<Crews />} />
           <Route path="/crew/:crewId" element={<Crew />} />
