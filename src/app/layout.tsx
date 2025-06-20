@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import MSWProvider from "@/mocks/MSWProvider";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -30,7 +31,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${pretendard.variable} antialiased`}>{children}</body>
+      <body className={`${pretendard.variable} antialiased`}>
+        <MSWProvider>{children}</MSWProvider>
+      </body>
     </html>
   );
 }
