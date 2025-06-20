@@ -44,6 +44,13 @@ export default function Navbar() {
         <Link to="/brands" className="hidden sm:inline-block">
           Brands
         </Link>
+        <Link
+          to="/search"
+          aria-label="Search"
+          className={location.pathname === '/search' ? 'border p-1 rounded' : ''}
+        >
+          🔍
+        </Link>
         <Link to="/write" className="hidden sm:inline-block">
           Write
         </Link>
