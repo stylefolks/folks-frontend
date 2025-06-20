@@ -5,7 +5,7 @@ import Signup from '@/pages/Signup';
 import Posts from '@/pages/Posts';
 import Post from '@/pages/Post';
 import Crews from '@/pages/Crews';
-import Crew from '@/pages/Crew';
+import CrewDetailPage from '@/pages/crew/[id]';
 import Brand from '@/pages/Brand';
 import Profile from '@/pages/Profile';
 import MyProfile from '@/pages/MyProfile';
@@ -28,7 +28,7 @@ export default function App() {
           <Route path="/posts" element={<Posts />} />
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/crews" element={<Crews />} />
-          <Route path="/crew/:crewId" element={<Crew />} />
+          <Route path="/crew/:id" element={<CrewDetailPage />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/brand/:brandId" element={<Brand />} />
           <Route element={<RequireAuth />}>
