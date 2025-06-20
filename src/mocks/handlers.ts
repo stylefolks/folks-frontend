@@ -42,17 +42,52 @@ function randomProfile(id: string): Profile {
 function randomPost(id: number) {
   const seed = Math.random().toString(36).slice(2, 8);
   const author = randomProfile(`user${id}`);
-  const content = {
-    type: 'doc',
-    content: [
-      {
-        type: 'paragraph',
-        content: [
-          { type: 'text', text: `Random post ${id}` },
-        ],
-      },
-    ],
-  };
+   const content = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: `Random post ${id}` },
+            { type: 'text', text: `this is new text` },
+          ],
+        },
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: '다양한 스타일의 문단 ' ,
+              marks: [
+                { type: 'font', attrs: { name: 'Georgia' } },
+                { type: 'color', attrs: { color: 'blue' } },
+              ],
+            },
+            { type: 'text', text: '😊' },
+          ],
+        },
+        {
+          type: 'image',
+          attrs: {
+            src: `https://picsum.photos/seed/${seed+1}/600/400`,
+            alt: 'random image',
+          },
+        },
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Comic Sans 폰트의 문단입니다.',
+              marks: [
+                { type: 'font', attrs: { name: 'Comic Sans MS' } },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    
   return {
     id,
     title: `Post title ${id}`,
