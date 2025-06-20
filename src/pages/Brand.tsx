@@ -1,14 +1,48 @@
 import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useMeta } from '@/lib/meta';
+import { fetchBrand, fetchBrandPosts, type Brand } from '@/lib/brand';
+import type { Post } from '@/lib/posts';
+import PostCard from '@/components/PostCard';
+import AdBadge from '@/components/AdBadge';
 
 export default function BrandPage() {
   const params = useParams();
   const brandId = params.brandId as string;
-  useMeta({ title: `Brand ${brandId} - Stylefolks` });
+  const [brand, setBrand] = useState<Brand | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  useMeta({ title: brand ? `${brand.name} - Stylefolks` : 'Brand - Stylefolks' });
+
+  useEffect(() => {
+    if (!brandId) return;
+    setLoading(true);
+    Promise.all([fetchBrand(brandId), fetchBrandPosts(brandId)])
+      .then(([b, p]) => {
+        setBrand(b);
+        setPosts(p);
+      })
+      .finally(() => setLoading(false));
+  }, [brandId]);
+
+  if (loading) return <p className="p-4">Loading...</p>;
+  if (!brand) return <p className="p-4">No brand</p>;
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">Brand {brandId}</h1>
-      <p className="text-sm text-gray-600">This is the brand page.</p>
+    <div className="mx-auto max-w-[720px] space-y-4 p-4">
+      <img src={brand.logo} alt={brand.name} className="h-24 w-24 rounded object-cover" />
+      <div>
+        <h1 className="text-xl font-bold">{brand.name}</h1>
+        <p className="text-sm text-gray-600">{brand.description}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {posts.map((post) => (
+          <div className="relative" key={post.id}>
+            <AdBadge />
+            <PostCard post={post} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

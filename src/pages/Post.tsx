@@ -4,6 +4,9 @@ import Viewer from '@/components/Viewer';
 import Comments from '@/components/Comments';
 import { useEffect, useState } from 'react';
 import { useMeta } from '@/lib/meta';
+import TagList from '@/components/TagList';
+import CrewBanner from '@/components/CrewBanner';
+import AdBadge from '@/components/AdBadge';
 
 const PostTitlePart = ({ post }:{ post : Post   }) => {
   const navigate = useNavigate();
@@ -25,19 +28,22 @@ const PostTitlePart = ({ post }:{ post : Post   }) => {
       </button>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{post.title}</h1>
-        <button
-          onClick={() => {
-            if (navigator.share) {
-              navigator.share({ title: post.title, url: window.location.href });
-            } else {
-              navigator.clipboard.writeText(window.location.href);
-              alert('Link copied');
-            }
+        <div className="space-x-2">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: post.title, url: window.location.href });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied');
+              }
           }}
           className="text-sm text-blue-500"
         >
           Share
         </button>
+          <button className="text-sm" onClick={() => alert('Liked!')}>❤️</button>
+        </div>
       </div>
       <div className="flex items-center space-x-2">
         <img
@@ -56,6 +62,9 @@ const PostTitlePart = ({ post }:{ post : Post   }) => {
       <p className="text-sm text-gray-500">
         {new Date(post.date).toLocaleString()} · {post.views} views
       </p>
+      {post.tags && <TagList tags={post.tags} />}
+      {post.crew && <CrewBanner crew={post.crew} />}
+      {post.brand && <div className="relative"><AdBadge /></div>}
       </>
   )
 }

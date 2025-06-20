@@ -8,6 +8,9 @@ export interface Post {
   date: string;
   views: number;
   author: SimpleUser;
+  tags?: string[];
+  crew?: { id: string; name: string };
+  brand?: { id: string; name: string };
   content: any; // ProseMirror JSON
 }
 
@@ -26,6 +29,9 @@ export function mockPost(id: number): Post {
     date: new Date(BASE_TIME - id * 24 * 60 * 60 * 1000).toISOString(),
     views: id * 10,
     author,
+    tags: [`tag${id}`, `tag${id + 1}`],
+    crew: id % 2 === 0 ? { id: `crew${id}`, name: `Crew ${id}` } : undefined,
+    brand: id % 3 === 0 ? { id: `brand${id}`, name: `Brand ${id}` } : undefined,
     content: {
       type: 'doc',
       content: [
