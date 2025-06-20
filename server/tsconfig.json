@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/server",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "ES2019",
     "lib": ["ES2019"],
     "noEmit": false,
@@ -10,5 +10,6 @@
     "moduleResolution": "node",
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts"],
+  "ts-node": {"esm": true}
 }
