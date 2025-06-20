@@ -25,7 +25,7 @@ export default function Navbar() {
     <>
     <nav className="flex items-center justify-between border-b px-4 py-4">
       <Link to="/" className="font-bold text-xl">
-        Stylefolks
+        Folks
       </Link>
       <div className="flex gap-4 items-center">
         <button
@@ -40,6 +40,9 @@ export default function Navbar() {
         </Link>
         <Link to="/crews" className="hidden sm:inline-block">
           Crews
+        </Link>
+        <Link to="/brands" className="hidden sm:inline-block">
+          Brands
         </Link>
         <Link to="/write" className="hidden sm:inline-block">
           Write

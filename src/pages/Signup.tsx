@@ -26,7 +26,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-md py-10 space-y-6">
+      <div className="w-full max-w-md p-10 space-y-6">
         <h1 className="text-2xl font-bold text-center">Create Your Account</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">

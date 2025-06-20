@@ -20,11 +20,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div>
-        <button onClick={() => setCount(count + 1)}>Click me + 1</button>
-        <p>Count: {count}</p>
-        <button onClick={() => setCount(count - 1)}>Click me - 1</button>
-      </div>
       <PostGrid />
     </main>
   );

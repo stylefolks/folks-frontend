@@ -13,7 +13,7 @@ export default function MobileNav({ open, onClose, loggedIn }: MobileNavProps) {
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex flex-col sm:hidden transition-opacity duration-300',
+        'fixed inset-0 z-50 flex flex-col sm:hidden transition-opacity duration-300 ',
         open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       )}
       onClick={onClose}
@@ -21,7 +21,7 @@ export default function MobileNav({ open, onClose, loggedIn }: MobileNavProps) {
       <div className="flex-1" />
       <div
         className={cn(
-          'bg-background p-4 shadow-md transition-transform duration-300',
+          'bg-background p-4 shadow-md transition-transform duration-300 border-solid border-t-1 border-l-0 border-r-0 border-b-0',
           open ? 'translate-y-0' : 'translate-y-full'
         )}
         onClick={(e) => e.stopPropagation()}
@@ -32,6 +32,9 @@ export default function MobileNav({ open, onClose, loggedIn }: MobileNavProps) {
           </Link>
           <Link to="/crews" onClick={onClose} className="py-2">
             Crews
+          </Link>
+          <Link to="/brands" onClick={onClose} className="py-2">
+            Brands
           </Link>
           <Link to="/write" onClick={onClose} className="py-2">
             Write

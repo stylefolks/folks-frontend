@@ -14,6 +14,7 @@ import Write from '@/pages/Write';
 import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
+import Brands from './pages/Brands';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/crews" element={<Crews />} />
           <Route path="/crew/:crewId" element={<Crew />} />
+          <Route path="/brands" element={<Brands />} />
           <Route path="/brand/:brandId" element={<Brand />} />
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<MyProfile />} />
