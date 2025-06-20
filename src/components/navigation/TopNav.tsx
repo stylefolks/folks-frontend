@@ -31,10 +31,11 @@ const makeNavItem = (items: NavItem[], loggedIn?: boolean) => {
 
 
 
-export default function BottomNav({ loggedIn }: BottomNavProps) {
+export default function TopNav({ loggedIn }: BottomNavProps) {
   
   return (
-      <ul className="flex justify-around py-2">
+    <div className='hidden sm:inline-block'>
+      <ul className="flex justify-around gap-4">
         {makeNavItem(navItems, loggedIn).map(({ href, label, icon }) => (
           <li key={href}>
             <Link
@@ -47,6 +48,6 @@ export default function BottomNav({ loggedIn }: BottomNavProps) {
           </li>
         ))}
       </ul>
-    
+    </div>
   )
 }

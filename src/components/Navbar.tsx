@@ -1,9 +1,8 @@
-'use client';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
 import MobileNav from './MobileNav';
 import { getToken } from '@/lib/auth';
+import TopNav from './navigation/TopNav';
 
 export default function Navbar() {
   const location = useLocation();
@@ -35,46 +34,7 @@ export default function Navbar() {
         >
           &#9776;
         </button>
-        <Link to="/posts" className="hidden sm:inline-block">
-          Posts
-        </Link>
-        <Link to="/crews" className="hidden sm:inline-block">
-          Crews
-        </Link>
-        <Link to="/brands" className="hidden sm:inline-block">
-          Brands
-        </Link>
-        <Link
-          to="/search"
-          aria-label="Search"
-          className={location.pathname === '/search' ? 'border p-1 rounded' : ''}
-        >
-          🔍
-        </Link>
-        <Link to="/write" className="hidden sm:inline-block">
-          Write
-        </Link>
-        {loggedIn ? (
-          <>
-            <Link to="/profile" className="hidden sm:inline-block">
-              Profile
-            </Link>
-            <Link to="/settings" className="hidden sm:inline-block">
-              Settings
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="hidden sm:inline-block">
-              <Button variant="outline" size="sm">
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button size="sm">Sign up</Button>
-            </Link>
-          </>
-        )}
+        <TopNav loggedIn={loggedIn} />
       </div>
     </nav>
     <MobileNav
