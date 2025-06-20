@@ -11,28 +11,33 @@ interface EditorProps {
   onChange: (value: EditorState) => void;
 }
 
-export const Editor: React.FC<EditorProps> = React.memo(({ value , onChange}: EditorProps) => {
-  if (typeof window === "undefined") {
-    // Avoid initializing ProseMirror on the server
-    return <div className="editor-wrapper" />;
-  }
+export const Editor: React.FC<EditorProps> = ({ value , onChange}: EditorProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorView | null>(null);
-  const schema = editorSchema;
-  const doc = Node.fromJSON(schema, value);
-  const plugins = setup({ schema });
-  const state = EditorState.create({ doc, plugins });
+  
 
   useEffect(() => {
+    if(typeof window === 'undefined') return; 
+
+
+
     if (ref.current !== null && !editorRef.current) {
+      const schema = editorSchema;
+      const doc = Node.fromJSON(schema, value);
+      const plugins = setup({ schema });
+      const state = EditorState.create({ doc, plugins });
+
       editorRef.current = new EditorView(ref.current, { state , dispatchTransaction:(transaction)=> {
-        const newState = editorRef.current.state.apply(transaction);
-        editorRef.current.updateState(newState)
-        onChange(newState)
+        if (editorRef.current) {
+          const newState = editorRef.current.state.apply(transaction);
+          editorRef.current.updateState(newState);
+          onChange(newState);
+        }
       }});
     }
-  }, [state]);
 
-  return <div ref={ref} className="editor-wrapper" />;
-});
+  }, [value]);
+
+  return <div  ref={ref} className="editor-wrapper" />;
+}
 
