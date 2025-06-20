@@ -12,8 +12,12 @@ interface EditorProps {
 }
 
 export const Editor: React.FC<EditorProps> = React.memo(({ value , onChange}: EditorProps) => {
+  if (typeof window === "undefined") {
+    // Avoid initializing ProseMirror on the server
+    return <div className="editor-wrapper" />;
+  }
   const ref = useRef<HTMLDivElement>(null);
-  const editorRef = useRef<EditorView>(null!);
+  const editorRef = useRef<EditorView | null>(null);
   const schema = editorSchema;
   const doc = Node.fromJSON(schema, value);
   const plugins = setup({ schema });
