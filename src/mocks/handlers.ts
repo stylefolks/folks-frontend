@@ -93,6 +93,40 @@ function randomCrew(id: number): CrewSummary {
   };
 }
 
+interface BrandSummary {
+  id: string;
+  name: string;
+  logo: string;
+  description: string;
+  tags: string[];
+  crews: { id: string; name: string; image: string }[];
+  upcomingEvent?: { title: string; date: string };
+}
+
+function randomBrand(id: number): BrandSummary {
+  const seed = Math.random().toString(36).slice(2, 8);
+  const tags = ['디자이너', '빈티지', '스트릿', '서울팝업'];
+  const brandTags = [tags[id % tags.length], tags[(id + 1) % tags.length]];
+  const hasEvent = id % 2 === 0;
+  const event = hasEvent
+    ? { title: `Event ${id}`, date: new Date().toISOString().slice(0, 10) }
+    : undefined;
+  const crews = Array.from({ length: 2 }, (_, i) => ({
+    id: `crew${id}-${i}`,
+    name: `Crew ${id}-${i}`,
+    image: `https://picsum.photos/seed/crew-${seed}-${i}/40/40`,
+  }));
+  return {
+    id: `${id}`,
+    name: `Brand ${id}`,
+    logo: `https://picsum.photos/seed/brand-${seed}/200/200`,
+    description: `This is brand ${id}.`,
+    tags: brandTags,
+    crews,
+    upcomingEvent: event,
+  };
+}
+
 export const handlers = [
   http.post(`${API_BASE}/auth/login`, async ({ request }) => {
     const { email, password } = await request.json();
@@ -138,6 +172,21 @@ export const handlers = [
     return HttpResponse.json(randomPost(Number(id)));
   }),
 
+  http.get(`${API_BASE}/posts`, ({ request }) => {
+    const url = new URL(request.url);
+    const authorType = url.searchParams.get('authorType');
+    const limit = Number(url.searchParams.get('limit') ?? '6');
+    if (authorType === 'BRAND') {
+      const posts = Array.from({ length: limit }, (_, i) => {
+        const post = randomPost(i + 1);
+        post.brand = { id: `brand${i + 1}`, name: `Brand ${i + 1}` };
+        return post;
+      });
+      return HttpResponse.json(posts);
+    }
+    return HttpResponse.json([]);
+  }),
+
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
     const hasEvent = url.searchParams.get('hasUpcomingEvent');
@@ -154,6 +203,24 @@ export const handlers = [
       crews = crews.sort((a, b) => b.memberCount - a.memberCount);
     }
     return HttpResponse.json(crews);
+  }),
+
+  http.get(`${API_BASE}/brands`, ({ request }) => {
+    const url = new URL(request.url);
+    const hasEvent = url.searchParams.get('hasUpcomingEvent');
+    const tag = url.searchParams.get('tag');
+    const sort = url.searchParams.get('sort');
+    let brands = Array.from({ length: 6 }, (_, i) => randomBrand(i + 1));
+    if (hasEvent) {
+      brands = brands.filter((b) => b.upcomingEvent);
+    }
+    if (tag) {
+      brands = brands.filter((b) => b.tags.includes(tag));
+    }
+    if (sort === 'popular') {
+      brands = brands.sort((a, b) => b.crews.length - a.crews.length);
+    }
+    return HttpResponse.json(brands);
   }),
 
   http.get(`${API_BASE}/crews/:id`, ({ params }) => {
