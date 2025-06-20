@@ -13,8 +13,8 @@ export default function MyProfile() {
           navigate(`/profile/${id}`, { replace: true });
           return;
         }
-      } catch {
-        // ignore errors and fall through to login
+      } catch (error) {
+        console.error('Failed to get user ID:', error);
       }
       navigate('/login', { replace: true });
     }
