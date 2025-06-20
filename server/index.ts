@@ -9,6 +9,9 @@ import { createServer as createViteServer, ViteDevServer } from 'vite'
 async function startServer() {
   const app = express()
   const isProd = process.env.NODE_ENV === 'production'
+  const isMocking = process.env.PUBLIC_API_MOCKING
+    ? process.env.PUBLIC_API_MOCKING === 'enabled'
+    : !isProd
   const root = path.resolve(__dirname, '..')
   let vite: ViteDevServer | undefined
 
@@ -25,9 +28,11 @@ async function startServer() {
     app.use('/public', express.static(path.join(root, 'public')))
   }
 
-  app.get('/mockServiceWorker.js', (_req, res) => {
-    res.sendFile(path.join(root, 'public/mockServiceWorker.js'))
-  })
+  if (isMocking) {
+    app.get('/mockServiceWorker.js', (_req, res) => {
+      res.sendFile(path.join(root, 'public/mockServiceWorker.js'))
+    })
+  }
 
   app.use('*', async (req: Request, res: Response) => {
     try {
