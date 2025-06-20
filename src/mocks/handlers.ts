@@ -39,6 +39,34 @@ function randomProfile(id: string): Profile {
   };
 }
 
+function randomPost(id: number) {
+  const seed = Math.random().toString(36).slice(2, 8);
+  const author = randomProfile(`user${id}`);
+  const content = {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [
+          { type: 'text', text: `Random post ${id}` },
+        ],
+      },
+    ],
+  };
+  return {
+    id,
+    title: `Post title ${id}`,
+    image: `https://picsum.photos/seed/${seed}/600/400`,
+    date: new Date().toISOString(),
+    views: id * 10,
+    author: { userId: author.userId, username: author.username, imageUrl: author.imageUrl },
+    tags: [`tag${id}`, `tag${id + 1}`],
+    crew: id % 2 === 0 ? { id: `crew${id}`, name: `Crew ${id}` } : undefined,
+    brand: id % 3 === 0 ? { id: `brand${id}`, name: `Brand ${id}` } : undefined,
+    content,
+  };
+}
+
 export const handlers = [
   http.post(`${API_BASE}/auth/login`, async ({ request }) => {
     const { email, password } = await request.json();
@@ -81,61 +109,44 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts/:id`, ({ params }) => {
     const { id } = params as { id: string };
-    const seed = Math.random().toString(36).slice(2, 8);
-    const author = randomProfile(`user${id}`);
-    const content = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: `Random post ${id}` },
-            { type: 'text', text: `this is new text` },
-          ],
-        },
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: '다양한 스타일의 문단 ' ,
-              marks: [
-                { type: 'font', attrs: { name: 'Georgia' } },
-                { type: 'color', attrs: { color: 'blue' } },
-              ],
-            },
-            { type: 'text', text: '😊' },
-          ],
-        },
-        {
-          type: 'image',
-          attrs: {
-            src: `https://picsum.photos/seed/${seed+1}/600/400`,
-            alt: 'random image',
-          },
-        },
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: 'Comic Sans 폰트의 문단입니다.',
-              marks: [
-                { type: 'font', attrs: { name: 'Comic Sans MS' } },
-              ],
-            },
-          ],
-        },
-      ],
-    };
+    return HttpResponse.json(randomPost(Number(id)));
+  }),
+
+  http.get(`${API_BASE}/crews/:id`, ({ params }) => {
+    const { id } = params as { id: string };
     return HttpResponse.json({
-      id: Number(id),
-      title: `Post title ${id}`,
-      image: `https://picsum.photos/seed/${seed}/600/400`,
-      date: new Date().toISOString(),
-      views: Number(id) * 10,
-      author: { userId: author.userId, username: author.username, imageUrl: author.imageUrl },
-      content,
+      id,
+      name: `Crew ${id}`,
+      coverImage: `https://picsum.photos/seed/crew-${id}/1200/300`,
+      description: `This is crew ${id}.`,
+      links: [
+        { title: 'Instagram', url: 'https://instagram.com' },
+      ],
     });
+  }),
+
+  http.get(`${API_BASE}/crews/:id/posts`, ({ params }) => {
+    const { id } = params as { id: string };
+    const posts = Array.from({ length: 4 }, (_, i) => randomPost(i + 1));
+    return HttpResponse.json(posts);
+  }),
+
+  http.get(`${API_BASE}/brands/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    return HttpResponse.json({
+      id,
+      name: `Brand ${id}`,
+      logo: `https://picsum.photos/seed/brand-${id}/200/200`,
+      description: `This is brand ${id}.`,
+      links: [
+        { title: 'Website', url: 'https://example.com' },
+      ],
+    });
+  }),
+
+  http.get(`${API_BASE}/brands/:id/posts`, ({ params }) => {
+    const { id } = params as { id: string };
+    const posts = Array.from({ length: 4 }, (_, i) => randomPost(i + 1));
+    return HttpResponse.json(posts);
   }),
 ];
