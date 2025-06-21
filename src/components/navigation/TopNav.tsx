@@ -8,10 +8,14 @@ interface TopNavProps {
 
 export default function TopNav({ loggedIn }: TopNavProps) {
   
+const items = makeNavItem(navItems, loggedIn).filter(({ href }) =>
+    loggedIn ? href !== '/profile' && href !== '/settings' : true
+  )
+
   return (
     <div className='hidden sm:inline-block'>
       <ul className="flex justify-around gap-4">
-        {makeNavItem(navItems, loggedIn).map(({ href, label, icon }) => (
+        {items.map(({ href, label, icon }) => (
           <li key={href}>
             <Link
               to={href}
