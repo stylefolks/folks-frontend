@@ -8,7 +8,7 @@ import Crews from '@/pages/Crews';
 import CrewDetailPage from '@/pages/crew/[id]';
 import BrandDetailPage from '@/pages/brand/[id]';
 import SearchPage from '@/pages/Search';
-import Profile from '@/pages/Profile';
+import UserProfilePage from '@/pages/profile/[userId]';
 import MyProfile from '@/pages/MyProfile';
 import SettingsPage from '@/pages/Settings';
 import Write from '@/pages/Write';
@@ -34,7 +34,7 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route element={<RequireAuth />}>
             <Route path="/profile" element={<MyProfile />} />
-            <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/profile/:userId" element={<UserProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
           <Route path="/write" element={<Write />} />
