@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import { AppBarTitleProvider } from '@/lib/appBarTitle';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -19,7 +20,7 @@ import Brands from './pages/Brands';
 
 export default function App() {
   return (
-    <>
+    <AppBarTitleProvider>
       <Navbar />
       <main className="pt-4">
         <Routes>
@@ -40,6 +41,6 @@ export default function App() {
           <Route path="/write" element={<Write />} />
         </Routes>
       </main>
-    </>
+    </AppBarTitleProvider>
   );
 }

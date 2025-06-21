@@ -5,9 +5,11 @@ import { getToken, getMyId } from '@/lib/auth';
 import { getProfile } from '@/lib/profile';
 import TopNav from './navigation/TopNav';
 import Avatar from './ui/avatar';
+import { useAppBarTitle } from '@/lib/appBarTitle';
 
 export default function Navbar() {
   const location = useLocation();
+  const title = useAppBarTitle();
   const [loggedIn, setLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -47,11 +49,17 @@ export default function Navbar() {
 
   return (
     <>
-    <nav className="flex items-center justify-between border-b px-4 py-4">
-      <Link to="/" className="font-bold text-xl">
-        Folks
-      </Link>
-      <div className="flex gap-4 items-center">
+    <nav className="relative flex items-center justify-between border-b px-4 py-4">
+      {title ? (
+        <span className="absolute left-1/2 -translate-x-1/2 truncate text-center text-base font-semibold">
+          {title}
+        </span>
+      ) : (
+        <Link to="/" className="font-bold text-xl">
+          Folks
+        </Link>
+      )}
+      <div className="ml-auto flex gap-4 items-center">
         {loggedIn && userId && (
           <Link to={`/profile/${userId}`} aria-label="Profile">
             <Avatar size="sm" src={imageUrl} />

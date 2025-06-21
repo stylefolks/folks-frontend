@@ -277,6 +277,38 @@ export const handlers = [
     return HttpResponse.json(posts);
   }),
 
+  http.get(`${API_BASE}/crews/:id/events`, ({ params }) => {
+    const { id } = params as { id: string };
+    const events = Array.from({ length: 3 }, (_, i) => ({
+      id: `${id}-${i + 1}`,
+      title: `Event ${i + 1}`,
+      date: new Date().toISOString().slice(0, 10),
+      location: `Location ${i + 1}`,
+      image: `https://picsum.photos/seed/${id}-event-${i}/200/200`,
+    }));
+    return HttpResponse.json(events);
+  }),
+
+  http.get(`${API_BASE}/crews/:id/notices`, ({ params }) => {
+    const { id } = params as { id: string };
+    const notices = Array.from({ length: 2 }, (_, i) => ({
+      id: `${id}-${i + 1}`,
+      title: `Notice ${i + 1}`,
+      content: `Notice content ${i + 1}`,
+      date: new Date().toISOString().slice(0, 10),
+    }));
+    return HttpResponse.json(notices);
+  }),
+
+  http.get(`${API_BASE}/crews/:id/topics`, ({ params }) => {
+    const { id } = params as { id: string };
+    const topics = ['talk', 'column', 'look'].map((tag, idx) => ({
+      tag,
+      count: idx + 1,
+    }));
+    return HttpResponse.json(topics);
+  }),
+
   http.get(`${API_BASE}/brands/:id`, ({ params }) => {
     const { id } = params as { id: string };
     return HttpResponse.json({
