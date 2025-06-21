@@ -5,14 +5,14 @@ import App from './App';
 import { MetaProvider } from './lib/meta';
 
 async function start() {
-  const env = (import.meta as any).env;
-  const mocking = env.PUBLIC_API_MOCKING ?? (env.DEV ? 'enabled' : 'disabled');
-  if (mocking === 'enabled') {
+  try {
     const { worker } = await import('./mocks/browser');
     await worker.start({
       serviceWorker: { url: '/mockServiceWorker.js' },
       onUnhandledRequest: 'bypass',
     });
+  } catch (err) {
+    console.error('Failed to start MSW', err);
   }
 
   const container = document.getElementById('root')!;

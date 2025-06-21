@@ -63,16 +63,8 @@
 
 ### Mock API
 개발 편의를 위해 [MSW](https://mswjs.io/) 기반의 목 API가 준비되어 있습니다.
-개발 모드에서는 기본적으로 MSW가 활성화되며, 필요한 경우 아래와 같이 명시적으로 설정할 수 있습니다.
-
-```bash
-# MSW 사용
-PUBLIC_API_MOCKING=enabled npm run dev
-# 실제 API 사용
-PUBLIC_API_MOCKING=disabled npm run dev
-```
-
-프로덕션 빌드에서는 기본적으로 MSW가 비활성화됩니다.
+현재는 별도의 환경 변수 설정 없이도 모든 환경에서 MSW가 기본적으로 활성화되며,
+빌드 후 CSR 환경에서도 목 API가 동작합니다.
 
 로그인은 아래 계정으로 가능합니다.
 
@@ -98,6 +90,5 @@ Fly.io에서 SSR과 MSW를 사용한 MVP를 배포하려면 Fly CLI와 Docker가
    ```bash
    flyctl deploy
    ```
-   배포 환경에서는 `PUBLIC_API_MOCKING=enabled`가 설정되어 있어 MSW가 자동으로 동작합니다.
-   완료 후 출력되는 `https://<app>.fly.dev` 주소로 접속하면 프로덕션 모드에서도 MSW가 실행된 화면을 확인할 수 있습니다.
+  배포 후 출력되는 `https://<app>.fly.dev` 주소로 접속하면 프로덕션 모드에서도 MSW가 실행된 화면을 확인할 수 있습니다.
 
