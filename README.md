@@ -83,3 +83,21 @@ PUBLIC_API_MOCKING=disabled npm run dev
 `/profile/[userId]` 경로로 접근하면 임의의 랜덤 프로필 정보를 확인할 수 있습니다.
 
 본 프로젝트는 [stylefolks-frontend](https://github.com/stylefolks/stylefolks-frontend) 의 명세를 참고하여 개발되고 있습니다.
+## Fly.io 배포
+
+Fly.io에서 SSR과 MSW를 사용한 MVP를 배포하려면 Fly CLI와 Docker가 필요합니다.
+
+1. 앱 초기화
+   ```bash
+   flyctl launch
+   ```
+   저장소에 포함된 `fly.toml`을 사용해 바로 배포할 수 있습니다.
+
+
+2. 배포
+   ```bash
+   flyctl deploy
+   ```
+   배포 환경에서는 `PUBLIC_API_MOCKING=enabled`가 설정되어 있어 MSW가 자동으로 동작합니다.
+   완료 후 출력되는 `https://<app>.fly.dev` 주소로 접속하면 프로덕션 모드에서도 MSW가 실행된 화면을 확인할 수 있습니다.
+
