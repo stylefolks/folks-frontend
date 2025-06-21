@@ -124,7 +124,7 @@ export default function UserProfilePage() {
             <div
               key={c.id}
               className="w-16 flex-shrink-0 text-center"
-              onClick={() => navigate(`/crews/${c.id}`)}
+              onClick={() => navigate(`/crew/${c.id}`)}
             >
               <img
                 src={c.imageUrl}

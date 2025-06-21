@@ -33,7 +33,7 @@ export default function App() {
           <Route path="/brand/:id" element={<BrandDetailPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route element={<RequireAuth />}>
-            <Route path="/profile" element={<MyProfile />} />
+            {/* <Route path="/profile" element={<MyProfile />} /> */}
             <Route path="/profile/:userId" element={<UserProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
