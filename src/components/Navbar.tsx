@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import MobileNav from './MobileNav';
 import { getToken } from '@/lib/auth';
 import TopNav from './navigation/TopNav';
+import Avatar from './ui/avatar';
 
 export default function Navbar() {
   const location = useLocation();
@@ -27,6 +28,11 @@ export default function Navbar() {
         Folks
       </Link>
       <div className="flex gap-4 items-center">
+        {loggedIn && (
+          <Link to="/profile/me" aria-label="Profile">
+            <Avatar size="sm" />
+          </Link>
+        )}
         <button
           className="sm:hidden p-2"
           onClick={() => setMobileOpen(true)}
