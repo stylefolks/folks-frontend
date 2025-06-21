@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import MobileNav from './MobileNav';
-import { getToken } from '@/lib/auth';
+import { getToken, getMyId } from '@/lib/auth';
+import { getProfile } from '@/lib/profile';
 import TopNav from './navigation/TopNav';
 import Avatar from './ui/avatar';
 
@@ -9,6 +10,8 @@ export default function Navbar() {
   const location = useLocation();
   const [loggedIn, setLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | undefined>();
 
   useEffect(() => {
     setLoggedIn(!!getToken());
@@ -20,6 +23,27 @@ export default function Navbar() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
+  useEffect(() => {
+    async function loadProfile() {
+      if (!loggedIn) {
+        setUserId(null);
+        setImageUrl(undefined);
+        return;
+      }
+      try {
+        const id = await getMyId();
+        setUserId(id);
+        if (id) {
+          const profile = await getProfile(id);
+          setImageUrl(profile.imageUrl);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadProfile();
+  }, [loggedIn]);
+
 
   return (
     <>
@@ -28,9 +52,9 @@ export default function Navbar() {
         Folks
       </Link>
       <div className="flex gap-4 items-center">
-        {loggedIn && (
-          <Link to="/profile/me" aria-label="Profile">
-            <Avatar size="sm" />
+        {loggedIn && userId && (
+          <Link to={`/profile/${userId}`} aria-label="Profile">
+            <Avatar size="sm" src={imageUrl} />
           </Link>
         )}
         <button
