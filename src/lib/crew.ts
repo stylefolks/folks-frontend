@@ -21,6 +21,11 @@ export interface Notice {
   date: string;
 }
 
+export interface CrewTopic {
+  tag: string;
+  count: number;
+}
+
 export interface Crew {
   id: string;
   name: string;
@@ -63,6 +68,12 @@ export async function fetchCrewEvents(id: string): Promise<Event[]> {
 export async function fetchCrewNotices(id: string): Promise<Notice[]> {
   const res = await fetch(`${API_BASE}/crews/${id}/notices`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to load notices');
+  return res.json();
+}
+
+export async function fetchCrewTopics(id: string): Promise<CrewTopic[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/topics`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load topics');
   return res.json();
 }
 
