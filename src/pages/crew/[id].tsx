@@ -6,12 +6,15 @@ import {
   fetchCrewPosts,
   fetchCrewEvents,
   fetchCrewNotices,
+  fetchCrewTopics,
   type Crew,
   type Event,
   type Notice,
+  type CrewTopic,
 } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
 import { getMyId } from '@/lib/auth';
+import { useSetAppBarTitle } from '@/lib/appBarTitle';
 import PostCard from '@/components/PostCard';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
@@ -27,9 +30,12 @@ export default function CrewDetailPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [tab, setTab] = useState('feed');
+  const [topics, setTopics] = useState<CrewTopic[]>([]);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [tab, setTab] = useState('posts');
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [about, setAbout] = useState('');
+  useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
 
@@ -44,11 +50,13 @@ export default function CrewDetailPage() {
       fetchCrewPosts(crewId),
       fetchCrewEvents(crewId).catch(() => []),
       fetchCrewNotices(crewId).catch(() => []),
-    ]).then(([c, p, e, n]) => {
+      fetchCrewTopics(crewId).catch(() => []),
+    ]).then(([c, p, e, n, t]) => {
       setCrew(c);
       setPosts(p);
       setEvents(e as Event[]);
       setNotices(n as Notice[]);
+      setTopics(t as CrewTopic[]);
       setAbout(c.description);
     });
   }, [crewId]);
@@ -96,20 +104,43 @@ export default function CrewDetailPage() {
       />
       <TabNav
         tabs={[
-          { id: 'feed', title: 'Feed' },
+          { id: 'posts', title: 'Posts' },
+          { id: 'topics', title: 'Topics' },
           { id: 'events', title: 'Events' },
           { id: 'notice', title: 'Notice' },
-          { id: 'about', title: 'About' },
+          { id: 'overview', title: 'Overview' },
         ]}
         current={tab}
         onChange={setTab}
       />
-      {tab === 'feed' && (
+      {tab === 'posts' && (
         <div className="grid grid-cols-2 gap-4">
-          {posts.map((post) => (
+          {(selectedTopic
+            ? posts.filter((post) =>
+                post.tags?.includes(selectedTopic || '')
+              )
+            : posts
+          ).map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
+      )}
+      {tab === 'topics' && (
+        <ul className="flex gap-2 overflow-x-auto py-2">
+          {topics.map((t) => (
+            <li key={t.tag}>
+              <button
+                className="rounded-full border px-3 py-1 text-sm"
+                onClick={() => {
+                  setSelectedTopic(t.tag);
+                  setTab('posts');
+                }}
+              >
+                #{t.tag} ({t.count})
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
       {tab === 'events' && (
         <div className="space-y-2">
@@ -128,7 +159,7 @@ export default function CrewDetailPage() {
           ))}
         </ul>
       )}
-      {tab === 'about' && (
+      {tab === 'overview' && (
         <EditableText
           as="div"
           value={about}
