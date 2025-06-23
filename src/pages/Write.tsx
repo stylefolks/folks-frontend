@@ -1,33 +1,36 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { getToken, getMyId } from '@/lib/auth';
-import { getUserCrews, type Crew as UserCrew } from '@/lib/profile';
-import { fetchCrew } from '@/lib/crew';
-import { Editor } from '@/components/Editor';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { initialDoc } from '@/components/Editor/core/doc';
-import { EditorState } from 'prosemirror-state';
-import { useMeta } from '@/lib/meta';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getToken, getMyId } from "@/lib/auth";
+import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
+import { fetchCrew } from "@/lib/crew";
+import { Editor } from "@/components/Editor";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { initialDoc } from "@/components/Editor/core/doc";
+import { EditorState } from "prosemirror-state";
+import { useMeta } from "@/lib/meta";
+import { getUserCrews, type Crew } from "@/lib/profile";
+import { fetchMyCrewRole, type CrewRole } from "@/lib/crew";
 
 interface Draft {
   title: string;
   bigCategory: string;
   hashtags: string;
+  crewId?: string;
   editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
-const DRAFT_KEY = 'write_draft';
+const DRAFT_KEY = "write_draft";
 
 export default function WritePage() {
-  useMeta({ title: 'Write - Stylefolks' });
-  const [title, setTitle] = useState('');
-  const [bigCategory, setBigCategory] = useState('OOTD');
-  const [hashtags, setHashtags] = useState('');
+  useMeta({ title: "Write - Stylefolks" });
+  const [title, setTitle] = useState("");
+  const [bigCategory, setBigCategory] = useState("OOTD");
+  const [hashtags, setHashtags] = useState("");
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [crews, setCrews] = useState<UserCrew[]>([]);
-  const [crewId, setCrewId] = useState('');
+  const [crewId, setCrewId] = useState("");
   const [isCrewAdmin, setIsCrewAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,6 +43,9 @@ export default function WritePage() {
       setBigCategory(draft.bigCategory);
       setHashtags(draft.hashtags);
       setEditorState(draft.editorState);
+      if (draft.crewId) {
+        setSelectedCrewId(draft.crewId);
+      }
     }
     getMyId()
       .then((id) => {
@@ -66,38 +72,49 @@ export default function WritePage() {
   }, [crewId, myId]);
 
   const saveDraft = () => {
-    const draft: Draft = { title, bigCategory, hashtags, editorState };
+    const draft: Draft = {
+      title,
+      bigCategory,
+      hashtags,
+      crewId: selectedCrewId,
+      editorState,
+    };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    alert('Draft saved');
+    alert("Draft saved");
   };
 
   const handleSubmit = () => {
+    const draft: Draft = {
+      title,
+      bigCategory,
+      hashtags,
+      crewId: selectedCrewId,
+      editorState,
+    };
 
-    const draft: Draft = { title, bigCategory, hashtags, editorState };
-    
     if (!getToken()) {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-      navigate('/login', { state: { from: location } });
+      navigate("/login", { state: { from: location } });
       return;
     }
     clearDraft();
-    alert('Post submitted');
+    alert("Post submitted");
   };
 
   const clearDraft = () => {
     localStorage.removeItem(DRAFT_KEY);
-    alert('Draft cleared');
+    alert("Draft cleared");
   };
 
   const handleChange = (value: EditorState) => {
     setEditorState(value);
-  }
+  };
 
   const categories = [
-    'OOTD',
-    'Column',
-    'Review',
-    ...(isCrewAdmin ? ['Notice', 'Event'] : []),
+    "OOTD",
+    "Column",
+    "Review",
+    ...(isCrewAdmin ? ["Notice", "Event"] : []),
   ];
 
   return (
@@ -138,7 +155,7 @@ export default function WritePage() {
         value={hashtags}
         onChange={(e) => setHashtags(e.target.value)}
       />
-      <Editor value={initialDoc} onChange={handleChange}  />
+      <Editor value={initialDoc} onChange={handleChange} />
       <div className="flex gap-4 flex-col mt-8">
         <Button type="button" onClick={handleSubmit} variant="outline">
           Submit
