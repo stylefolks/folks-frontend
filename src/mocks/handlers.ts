@@ -128,6 +128,18 @@ function randomCrew(id: number): CrewSummary {
   };
 }
 
+interface Crew {
+  id: string;
+  name: string;
+  coverImage: string;
+  description: string;
+  links: { title: string; url: string }[];
+  ownerId: string;
+}
+
+let createdCrews: Crew[] = [];
+let crewSeq = 100;
+
 interface BrandSummary {
   id: string;
   name: string;
@@ -227,7 +239,7 @@ export const handlers = [
     const hasEvent = url.searchParams.get('hasUpcomingEvent');
     const tag = url.searchParams.get('tag');
     const sort = url.searchParams.get('sort');
-    let crews = Array.from({ length: 6 }, (_, i) => randomCrew(i + 1));
+    let crews = [...createdCrews, ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1))];
     if (hasEvent) {
       crews = crews.filter((c) => c.upcomingEvent);
     }
@@ -260,6 +272,10 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews/:id`, ({ params }) => {
     const { id } = params as { id: string };
+    const found = createdCrews.find((c) => c.id === id);
+    if (found) {
+      return HttpResponse.json(found);
+    }
     return HttpResponse.json({
       id,
       name: `Crew ${id}`,
@@ -268,6 +284,7 @@ export const handlers = [
       links: [
         { title: 'Instagram', url: 'https://instagram.com' },
       ],
+      ownerId: 'folks',
     });
   }),
 
@@ -307,6 +324,44 @@ export const handlers = [
       count: idx + 1,
     }));
     return HttpResponse.json(topics);
+  }),
+
+  http.post(`${API_BASE}/crews`, async ({ request }) => {
+    const body = await request.json();
+    crewSeq += 1;
+    const newCrew: Crew = {
+      id: String(crewSeq),
+      name: body.name,
+      coverImage: `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
+      description: body.description ?? '',
+      links: body.links ?? [],
+      ownerId: currentProfile.userId,
+    };
+    createdCrews.push(newCrew);
+    return HttpResponse.json(newCrew);
+  }),
+
+  http.put(`${API_BASE}/crews/:id`, async ({ params, request }) => {
+    const { id } = params as { id: string };
+    const body = await request.json();
+    let crew = createdCrews.find((c) => c.id === id);
+    if (!crew) {
+      crew = {
+        id,
+        name: body.name ?? `Crew ${id}`,
+        coverImage: `https://picsum.photos/seed/crew-${id}/400/200`,
+        description: body.description ?? '',
+        links: body.links ?? [],
+        ownerId: currentProfile.userId,
+      };
+      createdCrews.push(crew);
+    } else {
+      if (body.name !== undefined) crew.name = body.name;
+      if (body.description !== undefined) crew.description = body.description;
+      if (body.coverImage !== undefined) crew.coverImage = body.coverImage;
+      if (body.links !== undefined) crew.links = body.links;
+    }
+    return HttpResponse.json(crew);
   }),
 
   http.get(`${API_BASE}/brands/:id`, ({ params }) => {
