@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMeta } from '@/lib/meta';
 import {
@@ -25,7 +25,9 @@ import EventCard from '@/components/EventCard';
 export default function CrewDetailPage() {
   const params = useParams();
   const crewId = params.id as string;
+  const tabParam = params.tab as string | undefined;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -38,23 +40,23 @@ export default function CrewDetailPage() {
   const [about, setAbout] = useState('');
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
-  // Sync tab with location hash
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      setTab(hash);
+    const validTabs = ['posts', 'topics', 'events', 'notice', 'overview'];
+    if (!tabParam || !validTabs.includes(tabParam)) {
+      navigate(`/crew/${crewId}/posts`, { replace: true });
+    } else {
+      setTab(tabParam);
     }
-    const onHashChange = () => {
-      const h = window.location.hash.replace('#', '') || 'posts';
-      setTab(h);
-    };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
+  }, [tabParam, crewId, navigate]);
 
   useEffect(() => {
-    window.history.replaceState(null, '', `#${tab}`);
-  }, [tab]);
+    const search = new URLSearchParams(location.search).get('search');
+    if (search && search.startsWith('#')) {
+      setSelectedTopic(search.slice(1));
+    } else {
+      setSelectedTopic(null);
+    }
+  }, [location.search]);
 
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
 
@@ -130,7 +132,7 @@ export default function CrewDetailPage() {
           { id: 'overview', title: 'Overview' },
         ]}
         current={tab}
-        onChange={setTab}
+        onChange={(t) => navigate(`/crew/${crewId}/${t}`)}
       />
       {tab === 'posts' && (
         <div className="grid grid-cols-2 gap-4">
@@ -150,10 +152,11 @@ export default function CrewDetailPage() {
             <li key={t.tag}>
               <button
                 className="rounded-full border px-3 py-1 text-sm"
-                onClick={() => {
-                  setSelectedTopic(t.tag);
-                  setTab('posts');
-                }}
+                onClick={() =>
+                  navigate(
+                    `/crew/${crewId}/posts?search=${encodeURIComponent(`#${t.tag}`)}`,
+                  )
+                }
               >
                 #{t.tag} ({t.count})
               </button>
