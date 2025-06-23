@@ -53,8 +53,14 @@ export async function fetchCrew(id: string): Promise<Crew> {
   return res.json();
 }
 
-export async function fetchCrewPosts(id: string): Promise<Post[]> {
-  const res = await fetch(`${API_BASE}/crews/${id}/posts`, { cache: 'no-store' });
+export async function fetchCrewPosts(
+  id: string,
+  topics: string[] = [],
+): Promise<Post[]> {
+  const search = topics.length ? `?topics=${topics.join(',')}` : '';
+  const res = await fetch(`${API_BASE}/crews/${id}/posts${search}`, {
+    cache: 'no-store',
+  });
   if (!res.ok) throw new Error('Failed to load posts');
   return res.json();
 }
