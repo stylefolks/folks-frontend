@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import { AppBarTitleProvider } from '@/lib/appBarTitle';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
@@ -6,6 +7,7 @@ import Posts from '@/pages/Posts';
 import Post from '@/pages/Post';
 import Crews from '@/pages/Crews';
 import CrewDetailPage from '@/pages/crew/[id]';
+import CreateCrewPage from '@/pages/CreateCrew';
 import BrandDetailPage from '@/pages/brand/[id]';
 import SearchPage from '@/pages/Search';
 import UserProfilePage from '@/pages/profile/[userId]';
@@ -19,7 +21,7 @@ import Brands from './pages/Brands';
 
 export default function App() {
   return (
-    <>
+    <AppBarTitleProvider>
       <Navbar />
       <main className="pt-4">
         <Routes>
@@ -28,7 +30,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/crews" element={<Crews />} />
-          <Route path="/crew/:id" element={<CrewDetailPage />} />
+          <Route path="/crew/:id/:tab?" element={<CrewDetailPage />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/brand/:id" element={<BrandDetailPage />} />
           <Route path="/search" element={<SearchPage />} />
@@ -36,10 +38,11 @@ export default function App() {
             {/* <Route path="/profile" element={<MyProfile />} /> */}
             <Route path="/profile/:userId" element={<UserProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/crews/new" element={<CreateCrewPage />} />
           </Route>
           <Route path="/write" element={<Write />} />
         </Routes>
       </main>
-    </>
+    </AppBarTitleProvider>
   );
 }
