@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMeta } from '@/lib/meta';
 import {
@@ -25,6 +25,7 @@ import EventCard from '@/components/EventCard';
 export default function CrewDetailPage() {
   const params = useParams();
   const crewId = params.id as string;
+  const navigate = useNavigate();
 
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -36,6 +37,24 @@ export default function CrewDetailPage() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [about, setAbout] = useState('');
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
+
+  // Sync tab with location hash
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      setTab(hash);
+    }
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#', '') || 'posts';
+      setTab(h);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
+    window.history.replaceState(null, '', `#${tab}`);
+  }, [tab]);
 
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
 
@@ -116,12 +135,12 @@ export default function CrewDetailPage() {
       {tab === 'posts' && (
         <div className="grid grid-cols-2 gap-4">
           {(selectedTopic
-            ? posts.filter((post) =>
-                post.tags?.includes(selectedTopic || '')
-              )
+            ? posts.filter((post) => post.tags?.includes(selectedTopic || ''))
             : posts
           ).map((post) => (
-            <PostCard key={post.id} post={post} />
+            <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
+              <PostCard post={post} />
+            </div>
           ))}
         </div>
       )}
