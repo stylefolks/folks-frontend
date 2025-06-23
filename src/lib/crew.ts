@@ -83,3 +83,29 @@ export async function fetchCrews(params: Record<string, string> = {}): Promise<C
   if (!res.ok) throw new Error('Failed to load crews');
   return res.json();
 }
+
+export async function createCrew(data: {
+  name: string;
+  description: string;
+}): Promise<Crew> {
+  const res = await fetch(`${API_BASE}/crews`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to create crew');
+  return res.json();
+}
+
+export async function updateCrew(
+  id: string,
+  data: Partial<Omit<Crew, 'id' | 'ownerId'>>,
+): Promise<Crew> {
+  const res = await fetch(`${API_BASE}/crews/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update crew');
+  return res.json();
+}
