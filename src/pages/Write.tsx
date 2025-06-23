@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { initialDoc } from "@/components/Editor/core/doc";
 import { EditorState } from "prosemirror-state";
 import { useMeta } from "@/lib/meta";
-import { getUserCrews, type Crew } from "@/lib/profile";
-import { fetchMyCrewRole, type CrewRole } from "@/lib/crew";
 
 interface Draft {
   title: string;
@@ -32,6 +30,9 @@ export default function WritePage() {
   const [crews, setCrews] = useState<UserCrew[]>([]);
   const [crewId, setCrewId] = useState("");
   const [isCrewAdmin, setIsCrewAdmin] = useState(false);
+  const [selectedCrewId, setSelectedCrewId] = useState<string | undefined>(
+    undefined
+  );
   const navigate = useNavigate();
   const location = useLocation();
 

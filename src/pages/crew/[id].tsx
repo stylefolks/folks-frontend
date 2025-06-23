@@ -19,6 +19,7 @@ import {
 import type { Post } from '@/lib/posts';
 import { useSetAppBarTitle } from '@/lib/appBarTitle';
 import PostCard from '@/components/PostCard';
+import PostList from '@/components/PostList';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
 import EditableLinkList from '@/components/EditableLinkList';
@@ -194,55 +195,63 @@ export default function CrewDetailPage() {
         </div>
       )}
       {tab === 'posts' && (
-        <div className="grid grid-cols-2 gap-4">
-          {(selectedTopics.length
-            ? posts.filter((post) =>
-                selectedTopics.every((t) => post.tags?.includes(t)),
-              )
-            : posts
-          ).map((post) => (
-            <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
-              <PostCard post={post} />
-            </div>
-          ))}
-        </div>
+        <PostList
+          posts={
+            selectedTopics.length
+              ? posts.filter((post) =>
+                  selectedTopics.every((t) => post.tags?.includes(t)),
+                )
+              : posts
+          }
+        />
       )}
       {tab === 'topics' && (
-        <ul className="flex gap-2 overflow-x-auto py-2">
-          {topics.map((t) => {
-            const isSelected = selectedTopics.includes(t.tag);
-            return (
-              <li key={t.tag}>
-                <button
-                  className={`rounded-full border px-3 py-1 text-sm ${
-                    isSelected ? 'bg-blue-600 text-white border-blue-600' : ''
-                  }`}
-                  onClick={() => {
-                    const params = new URLSearchParams(location.search);
-                    const current = params.get('topics')
-                      ? params
-                          .get('topics')!
-                          .split(',')
-                          .filter(Boolean)
-                      : [];
-                    const exists = current.includes(t.tag);
-                    const next = exists
-                      ? current.filter((c) => c !== t.tag)
-                      : [...current, t.tag];
-                    if (next.length === 0) {
-                      params.delete('topics');
-                    } else {
-                      params.set('topics', next.join(','));
-                    }
-                    navigate(`/crew/${crewId}/topics?${params.toString()}`);
-                  }}
-                >
-                  #{t.tag} ({t.count})
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          <ul className="flex gap-2 overflow-x-auto py-2">
+            {topics.map((t) => {
+              const isSelected = selectedTopics.includes(t.tag);
+              return (
+                <li key={t.tag}>
+                  <button
+                    className={`rounded-full border px-3 py-1 text-sm ${
+                      isSelected ? 'bg-blue-600 text-white border-blue-600' : ''
+                    }`}
+                    onClick={() => {
+                      const params = new URLSearchParams(location.search);
+                      const current = params.get('topics')
+                        ? params
+                            .get('topics')!
+                            .split(',')
+                            .filter(Boolean)
+                        : [];
+                      const exists = current.includes(t.tag);
+                      const next = exists
+                        ? current.filter((c) => c !== t.tag)
+                        : [...current, t.tag];
+                      if (next.length === 0) {
+                        params.delete('topics');
+                      } else {
+                        params.set('topics', next.join(','));
+                      }
+                      navigate(`/crew/${crewId}/topics?${params.toString()}`);
+                    }}
+                  >
+                    #{t.tag} ({t.count})
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <PostList
+            posts={
+              selectedTopics.length
+                ? posts.filter((post) =>
+                    selectedTopics.every((t) => post.tags?.includes(t)),
+                  )
+                : posts
+            }
+          />
+        </>
       )}
       {tab === 'events' && (
         <div className="space-y-2">
