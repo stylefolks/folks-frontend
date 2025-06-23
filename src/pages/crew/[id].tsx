@@ -148,20 +148,25 @@ export default function CrewDetailPage() {
       )}
       {tab === 'topics' && (
         <ul className="flex gap-2 overflow-x-auto py-2">
-          {topics.map((t) => (
-            <li key={t.tag}>
-              <button
-                className="rounded-full border px-3 py-1 text-sm"
-                onClick={() =>
-                  navigate(
-                    `/crew/${crewId}/posts?search=${encodeURIComponent(`#${t.tag}`)}`,
-                  )
-                }
-              >
-                #{t.tag} ({t.count})
-              </button>
-            </li>
-          ))}
+          {topics.map((t) => {
+            const isSelected = selectedTopic === t.tag;
+            return (
+              <li key={t.tag}>
+                <button
+                  className={`rounded-full border px-3 py-1 text-sm ${
+                    isSelected ? 'bg-blue-600 text-white border-blue-600' : ''
+                  }`}
+                  onClick={() =>
+                    navigate(
+                      `/crew/${crewId}/topics?search=${encodeURIComponent(`#${t.tag}`)}`,
+                    )
+                  }
+                >
+                  #{t.tag} ({t.count})
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
       {tab === 'events' && (
