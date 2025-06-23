@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getToken } from '@/lib/auth';
+import { getToken, getMyId } from '@/lib/auth';
 import { Editor } from '@/components/Editor';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { initialDoc } from '@/components/Editor/core/doc';
 import { EditorState } from 'prosemirror-state';
 import { useMeta } from '@/lib/meta';
+import { getUserCrews, type Crew } from '@/lib/profile';
+import { fetchMyCrewRole, type CrewRole } from '@/lib/crew';
 
 interface Draft {
   title: string;
   bigCategory: string;
   hashtags: string;
+  crewId?: string;
   editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
@@ -23,6 +26,9 @@ export default function WritePage() {
   const [bigCategory, setBigCategory] = useState('OOTD');
   const [hashtags, setHashtags] = useState('');
   const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [crews, setCrews] = useState<Crew[]>([]);
+  const [selectedCrewId, setSelectedCrewId] = useState('');
+  const [crewRole, setCrewRole] = useState<CrewRole | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,18 +40,49 @@ export default function WritePage() {
       setBigCategory(draft.bigCategory);
       setHashtags(draft.hashtags);
       setEditorState(draft.editorState);
+      if (draft.crewId) {
+        setSelectedCrewId(draft.crewId);
+      }
     }
   }, []);
 
+  useEffect(() => {
+    async function loadCrews() {
+      try {
+        const id = await getMyId();
+        if (!id) return;
+        const c = await getUserCrews(id);
+        setCrews(c);
+        if (!selectedCrewId && c.length > 0) {
+          setSelectedCrewId(c[0].id);
+        }
+      } catch {
+        setCrews([]);
+      }
+    }
+    loadCrews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCrewId) {
+      setCrewRole(null);
+      return;
+    }
+    fetchMyCrewRole(selectedCrewId)
+      .then(setCrewRole)
+      .catch(() => setCrewRole(null));
+  }, [selectedCrewId]);
+
   const saveDraft = () => {
-    const draft: Draft = { title, bigCategory, hashtags, editorState };
+    const draft: Draft = { title, bigCategory, hashtags, crewId: selectedCrewId, editorState };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     alert('Draft saved');
   };
 
   const handleSubmit = () => {
 
-    const draft: Draft = { title, bigCategory, hashtags, editorState };
+    const draft: Draft = { title, bigCategory, hashtags, crewId: selectedCrewId, editorState };
     
     if (!getToken()) {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -65,6 +102,17 @@ export default function WritePage() {
     setEditorState(value);
   }
 
+  const categories = ['OOTD', 'Column', 'Review'];
+  if (crewRole === 'owner' || crewRole === 'master') {
+    categories.push('Notice', 'Event');
+  }
+
+  useEffect(() => {
+    if (!categories.includes(bigCategory)) {
+      setBigCategory(categories[0]);
+    }
+  }, [crewRole]);
+
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
       <h1 className="text-xl font-bold">Write a Post</h1>
@@ -73,14 +121,29 @@ export default function WritePage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      {crews.length > 0 && (
+        <select
+          value={selectedCrewId}
+          onChange={(e) => setSelectedCrewId(e.target.value)}
+          className="w-full border p-2 rounded"
+        >
+          {crews.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      )}
       <select
         value={bigCategory}
         onChange={(e) => setBigCategory(e.target.value)}
         className="w-full border p-2 rounded"
       >
-        <option value="OOTD">OOTD</option>
-        <option value="Column">Column</option>
-        <option value="Review">Review</option>
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
       </select>
       <Input
         placeholder="Hashtags (comma separated)"
