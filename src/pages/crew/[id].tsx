@@ -34,7 +34,7 @@ export default function CrewDetailPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [topics, setTopics] = useState<CrewTopic[]>([]);
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [tab, setTab] = useState('posts');
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [about, setAbout] = useState('');
@@ -50,13 +50,25 @@ export default function CrewDetailPage() {
   }, [tabParam, crewId, navigate]);
 
   useEffect(() => {
-    const search = new URLSearchParams(location.search).get('search');
-    if (search && search.startsWith('#')) {
-      setSelectedTopic(search.slice(1));
+    const topicsParam = new URLSearchParams(location.search).get('topics');
+    if (topicsParam) {
+      setSelectedTopics(
+        topicsParam
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+      );
     } else {
-      setSelectedTopic(null);
+      setSelectedTopics([]);
     }
   }, [location.search]);
+
+  useEffect(() => {
+    if (!crewId) return;
+    fetchCrewPosts(crewId, selectedTopics)
+      .then(setPosts)
+      .catch(() => {});
+  }, [crewId, selectedTopics]);
 
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
 
@@ -81,6 +93,15 @@ export default function CrewDetailPage() {
       setAbout(c.description);
     });
   }, [crewId]);
+
+  useEffect(() => {
+    if (tab !== 'topics' || topics.length === 0) return;
+    const params = new URLSearchParams(location.search);
+    if (!params.get('topics')) {
+      params.set('topics', topics[0].tag);
+      navigate(`/crew/${crewId}/topics?${params.toString()}`, { replace: true });
+    }
+  }, [tab, topics, location.search, crewId, navigate]);
 
   if (!crew) return <p className="p-4">Loading...</p>;
 
@@ -132,12 +153,17 @@ export default function CrewDetailPage() {
           { id: 'overview', title: 'Overview' },
         ]}
         current={tab}
-        onChange={(t) => navigate(`/crew/${crewId}/${t}`)}
+        onChange={(t) => {
+          const qs = location.search ? `?${new URLSearchParams(location.search).toString()}` : '';
+          navigate(`/crew/${crewId}/${t}${qs}`);
+        }}
       />
       {tab === 'posts' && (
         <div className="grid grid-cols-2 gap-4">
-          {(selectedTopic
-            ? posts.filter((post) => post.tags?.includes(selectedTopic || ''))
+          {(selectedTopics.length
+            ? posts.filter((post) =>
+                selectedTopics.every((t) => post.tags?.includes(t)),
+              )
             : posts
           ).map((post) => (
             <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
@@ -149,18 +175,32 @@ export default function CrewDetailPage() {
       {tab === 'topics' && (
         <ul className="flex gap-2 overflow-x-auto py-2">
           {topics.map((t) => {
-            const isSelected = selectedTopic === t.tag;
+            const isSelected = selectedTopics.includes(t.tag);
             return (
               <li key={t.tag}>
                 <button
                   className={`rounded-full border px-3 py-1 text-sm ${
                     isSelected ? 'bg-blue-600 text-white border-blue-600' : ''
                   }`}
-                  onClick={() =>
-                    navigate(
-                      `/crew/${crewId}/topics?search=${encodeURIComponent(`#${t.tag}`)}`,
-                    )
-                  }
+                  onClick={() => {
+                    const params = new URLSearchParams(location.search);
+                    const current = params.get('topics')
+                      ? params
+                          .get('topics')!
+                          .split(',')
+                          .filter(Boolean)
+                      : [];
+                    const exists = current.includes(t.tag);
+                    const next = exists
+                      ? current.filter((c) => c !== t.tag)
+                      : [...current, t.tag];
+                    if (next.length === 0) {
+                      params.delete('topics');
+                    } else {
+                      params.set('topics', next.join(','));
+                    }
+                    navigate(`/crew/${crewId}/topics?${params.toString()}`);
+                  }}
                 >
                   #{t.tag} ({t.count})
                 </button>
