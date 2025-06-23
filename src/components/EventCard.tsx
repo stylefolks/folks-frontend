@@ -1,8 +1,13 @@
 import { Event } from '@/lib/crew';
 
-export default function EventCard({ event }: { event: Event }) {
+interface Props {
+  event: Event;
+  onClick?: () => void;
+}
+
+export default function EventCard({ event, onClick }: Props) {
   return (
-    <div className="flex gap-2 rounded border p-2">
+    <div className="flex gap-2 rounded border p-2 cursor-pointer" onClick={onClick}>
       {event.image && (
         <img src={event.image} className="h-20 w-20 rounded object-cover" />
       )}
