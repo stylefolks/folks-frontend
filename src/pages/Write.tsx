@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getToken } from '@/lib/auth';
+import { getToken, getMyId } from '@/lib/auth';
+import { getUserCrews, type Crew as UserCrew } from '@/lib/profile';
+import { fetchCrew } from '@/lib/crew';
 import { Editor } from '@/components/Editor';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -23,6 +25,10 @@ export default function WritePage() {
   const [bigCategory, setBigCategory] = useState('OOTD');
   const [hashtags, setHashtags] = useState('');
   const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [myId, setMyId] = useState<string | null>(null);
+  const [crews, setCrews] = useState<UserCrew[]>([]);
+  const [crewId, setCrewId] = useState('');
+  const [isCrewAdmin, setIsCrewAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,7 +41,29 @@ export default function WritePage() {
       setHashtags(draft.hashtags);
       setEditorState(draft.editorState);
     }
+    getMyId()
+      .then((id) => {
+        setMyId(id);
+        if (id) {
+          getUserCrews(id)
+            .then((c) => setCrews(c))
+            .catch(() => {});
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!crewId) {
+      setIsCrewAdmin(false);
+      return;
+    }
+    fetchCrew(crewId)
+      .then((crew) => {
+        setIsCrewAdmin(crew.ownerId === myId);
+      })
+      .catch(() => setIsCrewAdmin(false));
+  }, [crewId, myId]);
 
   const saveDraft = () => {
     const draft: Draft = { title, bigCategory, hashtags, editorState };
@@ -65,6 +93,13 @@ export default function WritePage() {
     setEditorState(value);
   }
 
+  const categories = [
+    'OOTD',
+    'Column',
+    'Review',
+    ...(isCrewAdmin ? ['Notice', 'Event'] : []),
+  ];
+
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
       <h1 className="text-xl font-bold">Write a Post</h1>
@@ -73,14 +108,30 @@ export default function WritePage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      {crews.length > 0 && (
+        <select
+          value={crewId}
+          onChange={(e) => setCrewId(e.target.value)}
+          className="w-full border p-2 rounded"
+        >
+          <option value="">Select Crew (optional)</option>
+          {crews.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      )}
       <select
         value={bigCategory}
         onChange={(e) => setBigCategory(e.target.value)}
         className="w-full border p-2 rounded"
       >
-        <option value="OOTD">OOTD</option>
-        <option value="Column">Column</option>
-        <option value="Review">Review</option>
+        {categories.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
       </select>
       <Input
         placeholder="Hashtags (comma separated)"
