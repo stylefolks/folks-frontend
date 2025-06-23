@@ -1,4 +1,4 @@
-import { API_BASE } from './auth';
+import { API_BASE, getToken } from './auth';
 import type { Post } from './posts';
 
 export interface CrewLink {
@@ -114,4 +114,26 @@ export async function updateCrew(
   });
   if (!res.ok) throw new Error('Failed to update crew');
   return res.json();
+}
+
+export type CrewRole = 'member' | 'master' | 'owner';
+
+export async function fetchMyCrewRole(id: string): Promise<CrewRole> {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/crews/${id}/my-role`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error('Failed to load role');
+  const data = await res.json();
+  return data.role as CrewRole;
+}
+
+export async function deleteCrew(id: string): Promise<void> {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}/crews/${id}`, {
+    method: 'DELETE',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) throw new Error('Failed to delete crew');
 }

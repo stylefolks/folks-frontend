@@ -139,6 +139,7 @@ interface Crew {
 
 let createdCrews: Crew[] = [];
 let crewSeq = 100;
+const masterCrewIds = new Set<string>(['2']);
 
 interface Comment {
   id: string;
@@ -370,6 +371,24 @@ export const handlers = [
       if (body.links !== undefined) crew.links = body.links;
     }
     return HttpResponse.json(crew);
+  }),
+
+  http.get(`${API_BASE}/crews/:id/my-role`, ({ params }) => {
+    const { id } = params as { id: string };
+    const found = createdCrews.find((c) => c.id === id);
+    if (found && found.ownerId === currentProfile.userId) {
+      return HttpResponse.json({ role: 'owner' });
+    }
+    if (masterCrewIds.has(id)) {
+      return HttpResponse.json({ role: 'master' });
+    }
+    return HttpResponse.json({ role: 'member' });
+  }),
+
+  http.delete(`${API_BASE}/crews/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    createdCrews = createdCrews.filter((c) => c.id !== id);
+    return new HttpResponse(null, { status: 204 });
   }),
 
   http.get(`${API_BASE}/brands/:id`, ({ params }) => {
