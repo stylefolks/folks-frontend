@@ -7,13 +7,16 @@ import {
   fetchCrewEvents,
   fetchCrewNotices,
   fetchCrewTopics,
+  fetchMyCrewRole,
+  updateCrew,
+  deleteCrew,
   type Crew,
   type Event,
   type Notice,
   type CrewTopic,
+  type CrewRole,
 } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
-import { getMyId } from '@/lib/auth';
 import { useSetAppBarTitle } from '@/lib/appBarTitle';
 import PostCard from '@/components/PostCard';
 import EditableText from '@/components/EditableText';
@@ -36,7 +39,7 @@ export default function CrewDetailPage() {
   const [topics, setTopics] = useState<CrewTopic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [tab, setTab] = useState('posts');
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [role, setRole] = useState<CrewRole>('member');
   const [about, setAbout] = useState('');
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
@@ -61,8 +64,11 @@ export default function CrewDetailPage() {
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
 
   useEffect(() => {
-    getMyId().then(setCurrentUser).catch(() => {});
-  }, []);
+    if (!crewId) return;
+    fetchMyCrewRole(crewId)
+      .then(setRole)
+      .catch(() => setRole('member'));
+  }, [crewId]);
 
   useEffect(() => {
     if (!crewId) return;
@@ -84,16 +90,35 @@ export default function CrewDetailPage() {
 
   if (!crew) return <p className="p-4">Loading...</p>;
 
-  const isEditable = currentUser === crew.ownerId;
+  const isEditable = role === 'owner' || role === 'master';
 
-  const updateName = (name: string) => setCrew({ ...(crew as Crew), name });
-  const updateDescription = (description: string) =>
+  const updateName = (name: string) => {
+    setCrew({ ...(crew as Crew), name });
+    updateCrew(crewId, { name }).catch(() => {});
+  };
+  const updateDescription = (description: string) => {
     setCrew({ ...(crew as Crew), description });
+    updateCrew(crewId, { description }).catch(() => {});
+  };
   const updateCover = (file: File) => {
     const url = URL.createObjectURL(file);
     setCrew({ ...(crew as Crew), coverImage: url });
+    updateCrew(crewId, { coverImage: url }).catch(() => {});
   };
-  const updateLinks = (links: any) => setCrew({ ...(crew as Crew), links });
+  const updateLinks = (links: any) => {
+    setCrew({ ...(crew as Crew), links });
+    updateCrew(crewId, { links }).catch(() => {});
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this crew?')) return;
+    try {
+      await deleteCrew(crewId);
+      navigate('/crews');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete crew');
+    }
+  };
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 p-4">
@@ -134,6 +159,16 @@ export default function CrewDetailPage() {
         current={tab}
         onChange={(t) => navigate(`/crew/${crewId}/${t}`)}
       />
+      {isEditable && (
+        <div className="flex justify-end">
+          <button
+            onClick={handleDelete}
+            className="text-sm text-red-600 underline"
+          >
+            Delete Crew
+          </button>
+        </div>
+      )}
       {tab === 'posts' && (
         <div className="grid grid-cols-2 gap-4">
           {(selectedTopic
