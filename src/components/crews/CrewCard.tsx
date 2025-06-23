@@ -7,7 +7,7 @@ export default function CrewCard({ crew }: { crew: CrewSummary }) {
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/crew/${crew.id}`)}
+      onClick={() => navigate(`/crew/${crew.id}/posts`)}
       className="cursor-pointer space-y-1"
     >
       <ImageWithSkeleton

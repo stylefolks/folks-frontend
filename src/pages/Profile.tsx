@@ -212,7 +212,7 @@ export default function ProfilePage() {
             <ul className="list-disc pl-5">
               {crews.map((c) => (
                 <li key={c.id}>
-                  <Link to={`/crew/${c.id}`}>{c.name}</Link>
+                  <Link to={`/crew/${c.id}/posts`}>{c.name}</Link>
                 </li>
               ))}
             </ul>
