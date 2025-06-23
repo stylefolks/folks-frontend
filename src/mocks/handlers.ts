@@ -145,6 +145,7 @@ interface Comment {
   id: string;
   postId: string;
   text: string;
+  author: { userId: string; username: string; imageUrl?: string };
 }
 
 const commentsMap: Record<string, Comment[]> = {};
@@ -422,6 +423,11 @@ export const handlers = [
       id: String(Date.now()),
       postId,
       text,
+      author: {
+        userId: currentProfile.userId,
+        username: currentProfile.username,
+        imageUrl: currentProfile.imageUrl,
+      },
     };
     commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
     return HttpResponse.json(newComment, { status: 201 });
