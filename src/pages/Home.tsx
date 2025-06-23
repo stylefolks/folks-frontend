@@ -19,7 +19,7 @@ export default function Home() {
   const [count, setCount] = useState(0);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background text-foreground">
       <PostGrid />
     </main>
   );
