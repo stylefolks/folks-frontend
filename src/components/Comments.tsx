@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import type { Comment } from '@/lib/comments';
 import { fetchComments, addComment, updateComment, deleteComment } from '@/lib/comments';
 
 export default function Comments({ postId }: { postId: string }) {
+  const navigate = useNavigate();
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,9 +61,15 @@ export default function Comments({ postId }: { postId: string }) {
       ) : (
         <ul className="space-y-2">
           {comments.map((c) => (
-            <li key={c.id} className="rounded border p-2 space-y-2">
+            <li key={c.id} className="rounded border p-2">
               {editingId === c.id ? (
-                <div className="flex space-x-2">
+                <div className="flex items-start space-x-2">
+                  <img
+                    src={c.author.imageUrl}
+                    alt={c.author.username}
+                    className="h-8 w-8 rounded-full object-cover cursor-pointer"
+                    onClick={() => navigate(`/profile/${c.author.userId}`)}
+                  />
                   <Input
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
@@ -71,8 +79,16 @@ export default function Comments({ postId }: { postId: string }) {
                   </Button>
                 </div>
               ) : (
-                <div className="flex justify-between items-center">
-                  <span>{c.text}</span>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-2">
+                    <img
+                      src={c.author.imageUrl}
+                      alt={c.author.username}
+                      className="h-8 w-8 rounded-full object-cover cursor-pointer"
+                      onClick={() => navigate(`/profile/${c.author.userId}`)}
+                    />
+                    <span>{c.text}</span>
+                  </div>
                   <div className="space-x-2">
                     <Button size="sm" variant="outline" onClick={() => startEdit(c)}>
                       Edit

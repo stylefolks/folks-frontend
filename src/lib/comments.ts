@@ -1,9 +1,11 @@
 import { API_BASE } from './auth';
+import type { SimpleUser } from './profile';
 
 export interface Comment {
   id: string;
   postId: string;
   text: string;
+  author: SimpleUser;
 }
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
