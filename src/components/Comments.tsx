@@ -1,34 +1,54 @@
 import { useEffect, useState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-
-interface Comment {
-  id: number;
-  text: string;
-}
+import type { Comment } from '@/lib/comments';
+import { fetchComments, addComment, updateComment, deleteComment } from '@/lib/comments';
 
 export default function Comments({ postId }: { postId: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
 
   useEffect(() => {
-    const stored = localStorage.getItem(`comments-${postId}`);
-    if (stored) {
-      try {
-        setComments(JSON.parse(stored));
-      } catch {
-        setComments([]);
-      }
-    }
+    fetchComments(postId)
+      .then(setComments)
+      .catch(() => setComments([]));
   }, [postId]);
 
-  const addComment = () => {
+  const handleAdd = async () => {
     if (!text.trim()) return;
-    const newComment = { id: Date.now(), text };
-    const updated = [...comments, newComment];
-    setComments(updated);
-    localStorage.setItem(`comments-${postId}`, JSON.stringify(updated));
-    setText('');
+    try {
+      const newComment = await addComment(postId, text);
+      setComments([...comments, newComment]);
+      setText('');
+    } catch {
+      // error handling omitted for brevity
+    }
+  };
+
+  const startEdit = (c: Comment) => {
+    setEditingId(c.id);
+    setEditText(c.text);
+  };
+
+  const handleUpdate = async (id: string) => {
+    try {
+      const updated = await updateComment(id, editText);
+      setComments(comments.map((c) => (c.id === id ? updated : c)));
+      setEditingId(null);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteComment(id);
+      setComments(comments.filter((c) => c.id !== id));
+    } catch {
+      // ignore
+    }
   };
 
   return (
@@ -39,8 +59,30 @@ export default function Comments({ postId }: { postId: string }) {
       ) : (
         <ul className="space-y-2">
           {comments.map((c) => (
-            <li key={c.id} className="rounded border p-2">
-              {c.text}
+            <li key={c.id} className="rounded border p-2 space-y-2">
+              {editingId === c.id ? (
+                <div className="flex space-x-2">
+                  <Input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <Button size="sm" onClick={() => handleUpdate(c.id)}>
+                    Save
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center">
+                  <span>{c.text}</span>
+                  <div className="space-x-2">
+                    <Button size="sm" variant="outline" onClick={() => startEdit(c)}>
+                      Edit
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleDelete(c.id)}>
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -51,7 +93,7 @@ export default function Comments({ postId }: { postId: string }) {
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a comment"
         />
-        <Button type="button" onClick={addComment} className="shrink-0">
+        <Button type="button" onClick={handleAdd} className="shrink-0">
           Post
         </Button>
       </div>
