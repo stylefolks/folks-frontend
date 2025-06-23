@@ -140,6 +140,14 @@ interface Crew {
 let createdCrews: Crew[] = [];
 let crewSeq = 100;
 
+interface Comment {
+  id: string;
+  postId: string;
+  text: string;
+}
+
+const commentsMap: Record<string, Comment[]> = {};
+
 interface BrandSummary {
   id: string;
   name: string;
@@ -381,5 +389,47 @@ export const handlers = [
     const { id } = params as { id: string };
     const posts = Array.from({ length: 4 }, (_, i) => randomPost(i + 1));
     return HttpResponse.json(posts);
+  }),
+
+  http.get(`${API_BASE}/posts/:postId/comments`, ({ params }) => {
+    const { postId } = params as { postId: string };
+    return HttpResponse.json(commentsMap[postId] ?? []);
+  }),
+
+  http.post(`${API_BASE}/posts/:postId/comments`, async ({ params, request }) => {
+    const { postId } = params as { postId: string };
+    const { text } = await request.json();
+    const newComment: Comment = {
+      id: String(Date.now()),
+      postId,
+      text,
+    };
+    commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
+    return HttpResponse.json(newComment, { status: 201 });
+  }),
+
+  http.put(`${API_BASE}/comments/:id`, async ({ params, request }) => {
+    const { id } = params as { id: string };
+    const { text } = await request.json();
+    for (const postId of Object.keys(commentsMap)) {
+      const idx = commentsMap[postId].findIndex((c) => c.id === id);
+      if (idx >= 0) {
+        commentsMap[postId][idx].text = text;
+        return HttpResponse.json(commentsMap[postId][idx]);
+      }
+    }
+    return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+  }),
+
+  http.delete(`${API_BASE}/comments/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    for (const postId of Object.keys(commentsMap)) {
+      const idx = commentsMap[postId].findIndex((c) => c.id === id);
+      if (idx >= 0) {
+        commentsMap[postId].splice(idx, 1);
+        return new HttpResponse(null, { status: 204 });
+      }
+    }
+    return new HttpResponse(null, { status: 404 });
   }),
 ];
