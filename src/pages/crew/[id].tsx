@@ -172,14 +172,22 @@ export default function CrewDetailPage() {
       {tab === 'events' && (
         <div className="space-y-2">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard
+              key={event.id}
+              event={event}
+              onClick={() => navigate(`/post/${event.id}`)}
+            />
           ))}
         </div>
       )}
       {tab === 'notice' && (
         <ul className="space-y-2">
           {notices.map((n) => (
-            <li key={n.id} className="rounded border p-2">
+            <li
+              key={n.id}
+              className="cursor-pointer rounded border p-2"
+              onClick={() => navigate(`/post/${n.id}`)}
+            >
               <h3 className="font-semibold">{n.title}</h3>
               <p className="text-sm text-gray-500">{n.date}</p>
             </li>
