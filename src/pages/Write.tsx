@@ -22,6 +22,7 @@ const DRAFT_KEY = "write_draft";
 
 export default function WritePage() {
   useMeta({ title: "Write - Stylefolks" });
+
   const [title, setTitle] = useState("");
   const [bigCategory, setBigCategory] = useState("OOTD");
   const [hashtags, setHashtags] = useState("");
@@ -112,10 +113,8 @@ export default function WritePage() {
   };
 
   const categories = [
-    "OOTD",
-    "Column",
-    "Review",
-    ...(isCrewAdmin ? ["Notice", "Event"] : []),
+      "BASIC",
+      "COLUMN",
   ];
 
   return (
