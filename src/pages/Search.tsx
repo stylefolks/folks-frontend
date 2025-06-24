@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import SearchInput from '@/components/search/SearchInput';
 import PostTypeTabs, { PostType } from '@/components/search/PostTypeTabs';
 import TagFilterChips from '@/components/search/TagFilterChips';
@@ -28,6 +29,7 @@ function filterByType(post: Post, type: PostType) {
 
 export default function SearchPage() {
   useMeta({ title: 'Search - Stylefolks' });
+  const location = useLocation();
   const [query, setQuery] = useState('');
   const [type, setType] = useState<PostType>('ALL');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -59,6 +61,14 @@ export default function SearchPage() {
     setPosts(initial);
     setNextId(PAGE_SIZE);
   }, [query, selectedTags, type, applyFilters]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tag = params.get('tag');
+    if (tag) {
+      setSelectedTags([tag]);
+    }
+  }, [location.search]);
 
   return (
     <div className="p-4 space-y-4">
