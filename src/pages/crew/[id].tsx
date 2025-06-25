@@ -23,6 +23,8 @@ import PostList from '@/components/PostList';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
 import EditableLinkList from '@/components/EditableLinkList';
+import CrewSettingsModal from '@/components/crews/CrewSettingsModal';
+import { Settings } from 'lucide-react';
 import TabNav from '@/components/TabNav';
 import EventCard from '@/components/EventCard';
 
@@ -113,27 +115,10 @@ export default function CrewDetailPage() {
   if (!crew) return <p className="p-4">Loading...</p>;
 
   const isEditable = role === 'owner' || role === 'master';
+  const [showSettings, setShowSettings] = useState(false);
 
-  const updateName = (name: string) => {
-    setCrew({ ...(crew as Crew), name });
-    updateCrew(crewId, { name }).catch(() => {});
-  };
-  const updateDescription = (description: string) => {
-    setCrew({ ...(crew as Crew), description });
-    updateCrew(crewId, { description }).catch(() => {});
-  };
-  const updateCover = (file: File) => {
-    const url = URL.createObjectURL(file);
-    setCrew({ ...(crew as Crew), coverImage: url });
-    updateCrew(crewId, { coverImage: url }).catch(() => {});
-  };
-  const updateLinks = (links: any) => {
-    setCrew({ ...(crew as Crew), links });
-    updateCrew(crewId, { links }).catch(() => {});
-  };
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete this crew?')) return;
     try {
       await deleteCrew(crewId);
       navigate('/crews');
@@ -143,33 +128,43 @@ export default function CrewDetailPage() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4">
+    <div className="relative mx-auto max-w-2xl space-y-4 p-4">
+      {isEditable && (
+        <>
+          <button
+            className="absolute right-4 top-4"
+            onClick={() => setShowSettings(true)}
+          >
+            <Settings size={20} />
+          </button>
+          <CrewSettingsModal
+            open={showSettings}
+            crew={crew as Crew}
+            onClose={() => setShowSettings(false)}
+            onSave={async (data) => {
+              setCrew({ ...(crew as Crew), ...data });
+              await updateCrew(crewId, data).catch(() => {});
+              setShowSettings(false);
+            }}
+            onDelete={handleDelete}
+          />
+        </>
+      )}
       <EditableImageUpload
         src={crew.coverImage}
-        onChange={updateCover}
-        isEditable={isEditable}
+        onChange={() => {}}
+        isEditable={false}
         className="h-40 w-full rounded"
       />
-      <EditableText
-        as="h1"
-        value={crew.name}
-        onChange={updateName}
-        isEditable={isEditable}
-        className="text-xl font-bold"
-      />
-      <EditableText
-        as="p"
-        value={crew.description}
-        onChange={updateDescription}
-        isEditable={isEditable}
-        placeholder="Short description"
-        className="text-sm text-gray-600"
-      />
-      <EditableLinkList
-        links={crew.links}
-        onChange={updateLinks}
-        isEditable={isEditable}
-      />
+      {crew.profileImage && (
+        <img
+          src={crew.profileImage}
+          className="mx-auto -mt-8 h-20 w-20 rounded-full object-cover border-2 border-white"
+        />
+      )}
+      <h1 className="text-xl font-bold">{crew.name}</h1>
+      <p className="text-sm text-gray-600">{crew.description}</p>
+      <EditableLinkList links={crew.links} onChange={() => {}} isEditable={false} />
       <TabNav
         tabs={[
           { id: 'posts', title: 'Posts' },
@@ -184,16 +179,6 @@ export default function CrewDetailPage() {
           navigate(`/crew/${crewId}/${t}${qs}`);
         }}
       />
-      {isEditable && (
-        <div className="flex justify-end">
-          <button
-            onClick={handleDelete}
-            className="text-sm text-red-600 underline"
-          >
-            Delete Crew
-          </button>
-        </div>
-      )}
       {tab === 'posts' && (
         <PostList
           posts={

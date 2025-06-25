@@ -131,6 +131,7 @@ function randomCrew(id: number): CrewSummary {
 interface Crew {
   id: string;
   name: string;
+  profileImage?: string;
   coverImage: string;
   description: string;
   links: { title: string; url: string }[];
@@ -295,6 +296,7 @@ export const handlers = [
     return HttpResponse.json({
       id,
       name: `Crew ${id}`,
+      profileImage: `https://picsum.photos/seed/crew-${id}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${id}/1200/300`,
       description: `This is crew ${id}.`,
       links: [
@@ -348,6 +350,7 @@ export const handlers = [
     const newCrew: Crew = {
       id: String(crewSeq),
       name: body.name,
+      profileImage: body.profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
       description: body.description ?? '',
       links: body.links ?? [],
@@ -374,6 +377,7 @@ export const handlers = [
     } else {
       if (body.name !== undefined) crew.name = body.name;
       if (body.description !== undefined) crew.description = body.description;
+      if (body.profileImage !== undefined) crew.profileImage = body.profileImage;
       if (body.coverImage !== undefined) crew.coverImage = body.coverImage;
       if (body.links !== undefined) crew.links = body.links;
     }
