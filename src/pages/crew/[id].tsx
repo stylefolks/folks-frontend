@@ -21,7 +21,6 @@ import {
 } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
 import { useSetAppBarTitle } from '@/lib/appBarTitle';
-import PostCard from '@/components/PostCard';
 import PostList from '@/components/PostList';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
@@ -51,7 +50,7 @@ export default function CrewDetailPage() {
   const [about, setAbout] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showTabSettings, setShowTabSettings] = useState(false);
-  
+
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
   useEffect(() => {
@@ -119,8 +118,6 @@ export default function CrewDetailPage() {
   if (!crew) return <p className="p-4">Loading...</p>;
 
   const isEditable = role === 'owner' || role === 'master';
-  
-
 
   const handleDelete = async () => {
     try {
@@ -134,7 +131,7 @@ export default function CrewDetailPage() {
   const currentTab = tabs.find((t) => t.type === tab);
 
   return (
-    <div className="relative mx-auto max-w-2xl space-y-4 p-4">
+    <div className="relative mx-auto max-w-2xl space-y-4 p-4 mt-4">
       {isEditable && (
         <>
           <button
@@ -181,7 +178,7 @@ export default function CrewDetailPage() {
       {crew.profileImage && (
         <img
           src={crew.profileImage}
-          className="mx-auto -mt-8 h-20 w-20 rounded-full object-cover border-2 border-white"
+          className="mx-auto -mt-8 h-20 w-20 rounded-full object-cover border-2 border-white z-30 relative"
         />
       )}
       <h1 className="text-xl font-bold">{crew.name}</h1>
