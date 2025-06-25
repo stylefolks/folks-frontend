@@ -383,3 +383,27 @@ img.ProseMirror-separator {
 .mention {
   color: #2563eb;
 }
+
+.suggestion-item-container {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.suggestion-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+.suggestion-item {
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.suggestion-item-active,
+.suggestion-item:hover {
+  background-color: #f3f4f6;
+}

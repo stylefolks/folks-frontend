@@ -20,6 +20,7 @@
     "prosemirror-history": "^1.4.1",
     "prosemirror-inputrules": "^1.1.4",
     "prosemirror-keymap": "^1.2.0",
+    "prosemirror-mentions": "^1.0.2",
     "prosemirror-menu": "^1.2.5",
     "prosemirror-model": "^1.25.1",
     "prosemirror-schema-basic": "^1.2.4",
