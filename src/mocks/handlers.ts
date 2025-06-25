@@ -151,6 +151,18 @@ interface Comment {
 
 const commentsMap: Record<string, Comment[]> = {};
 
+interface CrewTab {
+  id: number;
+  crewId: number;
+  title: string;
+  type: string;
+  isVisible: boolean;
+  order: number;
+  hashtag?: string;
+}
+
+const crewTabsMap: Record<string, CrewTab[]> = {};
+
 interface BrandSummary {
   id: string;
   name: string;
@@ -342,6 +354,24 @@ export const handlers = [
       count: idx + 1,
     }));
     return HttpResponse.json(topics);
+  }),
+
+  http.get(`${API_BASE}/crews/:id/tabs`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!crewTabsMap[id]) {
+      crewTabsMap[id] = [
+        { id: 1, crewId: Number(id), title: 'Posts', type: 'posts', isVisible: true, order: 0 },
+        { id: 2, crewId: Number(id), title: 'Overview', type: 'overview', isVisible: true, order: 1 },
+      ];
+    }
+    return HttpResponse.json(crewTabsMap[id]);
+  }),
+
+  http.put(`${API_BASE}/crews/:id/tabs`, async ({ params, request }) => {
+    const { id } = params as { id: string };
+    const tabs = (await request.json()) as CrewTab[];
+    crewTabsMap[id] = tabs;
+    return HttpResponse.json(crewTabsMap[id]);
   }),
 
   http.post(`${API_BASE}/crews`, async ({ request }) => {
