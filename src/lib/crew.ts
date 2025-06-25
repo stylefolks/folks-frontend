@@ -26,6 +26,16 @@ export interface CrewTopic {
   count: number;
 }
 
+export interface CrewTab {
+  id: number;
+  crewId: number;
+  title: string;
+  type: string;
+  isVisible: boolean;
+  order: number;
+  hashtag?: string;
+}
+
 export interface Crew {
   id: string;
   name: string;
@@ -81,6 +91,22 @@ export async function fetchCrewNotices(id: string): Promise<Notice[]> {
 export async function fetchCrewTopics(id: string): Promise<CrewTopic[]> {
   const res = await fetch(`${API_BASE}/crews/${id}/topics`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to load topics');
+  return res.json();
+}
+
+export async function fetchCrewTabs(id: string): Promise<CrewTab[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/tabs`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load crew tabs');
+  return res.json();
+}
+
+export async function updateCrewTabs(id: string, tabs: CrewTab[]): Promise<CrewTab[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/tabs`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(tabs),
+  });
+  if (!res.ok) throw new Error('Failed to update crew tabs');
   return res.json();
 }
 
