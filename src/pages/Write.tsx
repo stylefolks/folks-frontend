@@ -4,10 +4,13 @@ import { getToken, getMyId } from "@/lib/auth";
 import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
 import { fetchCrew } from "@/lib/crew";
 import { Editor } from "@/components/Editor";
+import { createPost, type CreatePostDto } from "@/lib/posts";
+import { extractMentionsFromDoc } from "@/lib/mentions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initialDoc } from "@/components/Editor/core/doc";
 import { EditorState } from "prosemirror-state";
+import { EditorView } from "prosemirror-view";
 import { useMeta } from "@/lib/meta";
 
 interface Draft {
@@ -15,6 +18,7 @@ interface Draft {
   bigCategory: string;
   hashtags: string;
   crewId?: string;
+  metaType?: string;
   editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
@@ -22,17 +26,20 @@ const DRAFT_KEY = "write_draft";
 
 export default function WritePage() {
   useMeta({ title: "Write - Stylefolks" });
+
   const [title, setTitle] = useState("");
   const [bigCategory, setBigCategory] = useState("OOTD");
   const [hashtags, setHashtags] = useState("");
+  const [metaType, setMetaType] = useState("");
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [crews, setCrews] = useState<UserCrew[]>([]);
   const [crewId, setCrewId] = useState("");
   const [isCrewAdmin, setIsCrewAdmin] = useState(false);
   const [selectedCrewId, setSelectedCrewId] = useState<string | undefined>(
-    undefined
+    undefined,
   );
+  const [editorView, setEditorView] = useState<EditorView | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,6 +50,7 @@ export default function WritePage() {
       setTitle(draft.title);
       setBigCategory(draft.bigCategory);
       setHashtags(draft.hashtags);
+      if (draft.metaType) setMetaType(draft.metaType);
       setEditorState(draft.editorState);
       if (draft.crewId) {
         setSelectedCrewId(draft.crewId);
@@ -72,11 +80,13 @@ export default function WritePage() {
       .catch(() => setIsCrewAdmin(false));
   }, [crewId, myId]);
 
+
   const saveDraft = () => {
     const draft: Draft = {
       title,
       bigCategory,
       hashtags,
+      metaType,
       crewId: selectedCrewId,
       editorState,
     };
@@ -84,11 +94,12 @@ export default function WritePage() {
     alert("Draft saved");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const draft: Draft = {
       title,
       bigCategory,
       hashtags,
+      metaType,
       crewId: selectedCrewId,
       editorState,
     };
@@ -98,8 +109,28 @@ export default function WritePage() {
       navigate("/login", { state: { from: location } });
       return;
     }
-    clearDraft();
-    alert("Post submitted");
+
+    if (!editorView) return;
+    const content = editorView.state.doc.toJSON();
+    const { crewIds, userIds } = extractMentionsFromDoc(content);
+    const payload: CreatePostDto = {
+      title,
+      type: bigCategory as 'BASIC' | 'COLUMN',
+      content,
+      crewMentions: crewIds,
+      userMentions: userIds,
+    };
+    if (metaType) {
+      payload.metaType = metaType as 'EVENT' | 'NOTICE';
+    }
+
+    try {
+      await createPost(payload);
+      clearDraft();
+      alert('Post submitted');
+    } catch {
+      alert('Failed to submit');
+    }
   };
 
   const clearDraft = () => {
@@ -111,12 +142,9 @@ export default function WritePage() {
     setEditorState(value);
   };
 
-  const categories = [
-    "OOTD",
-    "Column",
-    "Review",
-    ...(isCrewAdmin ? ["Notice", "Event"] : []),
-  ];
+
+  const categories = ["BASIC", "COLUMN"];
+  const metaTypes = ["EVENT", "NOTICE"];
 
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
@@ -151,12 +179,30 @@ export default function WritePage() {
           </option>
         ))}
       </select>
+      <select
+        value={metaType}
+        onChange={(e) => setMetaType(e.target.value)}
+        className="w-full border p-2 rounded"
+      >
+        <option value="">Meta Type (optional)</option>
+        {metaTypes.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
       <Input
         placeholder="Hashtags (comma separated)"
         value={hashtags}
         onChange={(e) => setHashtags(e.target.value)}
       />
-      <Editor value={initialDoc} onChange={handleChange} />
+      <div className="relative">
+        <Editor
+          value={initialDoc}
+          onChange={handleChange}
+          onReady={setEditorView}
+        />
+      </div>
       <div className="flex gap-4 flex-col mt-8">
         <Button type="button" onClick={handleSubmit} variant="outline">
           Submit

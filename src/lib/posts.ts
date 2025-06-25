@@ -66,3 +66,24 @@ export async function fetchPost(id: number): Promise<Post> {
   }
   return res.json();
 }
+
+export interface CreatePostDto {
+  title: string;
+  type: 'BASIC' | 'COLUMN';
+  content: any;
+  crewMentions: number[];
+  userMentions: number[];
+  metaType?: 'EVENT' | 'NOTICE';
+}
+
+export async function createPost(data: CreatePostDto): Promise<Post> {
+  const res = await fetch(`${API_BASE}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to create post');
+  return res.json();
+}

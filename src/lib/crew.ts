@@ -26,9 +26,20 @@ export interface CrewTopic {
   count: number;
 }
 
+export interface CrewTab {
+  id: number;
+  crewId: number;
+  title: string;
+  type: string;
+  isVisible: boolean;
+  order: number;
+  hashtag?: string;
+}
+
 export interface Crew {
   id: string;
   name: string;
+  profileImage?: string;
   coverImage: string;
   description: string;
   links: CrewLink[];
@@ -83,11 +94,37 @@ export async function fetchCrewTopics(id: string): Promise<CrewTopic[]> {
   return res.json();
 }
 
-export async function fetchCrews(params: Record<string, string> = {}): Promise<CrewSummary[]> {
+export async function fetchCrewTabs(id: string): Promise<CrewTab[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/tabs`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load crew tabs');
+  return res.json();
+}
+
+export async function updateCrewTabs(id: string, tabs: CrewTab[]): Promise<CrewTab[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/tabs`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(tabs),
+  });
+  if (!res.ok) throw new Error('Failed to update crew tabs');
+  return res.json();
+}
+
+export async function fetchCrews(
+  params: Record<string, string> = {},
+): Promise<CrewSummary[]> {
   const search = new URLSearchParams(params).toString();
-  const res = await fetch(`${API_BASE}/crews${search ? `?${search}` : ''}`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/crews${search ? `?${search}` : ''}`, {
+    cache: 'no-store',
+  });
   if (!res.ok) throw new Error('Failed to load crews');
   return res.json();
+}
+
+export async function searchCrew(
+  params: Record<string, string> = {},
+): Promise<CrewSummary[]> {
+  return fetchCrews(params);
 }
 
 export async function createCrew(data: {

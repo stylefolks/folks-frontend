@@ -12,7 +12,7 @@ interface Props {
 
 export default function TabNav({ tabs, current, onChange, className }: Props) {
   return (
-    <div className={`flex border-b ${className || ''}`}>
+    <div className={`flex border-b overflow-x-scroll ${className || ''}`}>
       {tabs.map((tab) => (
         <button
           key={tab.id}

@@ -7,6 +7,8 @@ import {
   fetchCrewEvents,
   fetchCrewNotices,
   fetchCrewTopics,
+  fetchCrewTabs,
+  updateCrewTabs,
   fetchMyCrewRole,
   updateCrew,
   deleteCrew,
@@ -14,15 +16,18 @@ import {
   type Event,
   type Notice,
   type CrewTopic,
+  type CrewTab,
   type CrewRole,
 } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
 import { useSetAppBarTitle } from '@/lib/appBarTitle';
-import PostCard from '@/components/PostCard';
 import PostList from '@/components/PostList';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
 import EditableLinkList from '@/components/EditableLinkList';
+import CrewSettingsModal from '@/components/crews/CrewSettingsModal';
+import CrewTabSettingsModal from '@/components/crews/CrewTabSettingsModal';
+import { Settings, LayoutList } from 'lucide-react';
 import TabNav from '@/components/TabNav';
 import EventCard from '@/components/EventCard';
 
@@ -38,20 +43,26 @@ export default function CrewDetailPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [topics, setTopics] = useState<CrewTopic[]>([]);
+  const [tabs, setTabs] = useState<CrewTab[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [tab, setTab] = useState('posts');
+  const [tab, setTab] = useState('');
   const [role, setRole] = useState<CrewRole>('member');
   const [about, setAbout] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [showTabSettings, setShowTabSettings] = useState(false);
+
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
   useEffect(() => {
-    const validTabs = ['posts', 'topics', 'events', 'notice', 'overview'];
-    if (!tabParam || !validTabs.includes(tabParam)) {
-      navigate(`/crew/${crewId}/posts`, { replace: true });
+    if (tabs.length === 0) return;
+    const valid = tabs.map((t) => t.type);
+    const first = tabs.find((t) => t.isVisible)?.type;
+    if (!tabParam || !valid.includes(tabParam)) {
+      if (first) navigate(`/crew/${crewId}/${first}`, { replace: true });
     } else {
       setTab(tabParam);
     }
-  }, [tabParam, crewId, navigate]);
+  }, [tabParam, crewId, navigate, tabs]);
 
   useEffect(() => {
     const topicsParam = new URLSearchParams(location.search).get('topics');
@@ -91,49 +102,24 @@ export default function CrewDetailPage() {
       fetchCrewEvents(crewId).catch(() => []),
       fetchCrewNotices(crewId).catch(() => []),
       fetchCrewTopics(crewId).catch(() => []),
-    ]).then(([c, p, e, n, t]) => {
+      fetchCrewTabs(crewId).catch(() => []),
+    ]).then(([c, p, e, n, t, tabsData]) => {
       setCrew(c);
       setPosts(p);
       setEvents(e as Event[]);
       setNotices(n as Notice[]);
       setTopics(t as CrewTopic[]);
+      setTabs((tabsData as CrewTab[]).sort((a, b) => a.order - b.order));
       setAbout(c.description);
     });
   }, [crewId]);
 
-  useEffect(() => {
-    if (tab !== 'topics' || topics.length === 0) return;
-    const params = new URLSearchParams(location.search);
-    if (!params.get('topics')) {
-      params.set('topics', topics[0].tag);
-      navigate(`/crew/${crewId}/topics?${params.toString()}`, { replace: true });
-    }
-  }, [tab, topics, location.search, crewId, navigate]);
 
   if (!crew) return <p className="p-4">Loading...</p>;
 
   const isEditable = role === 'owner' || role === 'master';
 
-  const updateName = (name: string) => {
-    setCrew({ ...(crew as Crew), name });
-    updateCrew(crewId, { name }).catch(() => {});
-  };
-  const updateDescription = (description: string) => {
-    setCrew({ ...(crew as Crew), description });
-    updateCrew(crewId, { description }).catch(() => {});
-  };
-  const updateCover = (file: File) => {
-    const url = URL.createObjectURL(file);
-    setCrew({ ...(crew as Crew), coverImage: url });
-    updateCrew(crewId, { coverImage: url }).catch(() => {});
-  };
-  const updateLinks = (links: any) => {
-    setCrew({ ...(crew as Crew), links });
-    updateCrew(crewId, { links }).catch(() => {});
-  };
-
   const handleDelete = async () => {
-    if (!window.confirm('Delete this crew?')) return;
     try {
       await deleteCrew(crewId);
       navigate('/crews');
@@ -142,59 +128,71 @@ export default function CrewDetailPage() {
     }
   };
 
+  const currentTab = tabs.find((t) => t.type === tab);
+
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4">
+    <div className="relative mx-auto max-w-2xl space-y-4 p-4 mt-4">
+      {isEditable && (
+        <>
+          <button
+            className="absolute right-4 top-4"
+            onClick={() => setShowSettings(true)}
+          >
+            <Settings size={20} />
+          </button>
+          <button
+            className="absolute right-12 top-4"
+            onClick={() => setShowTabSettings(true)}
+          >
+            <LayoutList size={20} />
+          </button>
+          <CrewSettingsModal
+            open={showSettings}
+            crew={crew as Crew}
+            onClose={() => setShowSettings(false)}
+            onSave={async (data) => {
+              setCrew({ ...(crew as Crew), ...data });
+              await updateCrew(crewId, data).catch(() => {});
+              setShowSettings(false);
+            }}
+            onDelete={handleDelete}
+          />
+          <CrewTabSettingsModal
+            open={showTabSettings}
+            tabs={tabs}
+            onClose={() => setShowTabSettings(false)}
+            onSave={async (next) => {
+              setTabs(next);
+              await updateCrewTabs(crewId, next).catch(() => {});
+              setShowTabSettings(false);
+            }}
+          />
+        </>
+      )}
       <EditableImageUpload
         src={crew.coverImage}
-        onChange={updateCover}
-        isEditable={isEditable}
+        onChange={() => {}}
+        isEditable={false}
         className="h-40 w-full rounded"
       />
-      <EditableText
-        as="h1"
-        value={crew.name}
-        onChange={updateName}
-        isEditable={isEditable}
-        className="text-xl font-bold"
-      />
-      <EditableText
-        as="p"
-        value={crew.description}
-        onChange={updateDescription}
-        isEditable={isEditable}
-        placeholder="Short description"
-        className="text-sm text-gray-600"
-      />
-      <EditableLinkList
-        links={crew.links}
-        onChange={updateLinks}
-        isEditable={isEditable}
-      />
+      {crew.profileImage && (
+        <img
+          src={crew.profileImage}
+          className="mx-auto -mt-8 h-20 w-20 rounded-full object-cover border-2 border-white z-30 relative"
+        />
+      )}
+      <h1 className="text-xl font-bold">{crew.name}</h1>
+      <p className="text-sm text-gray-600">{crew.description}</p>
+      <EditableLinkList links={crew.links} onChange={() => {}} isEditable={false} />
       <TabNav
-        tabs={[
-          { id: 'posts', title: 'Posts' },
-          { id: 'topics', title: 'Topics' },
-          { id: 'events', title: 'Events' },
-          { id: 'notice', title: 'Notice' },
-          { id: 'overview', title: 'Overview' },
-        ]}
+        tabs={tabs.filter((t) => t.isVisible).map((t) => ({ id: t.type, title: t.title }))}
         current={tab}
         onChange={(t) => {
           const qs = location.search ? `?${new URLSearchParams(location.search).toString()}` : '';
           navigate(`/crew/${crewId}/${t}${qs}`);
         }}
       />
-      {isEditable && (
-        <div className="flex justify-end">
-          <button
-            onClick={handleDelete}
-            className="text-sm text-red-600 underline"
-          >
-            Delete Crew
-          </button>
-        </div>
-      )}
-      {tab === 'posts' && (
+      {currentTab?.type === 'posts' && (
         <PostList
           posts={
             selectedTopics.length
@@ -205,55 +203,14 @@ export default function CrewDetailPage() {
           }
         />
       )}
-      {tab === 'topics' && (
-        <>
-          <ul className="flex gap-2 overflow-x-auto py-2">
-            {topics.map((t) => {
-              const isSelected = selectedTopics.includes(t.tag);
-              return (
-                <li key={t.tag}>
-                  <button
-                    className={`rounded-full border px-3 py-1 text-sm ${
-                      isSelected ? 'bg-blue-600 text-white border-blue-600' : ''
-                    }`}
-                    onClick={() => {
-                      const params = new URLSearchParams(location.search);
-                      const current = params.get('topics')
-                        ? params
-                            .get('topics')!
-                            .split(',')
-                            .filter(Boolean)
-                        : [];
-                      const exists = current.includes(t.tag);
-                      const next = exists
-                        ? current.filter((c) => c !== t.tag)
-                        : [...current, t.tag];
-                      if (next.length === 0) {
-                        params.delete('topics');
-                      } else {
-                        params.set('topics', next.join(','));
-                      }
-                      navigate(`/crew/${crewId}/topics?${params.toString()}`);
-                    }}
-                  >
-                    #{t.tag} ({t.count})
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <PostList
-            posts={
-              selectedTopics.length
-                ? posts.filter((post) =>
-                    selectedTopics.every((t) => post.tags?.includes(t)),
-                  )
-                : posts
-            }
-          />
-        </>
+      {currentTab?.type === 'topic' && (
+        <PostList
+          posts={posts.filter((p) =>
+            currentTab?.hashtag ? p.tags?.includes(currentTab.hashtag) : true,
+          )}
+        />
       )}
-      {tab === 'events' && (
+      {currentTab?.type === 'event' && (
         <div className="space-y-2">
           {events.map((event) => (
             <EventCard
@@ -264,7 +221,7 @@ export default function CrewDetailPage() {
           ))}
         </div>
       )}
-      {tab === 'notice' && (
+      {currentTab?.type === 'notice' && (
         <ul className="space-y-2">
           {notices.map((n) => (
             <li
@@ -278,7 +235,7 @@ export default function CrewDetailPage() {
           ))}
         </ul>
       )}
-      {tab === 'overview' && (
+      {currentTab?.type === 'overview' && (
         <EditableText
           as="div"
           value={about}

@@ -131,6 +131,7 @@ function randomCrew(id: number): CrewSummary {
 interface Crew {
   id: string;
   name: string;
+  profileImage?: string;
   coverImage: string;
   description: string;
   links: { title: string; url: string }[];
@@ -145,9 +146,22 @@ interface Comment {
   id: string;
   postId: string;
   text: string;
+  author: { userId: string; username: string; imageUrl?: string };
 }
 
 const commentsMap: Record<string, Comment[]> = {};
+
+interface CrewTab {
+  id: number;
+  crewId: number;
+  title: string;
+  type: string;
+  isVisible: boolean;
+  order: number;
+  hashtag?: string;
+}
+
+const crewTabsMap: Record<string, CrewTab[]> = {};
 
 interface BrandSummary {
   id: string;
@@ -245,10 +259,16 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
+    const search = url.searchParams.get('search');
     const hasEvent = url.searchParams.get('hasUpcomingEvent');
     const tag = url.searchParams.get('tag');
     const sort = url.searchParams.get('sort');
     let crews = [...createdCrews, ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1))];
+    if (search) {
+      crews = crews.filter((c) =>
+        c.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
     if (hasEvent) {
       crews = crews.filter((c) => c.upcomingEvent);
     }
@@ -288,6 +308,7 @@ export const handlers = [
     return HttpResponse.json({
       id,
       name: `Crew ${id}`,
+      profileImage: `https://picsum.photos/seed/crew-${id}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${id}/1200/300`,
       description: `This is crew ${id}.`,
       links: [
@@ -335,12 +356,31 @@ export const handlers = [
     return HttpResponse.json(topics);
   }),
 
+  http.get(`${API_BASE}/crews/:id/tabs`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!crewTabsMap[id]) {
+      crewTabsMap[id] = [
+        { id: 1, crewId: Number(id), title: 'Posts', type: 'posts', isVisible: true, order: 0 },
+        { id: 2, crewId: Number(id), title: 'Overview', type: 'overview', isVisible: true, order: 1 },
+      ];
+    }
+    return HttpResponse.json(crewTabsMap[id]);
+  }),
+
+  http.put(`${API_BASE}/crews/:id/tabs`, async ({ params, request }) => {
+    const { id } = params as { id: string };
+    const tabs = (await request.json()) as CrewTab[];
+    crewTabsMap[id] = tabs;
+    return HttpResponse.json(crewTabsMap[id]);
+  }),
+
   http.post(`${API_BASE}/crews`, async ({ request }) => {
     const body = await request.json();
     crewSeq += 1;
     const newCrew: Crew = {
       id: String(crewSeq),
       name: body.name,
+      profileImage: body.profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
       description: body.description ?? '',
       links: body.links ?? [],
@@ -367,6 +407,7 @@ export const handlers = [
     } else {
       if (body.name !== undefined) crew.name = body.name;
       if (body.description !== undefined) crew.description = body.description;
+      if (body.profileImage !== undefined) crew.profileImage = body.profileImage;
       if (body.coverImage !== undefined) crew.coverImage = body.coverImage;
       if (body.links !== undefined) crew.links = body.links;
     }
@@ -422,6 +463,11 @@ export const handlers = [
       id: String(Date.now()),
       postId,
       text,
+      author: {
+        userId: currentProfile.userId,
+        username: currentProfile.username,
+        imageUrl: currentProfile.imageUrl,
+      },
     };
     commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
     return HttpResponse.json(newComment, { status: 201 });
