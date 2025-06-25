@@ -246,10 +246,16 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
+    const search = url.searchParams.get('search');
     const hasEvent = url.searchParams.get('hasUpcomingEvent');
     const tag = url.searchParams.get('tag');
     const sort = url.searchParams.get('sort');
     let crews = [...createdCrews, ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1))];
+    if (search) {
+      crews = crews.filter((c) =>
+        c.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
     if (hasEvent) {
       crews = crews.filter((c) => c.upcomingEvent);
     }
