@@ -24,7 +24,8 @@ import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
 import EditableLinkList from '@/components/EditableLinkList';
 import CrewSettingsModal from '@/components/crews/CrewSettingsModal';
-import { Settings } from 'lucide-react';
+import CrewRoleModal from '@/components/crews/CrewRoleModal';
+import { Settings, UserCog } from 'lucide-react';
 import TabNav from '@/components/TabNav';
 import EventCard from '@/components/EventCard';
 
@@ -116,6 +117,7 @@ export default function CrewDetailPage() {
 
   const isEditable = role === 'owner' || role === 'master';
   const [showSettings, setShowSettings] = useState(false);
+  const [showRoles, setShowRoles] = useState(false);
 
 
   const handleDelete = async () => {
@@ -131,12 +133,14 @@ export default function CrewDetailPage() {
     <div className="relative mx-auto max-w-2xl space-y-4 p-4">
       {isEditable && (
         <>
-          <button
-            className="absolute right-4 top-4"
-            onClick={() => setShowSettings(true)}
-          >
-            <Settings size={20} />
-          </button>
+          <div className="absolute right-4 top-4 flex gap-2">
+            <button onClick={() => setShowRoles(true)}>
+              <UserCog size={20} />
+            </button>
+            <button onClick={() => setShowSettings(true)}>
+              <Settings size={20} />
+            </button>
+          </div>
           <CrewSettingsModal
             open={showSettings}
             crew={crew as Crew}
@@ -148,6 +152,7 @@ export default function CrewDetailPage() {
             }}
             onDelete={handleDelete}
           />
+          <CrewRoleModal open={showRoles} onClose={() => setShowRoles(false)} />
         </>
       )}
       <EditableImageUpload
