@@ -29,6 +29,7 @@ export interface CrewTopic {
 export interface Crew {
   id: string;
   name: string;
+  profileImage?: string;
   coverImage: string;
   description: string;
   links: CrewLink[];
