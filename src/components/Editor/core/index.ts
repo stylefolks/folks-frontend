@@ -11,8 +11,7 @@ import {buildMenuItems} from "./menu"
 import {buildKeymap} from "./keymap"
 import {buildInputRules} from "./inputrules"
 import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin"
-import { fetchCrews } from "@/lib/crew"
-import { searchUsers } from "@/lib/user"
+import { searchCrew } from "@/lib/crew"
 
 export {buildMenuItems, buildKeymap, buildInputRules}
 
@@ -63,15 +62,15 @@ export function setup(options: {
 }) {
   let plugins = [
     getFolksMentionPlugin({
-      getSuggestions: async (type, text, done) => {
+      getSuggestions: async (_type, text, done) => {
         try {
-          const [crews, users] = await Promise.all([
-            fetchCrews({ search: text, limit: '5' }),
-            searchUsers({ search: text, limit: '5' }),
-          ]);
-          const crewItems = crews.map((c) => ({ id: c.id, name: c.name, type: 'crew' }));
-          const userItems = users.map((u) => ({ id: u.userId, name: u.username, type: 'user' }));
-          done([...crewItems, ...userItems]);
+          const crews = await searchCrew({ search: text, limit: '5' });
+          const crewItems = crews.map((c) => ({
+            id: c.id,
+            name: c.name,
+            type: 'crew',
+          }));
+          done(crewItems);
         } catch {
           done([]);
         }

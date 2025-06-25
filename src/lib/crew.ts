@@ -83,11 +83,21 @@ export async function fetchCrewTopics(id: string): Promise<CrewTopic[]> {
   return res.json();
 }
 
-export async function fetchCrews(params: Record<string, string> = {}): Promise<CrewSummary[]> {
+export async function fetchCrews(
+  params: Record<string, string> = {},
+): Promise<CrewSummary[]> {
   const search = new URLSearchParams(params).toString();
-  const res = await fetch(`${API_BASE}/crews${search ? `?${search}` : ''}`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/crews${search ? `?${search}` : ''}`, {
+    cache: 'no-store',
+  });
   if (!res.ok) throw new Error('Failed to load crews');
   return res.json();
+}
+
+export async function searchCrew(
+  params: Record<string, string> = {},
+): Promise<CrewSummary[]> {
+  return fetchCrews(params);
 }
 
 export async function createCrew(data: {
