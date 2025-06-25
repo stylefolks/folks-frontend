@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getToken, getMyId } from "@/lib/auth";
-import { getUserCrews, type Crew as UserCrew, type SimpleUser } from "@/lib/profile";
-import { fetchCrew, type CrewSummary } from "@/lib/crew";
+import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
+import { fetchCrew } from "@/lib/crew";
 import { Editor } from "@/components/Editor";
-import CrewMentionList from "@/components/crews/CrewMentionList";
-import UserMentionList from "@/components/users/UserMentionList";
 import { createPost, type CreatePostDto } from "@/lib/posts";
 import { extractMentionsFromDoc } from "@/lib/mentions";
 import { Input } from "@/components/ui/input";
@@ -42,11 +40,6 @@ export default function WritePage() {
     undefined,
   );
   const [editorView, setEditorView] = useState<EditorView | null>(null);
-  const [mentionQuery, setMentionQuery] = useState("");
-  const [mentionPos, setMentionPos] = useState<{
-    left: number;
-    top: number;
-  } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -87,37 +80,6 @@ export default function WritePage() {
       .catch(() => setIsCrewAdmin(false));
   }, [crewId, myId]);
 
-  useEffect(() => {
-    if (!editorView) return;
-    const handler = () => {
-      const { state } = editorView;
-      const { from } = state.selection;
-      const $from = state.doc.resolve(from);
-      const textBefore = $from.parent.textBetween(
-        0,
-        $from.parentOffset,
-        undefined,
-        "\uFFFC",
-      );
-      const match = /@([\w\u3131-\uD79D]*)$/.exec(textBefore);
-      if (match) {
-        const query = match[1];
-        const pos = from - query.length;
-        const coords = editorView.coordsAtPos(pos);
-        setMentionQuery(query);
-        setMentionPos({ left: coords.left, top: coords.bottom });
-      } else {
-        setMentionQuery("");
-        setMentionPos(null);
-      }
-    };
-    editorView.dom.addEventListener("keyup", handler);
-    editorView.dom.addEventListener("click", handler);
-    return () => {
-      editorView.dom.removeEventListener("keyup", handler);
-      editorView.dom.removeEventListener("click", handler);
-    };
-  }, [editorView]);
 
   const saveDraft = () => {
     const draft: Draft = {
@@ -180,31 +142,6 @@ export default function WritePage() {
     setEditorState(value);
   };
 
-  const insertMention = (
-    id: string,
-    label: string,
-    type: 'crew' | 'user',
-  ) => {
-    if (!editorView) return;
-    const { state } = editorView;
-    const { from } = state.selection;
-    const start = from - mentionQuery.length - 1;
-    const mentionNode = state.schema.nodes.mention?.create({ id, label, type });
-    if (!mentionNode) return;
-    const tr = state.tr.replaceWith(start, from, [mentionNode, state.schema.text(' ')]);
-    editorView.dispatch(tr);
-    editorView.focus();
-    setMentionQuery('');
-    setMentionPos(null);
-  };
-
-  const handleMentionSelect = (crew: CrewSummary) => {
-    insertMention(String(crew.id), crew.name, 'crew');
-  };
-
-  const handleUserMentionSelect = (user: SimpleUser) => {
-    insertMention(String(user.userId), user.username, 'user');
-  };
 
   const categories = ["BASIC", "COLUMN"];
   const metaTypes = ["EVENT", "NOTICE"];
@@ -264,16 +201,6 @@ export default function WritePage() {
           value={initialDoc}
           onChange={handleChange}
           onReady={setEditorView}
-        />
-        <CrewMentionList
-          query={mentionQuery}
-          position={mentionPos}
-          onSelect={handleMentionSelect}
-        />
-        <UserMentionList
-          query={mentionQuery}
-          position={mentionPos}
-          onSelect={handleUserMentionSelect}
         />
       </div>
       <div className="flex gap-4 flex-col mt-8">

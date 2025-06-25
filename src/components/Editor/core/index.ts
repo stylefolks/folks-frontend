@@ -10,6 +10,9 @@ import {Schema} from "prosemirror-model"
 import {buildMenuItems} from "./menu"
 import {buildKeymap} from "./keymap"
 import {buildInputRules} from "./inputrules"
+import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin"
+import { fetchCrews } from "@/lib/crew"
+import { searchUsers } from "@/lib/user"
 
 export {buildMenuItems, buildKeymap, buildInputRules}
 
@@ -59,6 +62,25 @@ export function setup(options: {
   menuContent?: MenuElement[][]
 }) {
   let plugins = [
+    getFolksMentionPlugin({
+      getSuggestions: async (type, text, done) => {
+        try {
+          const [crews, users] = await Promise.all([
+            fetchCrews({ search: text, limit: '5' }),
+            searchUsers({ search: text, limit: '5' }),
+          ]);
+          const crewItems = crews.map((c) => ({ id: c.id, name: c.name, type: 'crew' }));
+          const userItems = users.map((u) => ({ id: u.userId, name: u.username, type: 'user' }));
+          done([...crewItems, ...userItems]);
+        } catch {
+          done([]);
+        }
+      },
+      getSuggestionsHTML: (items) =>
+        `<div class="suggestion-item-list">${items
+          .map((i) => `<div class="suggestion-item">${i.name}</div>`)
+          .join('')}</div>`,
+    }),
     buildInputRules(options.schema),
     keymap(buildKeymap(options.schema, options.mapKeys)),
     keymap(baseKeymap),
