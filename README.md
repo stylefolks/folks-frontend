@@ -89,6 +89,10 @@
 - 사용자명: `folks`
 - 비밀번호: `folks-password`
 
+`@`검색은 아래로 가능합니다.
+
+- write페이지에서 `Crew-[id]`로 prefix를 가진 이름이 랜덤으로 생성됩니다.
+
 `/profile/[userId]` 경로로 접근하면 임의의 랜덤 프로필 정보를 확인할 수 있습니다.
 
 본 프로젝트는 [stylefolks-frontend](https://github.com/stylefolks/stylefolks-frontend) 의 명세를 참고하여 개발되고 있습니다.
