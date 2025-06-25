@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getToken, getMyId } from "@/lib/auth";
-import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
+import { getUserCrews, type Crew as UserCrew, type SimpleUser } from "@/lib/profile";
 import { fetchCrew, type CrewSummary } from "@/lib/crew";
 import { Editor } from "@/components/Editor";
 import CrewMentionList from "@/components/crews/CrewMentionList";
+import UserMentionList from "@/components/users/UserMentionList";
+import { createPost, type CreatePostDto } from "@/lib/posts";
+import { extractMentionsFromDoc } from "@/lib/mentions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initialDoc } from "@/components/Editor/core/doc";
@@ -17,6 +20,7 @@ interface Draft {
   bigCategory: string;
   hashtags: string;
   crewId?: string;
+  metaType?: string;
   editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
@@ -28,6 +32,7 @@ export default function WritePage() {
   const [title, setTitle] = useState("");
   const [bigCategory, setBigCategory] = useState("OOTD");
   const [hashtags, setHashtags] = useState("");
+  const [metaType, setMetaType] = useState("");
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [crews, setCrews] = useState<UserCrew[]>([]);
@@ -52,6 +57,7 @@ export default function WritePage() {
       setTitle(draft.title);
       setBigCategory(draft.bigCategory);
       setHashtags(draft.hashtags);
+      if (draft.metaType) setMetaType(draft.metaType);
       setEditorState(draft.editorState);
       if (draft.crewId) {
         setSelectedCrewId(draft.crewId);
@@ -118,6 +124,7 @@ export default function WritePage() {
       title,
       bigCategory,
       hashtags,
+      metaType,
       crewId: selectedCrewId,
       editorState,
     };
@@ -125,11 +132,12 @@ export default function WritePage() {
     alert("Draft saved");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const draft: Draft = {
       title,
       bigCategory,
       hashtags,
+      metaType,
       crewId: selectedCrewId,
       editorState,
     };
@@ -139,8 +147,28 @@ export default function WritePage() {
       navigate("/login", { state: { from: location } });
       return;
     }
-    clearDraft();
-    alert("Post submitted");
+
+    if (!editorView) return;
+    const content = editorView.state.doc.toJSON();
+    const { crewIds, userIds } = extractMentionsFromDoc(content);
+    const payload: CreatePostDto = {
+      title,
+      type: bigCategory as 'BASIC' | 'COLUMN',
+      content,
+      crewMentions: crewIds,
+      userMentions: userIds,
+    };
+    if (metaType) {
+      payload.metaType = metaType as 'EVENT' | 'NOTICE';
+    }
+
+    try {
+      await createPost(payload);
+      clearDraft();
+      alert('Post submitted');
+    } catch {
+      alert('Failed to submit');
+    }
   };
 
   const clearDraft = () => {
@@ -152,23 +180,34 @@ export default function WritePage() {
     setEditorState(value);
   };
 
-  const handleMentionSelect = (crew: CrewSummary) => {
+  const insertMention = (
+    id: string,
+    label: string,
+    type: 'crew' | 'user',
+  ) => {
     if (!editorView) return;
     const { state } = editorView;
     const { from } = state.selection;
     const start = from - mentionQuery.length - 1;
-    const tr = state.tr.replaceWith(
-      start,
-      from,
-      state.schema.text(`@${crew.name} `),
-    );
+    const mentionNode = state.schema.nodes.mention?.create({ id, label, type });
+    if (!mentionNode) return;
+    const tr = state.tr.replaceWith(start, from, [mentionNode, state.schema.text(' ')]);
     editorView.dispatch(tr);
     editorView.focus();
-    setMentionQuery("");
+    setMentionQuery('');
     setMentionPos(null);
   };
 
+  const handleMentionSelect = (crew: CrewSummary) => {
+    insertMention(String(crew.id), crew.name, 'crew');
+  };
+
+  const handleUserMentionSelect = (user: SimpleUser) => {
+    insertMention(String(user.userId), user.username, 'user');
+  };
+
   const categories = ["BASIC", "COLUMN"];
+  const metaTypes = ["EVENT", "NOTICE"];
 
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
@@ -203,6 +242,18 @@ export default function WritePage() {
           </option>
         ))}
       </select>
+      <select
+        value={metaType}
+        onChange={(e) => setMetaType(e.target.value)}
+        className="w-full border p-2 rounded"
+      >
+        <option value="">Meta Type (optional)</option>
+        {metaTypes.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
       <Input
         placeholder="Hashtags (comma separated)"
         value={hashtags}
@@ -218,6 +269,11 @@ export default function WritePage() {
           query={mentionQuery}
           position={mentionPos}
           onSelect={handleMentionSelect}
+        />
+        <UserMentionList
+          query={mentionQuery}
+          position={mentionPos}
+          onSelect={handleUserMentionSelect}
         />
       </div>
       <div className="flex gap-4 flex-col mt-8">

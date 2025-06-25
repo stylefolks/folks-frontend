@@ -1,4 +1,4 @@
-import { MarkSpec, Schema } from 'prosemirror-model';
+import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 import { schema as basic } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 
@@ -25,6 +25,38 @@ const nodes = baseNodes.update('paragraph', {
     },
   }],
 });
+
+const mentionNode: NodeSpec = {
+  inline: true,
+  group: 'inline',
+  selectable: false,
+  atom: true,
+  attrs: { id: {}, type: {}, label: {} },
+  toDOM(node) {
+    const { id, type, label } = node.attrs as any;
+    return [
+      'span',
+      {
+        'data-id': id,
+        'data-type': type,
+        class: 'mention',
+      },
+      `@${label}`,
+    ];
+  },
+  parseDOM: [
+    {
+      tag: 'span[data-id][data-type]',
+      getAttrs(dom: HTMLElement) {
+        return {
+          id: dom.getAttribute('data-id'),
+          type: dom.getAttribute('data-type'),
+          label: dom.textContent?.replace(/^@/, '') ?? '',
+        };
+      },
+    },
+  ],
+};
 
 const colorMark: MarkSpec = {
   attrs: { color: {} },
@@ -67,7 +99,7 @@ const strikeMark: MarkSpec = {
 };
 
 export const editorSchema = new Schema({
-  nodes,
+  nodes: nodes.addToEnd('mention', mentionNode),
   marks: basic.spec.marks
     .addToEnd('color', colorMark)
     .addToEnd('font', fontMark)

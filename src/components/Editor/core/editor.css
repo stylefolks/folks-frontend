@@ -379,3 +379,7 @@ img.ProseMirror-separator {
 .ProseMirror p {
   margin-bottom: 1em;
 }
+
+.mention {
+  color: #2563eb;
+}
