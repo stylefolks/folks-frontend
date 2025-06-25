@@ -4,19 +4,13 @@ import { getToken, getMyId } from "@/lib/auth";
 import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
 import { fetchCrew } from "@/lib/crew";
 import { Editor } from "@/components/Editor";
-<<<<<<< HEAD
 import { createPost, type CreatePostDto } from "@/lib/posts";
 import { extractMentionsFromDoc } from "@/lib/mentions";
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initialDoc } from "@/components/Editor/core/doc";
 import { EditorState } from "prosemirror-state";
-<<<<<<< HEAD
 import { EditorView } from "prosemirror-view";
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
 import { useMeta } from "@/lib/meta";
 
 interface Draft {
@@ -24,10 +18,7 @@ interface Draft {
   bigCategory: string;
   hashtags: string;
   crewId?: string;
-<<<<<<< HEAD
   metaType?: string;
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
   editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
 }
 
@@ -35,31 +26,20 @@ const DRAFT_KEY = "write_draft";
 
 export default function WritePage() {
   useMeta({ title: "Write - Stylefolks" });
-<<<<<<< HEAD
 
   const [title, setTitle] = useState("");
   const [bigCategory, setBigCategory] = useState("OOTD");
   const [hashtags, setHashtags] = useState("");
   const [metaType, setMetaType] = useState("");
-=======
-  const [title, setTitle] = useState("");
-  const [bigCategory, setBigCategory] = useState("OOTD");
-  const [hashtags, setHashtags] = useState("");
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [crews, setCrews] = useState<UserCrew[]>([]);
   const [crewId, setCrewId] = useState("");
   const [isCrewAdmin, setIsCrewAdmin] = useState(false);
   const [selectedCrewId, setSelectedCrewId] = useState<string | undefined>(
-<<<<<<< HEAD
     undefined,
   );
   const [editorView, setEditorView] = useState<EditorView | null>(null);
-=======
-    undefined
-  );
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -106,10 +86,7 @@ export default function WritePage() {
       title,
       bigCategory,
       hashtags,
-<<<<<<< HEAD
       metaType,
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
       crewId: selectedCrewId,
       editorState,
     };
@@ -117,19 +94,12 @@ export default function WritePage() {
     alert("Draft saved");
   };
 
-<<<<<<< HEAD
   const handleSubmit = async () => {
-=======
-  const handleSubmit = () => {
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
     const draft: Draft = {
       title,
       bigCategory,
       hashtags,
-<<<<<<< HEAD
       metaType,
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
       crewId: selectedCrewId,
       editorState,
     };
@@ -139,7 +109,6 @@ export default function WritePage() {
       navigate("/login", { state: { from: location } });
       return;
     }
-<<<<<<< HEAD
 
     if (!editorView) return;
     const content = editorView.state.doc.toJSON();
@@ -162,10 +131,6 @@ export default function WritePage() {
     } catch {
       alert('Failed to submit');
     }
-=======
-    clearDraft();
-    alert("Post submitted");
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
   };
 
   const clearDraft = () => {
@@ -177,18 +142,9 @@ export default function WritePage() {
     setEditorState(value);
   };
 
-<<<<<<< HEAD
 
   const categories = ["BASIC", "COLUMN"];
   const metaTypes = ["EVENT", "NOTICE"];
-=======
-  const categories = [
-    "OOTD",
-    "Column",
-    "Review",
-    ...(isCrewAdmin ? ["Notice", "Event"] : []),
-  ];
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
 
   return (
     <div className="mx-auto max-w-2xl p-4 space-y-4">
@@ -240,7 +196,6 @@ export default function WritePage() {
         value={hashtags}
         onChange={(e) => setHashtags(e.target.value)}
       />
-<<<<<<< HEAD
       <div className="relative">
         <Editor
           value={initialDoc}
@@ -248,9 +203,6 @@ export default function WritePage() {
           onReady={setEditorView}
         />
       </div>
-=======
-      <Editor value={initialDoc} onChange={handleChange} />
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
       <div className="flex gap-4 flex-col mt-8">
         <Button type="button" onClick={handleSubmit} variant="outline">
           Submit

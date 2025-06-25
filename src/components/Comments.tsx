@@ -61,7 +61,6 @@ export default function Comments({ postId }: { postId: string }) {
       ) : (
         <ul className="space-y-2">
           {comments.map((c) => (
-<<<<<<< HEAD
             <li key={c.id} className="rounded border p-2">
               {editingId === c.id ? (
                 <div className="flex items-start space-x-2">
@@ -71,11 +70,6 @@ export default function Comments({ postId }: { postId: string }) {
                     className="h-8 w-8 rounded-full object-cover cursor-pointer"
                     onClick={() => navigate(`/profile/${c.author.userId}`)}
                   />
-=======
-            <li key={c.id} className="rounded border p-2 space-y-2">
-              {editingId === c.id ? (
-                <div className="flex space-x-2">
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
                   <Input
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
@@ -85,7 +79,6 @@ export default function Comments({ postId }: { postId: string }) {
                   </Button>
                 </div>
               ) : (
-<<<<<<< HEAD
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-2">
                     <img
@@ -96,10 +89,6 @@ export default function Comments({ postId }: { postId: string }) {
                     />
                     <span>{c.text}</span>
                   </div>
-=======
-                <div className="flex justify-between items-center">
-                  <span>{c.text}</span>
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
                   <div className="space-x-2">
                     <Button size="sm" variant="outline" onClick={() => startEdit(c)}>
                       Edit

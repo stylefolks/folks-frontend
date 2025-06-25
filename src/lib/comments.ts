@@ -1,17 +1,11 @@
 import { API_BASE } from './auth';
-<<<<<<< HEAD
 import type { SimpleUser } from './profile';
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
 
 export interface Comment {
   id: string;
   postId: string;
   text: string;
-<<<<<<< HEAD
   author: SimpleUser;
-=======
->>>>>>> 2909d7313c17ff510549ea1b7b13909f6c7cf391
 }
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
