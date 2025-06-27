@@ -384,6 +384,10 @@ img.ProseMirror-separator {
   color: #2563eb;
 }
 
+.hashtag {
+  color: #2563eb;
+}
+
 .suggestion-item-container {
   background: white;
   border: 1px solid #e5e7eb;
