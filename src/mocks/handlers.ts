@@ -14,6 +14,7 @@ interface Profile {
   imageUrl?: string;
   website?: string;
   backgroundUrl?: string;
+  role?: 'member' | 'master' | 'admin';
 }
 
 let currentProfile: Profile = {
@@ -24,6 +25,7 @@ let currentProfile: Profile = {
   imageUrl: 'https://picsum.photos/seed/folks/200',
   website: 'https://example.com',
   backgroundUrl: 'https://picsum.photos/seed/folks-bg/1200/400',
+  role: 'master',
 };
 
 function randomProfile(id: string): Profile {
@@ -36,6 +38,7 @@ function randomProfile(id: string): Profile {
     imageUrl: `https://picsum.photos/seed/${rand}/200`,
     website: `https://example.com/${id}`,
     backgroundUrl: `https://picsum.photos/seed/${rand}-bg/1200/400`,
+    role: 'member',
   };
 }
 
@@ -151,6 +154,11 @@ interface Comment {
 
 const commentsMap: Record<string, Comment[]> = {};
 
+type SimpleUser = { userId: string; username: string; imageUrl?: string };
+const followersMap: Record<string, SimpleUser[]> = {};
+const followingMap: Record<string, SimpleUser[]> = {};
+const blockedUsers = new Set<string>();
+
 interface CrewTab {
   id: number;
   crewId: number;
@@ -230,6 +238,30 @@ export const handlers = [
 
   http.get(`${API_BASE}/user/me/following`, () => {
     return HttpResponse.json([]);
+  }),
+
+  http.get(`${API_BASE}/user/:id/followers`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!followersMap[id]) {
+      followersMap[id] = Array.from({ length: 5 }, (_, i) => {
+        const p = randomProfile(`follower-${id}-${i}`);
+        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+      });
+    }
+    const list = followersMap[id].filter((u) => !blockedUsers.has(u.userId));
+    return HttpResponse.json(list);
+  }),
+
+  http.get(`${API_BASE}/user/:id/following`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!followingMap[id]) {
+      followingMap[id] = Array.from({ length: 5 }, (_, i) => {
+        const p = randomProfile(`following-${id}-${i}`);
+        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+      });
+    }
+    const list = followingMap[id].filter((u) => !blockedUsers.has(u.userId));
+    return HttpResponse.json(list);
   }),
 
   http.get(`${API_BASE}/user/:id`, ({ params }) => {
@@ -500,5 +532,29 @@ export const handlers = [
       }
     }
     return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.delete(`${API_BASE}/users/:id`, ({ params }) => {
+    const { id } = params as { id: string };
+    for (const key of Object.keys(followersMap)) {
+      followersMap[key] = followersMap[key].filter((u) => u.userId !== id);
+    }
+    for (const key of Object.keys(followingMap)) {
+      followingMap[key] = followingMap[key].filter((u) => u.userId !== id);
+    }
+    blockedUsers.delete(id);
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post(`${API_BASE}/users/:id/block`, ({ params }) => {
+    const { id } = params as { id: string };
+    blockedUsers.add(id);
+    for (const key of Object.keys(followersMap)) {
+      followersMap[key] = followersMap[key].filter((u) => u.userId !== id);
+    }
+    for (const key of Object.keys(followingMap)) {
+      followingMap[key] = followingMap[key].filter((u) => u.userId !== id);
+    }
+    return new HttpResponse(null, { status: 200 });
   }),
 ];

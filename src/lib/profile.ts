@@ -6,6 +6,7 @@ export interface Profile {
   imageUrl?: string;
   website?: string;
   backgroundUrl?: string;
+  role?: 'member' | 'master' | 'admin';
 }
 
 import { API_BASE, getToken } from './auth';
@@ -169,4 +170,18 @@ export async function getFollowedBrands(userId: string): Promise<Brand[]> {
     throw new Error('Failed to load brands');
   }
   return res.json();
+}
+
+export async function deleteUser(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    throw new Error('Failed to delete user');
+  }
+}
+
+export async function blockUser(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/users/${id}/block`, { method: 'POST' });
+  if (!res.ok) {
+    throw new Error('Failed to block user');
+  }
 }
