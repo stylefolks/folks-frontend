@@ -58,6 +58,33 @@ const mentionNode: NodeSpec = {
   ],
 };
 
+const hashtagNode: NodeSpec = {
+  inline: true,
+  group: 'inline',
+  selectable: false,
+  atom: true,
+  attrs: { tag: {} },
+  toDOM(node) {
+    const { tag } = node.attrs as any;
+    return [
+      'span',
+      {
+        'data-tag': tag,
+        class: 'hashtag',
+      },
+      `#${tag}`,
+    ];
+  },
+  parseDOM: [
+    {
+      tag: 'span[data-tag]',
+      getAttrs(dom: HTMLElement) {
+        return { tag: dom.getAttribute('data-tag') };
+      },
+    },
+  ],
+};
+
 const colorMark: MarkSpec = {
   attrs: { color: {} },
   parseDOM: [{
@@ -99,7 +126,9 @@ const strikeMark: MarkSpec = {
 };
 
 export const editorSchema = new Schema({
-  nodes: nodes.addToEnd('mention', mentionNode),
+  nodes: nodes
+    .addToEnd('mention', mentionNode)
+    .addToEnd('hashtag', hashtagNode),
   marks: basic.spec.marks
     .addToEnd('color', colorMark)
     .addToEnd('font', fontMark)

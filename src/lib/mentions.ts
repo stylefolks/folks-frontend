@@ -21,7 +21,8 @@ export const extractFromDoc = (
       if (!isNaN(id)) crewIds.push(id);
     }
     if (types.includes("hashtag") && node.type === "hashtag") {
-      if (node.text) hashtags.push(node.text);
+      const tag = node.attrs?.tag || node.text;
+      if (tag) hashtags.push(tag);
     }
     if (node.content) node.content.forEach(traverse);
   };
@@ -37,4 +38,27 @@ export const extractFromDoc = (
   if (types.includes("crew")) result.crewIds = crewIds;
   if (types.includes("hashtag")) result.hashtags = hashtags;
   return result;
+};
+
+export const extractMentionsFromDoc = (doc: any): {
+  crewIds: number[];
+  userIds: number[];
+} => {
+  const crewIds: number[] = [];
+  const userIds: number[] = [];
+
+  const traverse = (node: any) => {
+    if (node.type === 'mention') {
+      const id = parseInt(node.attrs.id, 10);
+      if (node.attrs.type === 'crew') {
+        if (!isNaN(id) && !crewIds.includes(id)) crewIds.push(id);
+      } else if (node.attrs.type === 'user') {
+        if (!isNaN(id) && !userIds.includes(id)) userIds.push(id);
+      }
+    }
+    if (node.content) node.content.forEach(traverse);
+  };
+
+  traverse(doc);
+  return { crewIds, userIds };
 };
