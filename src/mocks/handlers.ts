@@ -350,7 +350,7 @@ export const handlers = [
   http.get(`${API_BASE}/crews/:id/topics`, ({ params }) => {
     const { id } = params as { id: string };
     const topics = ['talk', 'column', 'look'].map((tag, idx) => ({
-      tag,
+      tag: `#${tag}-${id}`,
       count: idx + 1,
     }));
     return HttpResponse.json(topics);
@@ -362,6 +362,10 @@ export const handlers = [
       crewTabsMap[id] = [
         { id: 1, crewId: Number(id), title: 'Posts', type: 'posts', isVisible: true, order: 0 },
         { id: 2, crewId: Number(id), title: 'Overview', type: 'overview', isVisible: true, order: 1 },
+        { id: 3, crewId: Number(id), title: 'Notice', type: 'notice', isVisible: true, order: 2 },
+        { id: 4, crewId: Number(id), title: 'Event', type: 'event', isVisible: true, order: 3 },
+        { id: 5, crewId: Number(id), title: 'topic only for tag1', type: 'topic', isVisible: true, order: 4 ,hashtag: "tag1" },
+
       ];
     }
     return HttpResponse.json(crewTabsMap[id]);

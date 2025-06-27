@@ -5,7 +5,7 @@ import EditableLinkList from '../EditableLinkList';
 import { Button } from '../ui/button';
 import type { Crew, CrewLink } from '@/lib/crew';
 
-interface Props {
+interface CrewSettingsModalProps {
   open: boolean;
   crew: Crew;
   onClose: () => void;
@@ -13,7 +13,10 @@ interface Props {
   onDelete: () => void;
 }
 
-export default function CrewSettingsModal({ open, crew, onClose, onSave, onDelete }: Props) {
+/**
+ * @description Crew settings modal for editing crew profile and links.
+ */
+export default function CrewSettingsModal({ open, crew, onClose, onSave, onDelete }: CrewSettingsModalProps) {
   const [profileImage, setProfileImage] = useState(crew.profileImage || '');
   const [coverImage, setCoverImage] = useState(crew.coverImage);
   const [links, setLinks] = useState<CrewLink[]>(crew.links);

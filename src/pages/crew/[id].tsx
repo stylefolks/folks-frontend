@@ -129,31 +129,36 @@ export default function CrewDetailPage() {
   };
 
   const currentTab = tabs.find((t) => t.type === tab);
-
+  
   return (
     <div className="relative mx-auto max-w-2xl space-y-4 p-4 mt-4">
       {isEditable && (
-        <>
+        <>  
+        <div className='absolute right-4 top-4 z-20 bg-violet-100'>
           <button
-            className="absolute right-4 top-4"
+            className="absolute right-4 top-4 z-20"
             onClick={() => setShowSettings(true)}
           >
             <Settings size={20} />
           </button>
           <button
-            className="absolute right-12 top-4"
+            className="absolute right-12 top-4 z-20"
             onClick={() => setShowTabSettings(true)}
           >
             <LayoutList size={20} />
           </button>
+          </div>
           <CrewSettingsModal
             open={showSettings}
             crew={crew as Crew}
             onClose={() => setShowSettings(false)}
             onSave={async (data) => {
               setCrew({ ...(crew as Crew), ...data });
-              await updateCrew(crewId, data).catch(() => {});
-              setShowSettings(false);
+              await updateCrew(crewId, data).then(()=> {
+                setShowSettings(false);
+              }).catch(() => {
+                alert('Failed to update crew');
+              });
             }}
             onDelete={handleDelete}
           />
@@ -163,8 +168,11 @@ export default function CrewDetailPage() {
             onClose={() => setShowTabSettings(false)}
             onSave={async (next) => {
               setTabs(next);
-              await updateCrewTabs(crewId, next).catch(() => {});
-              setShowTabSettings(false);
+              await updateCrewTabs(crewId, next).then(()=> {
+                setShowTabSettings(false);
+              }).catch(()=> {
+                alert('Failed to update tabs');
+              })
             }}
           />
         </>
@@ -172,7 +180,7 @@ export default function CrewDetailPage() {
       <EditableImageUpload
         src={crew.coverImage}
         onChange={() => {}}
-        isEditable={false}
+        isEditable={isEditable}
         className="h-40 w-full rounded"
       />
       {crew.profileImage && (
@@ -183,7 +191,27 @@ export default function CrewDetailPage() {
       )}
       <h1 className="text-xl font-bold">{crew.name}</h1>
       <p className="text-sm text-gray-600">{crew.description}</p>
-      <EditableLinkList links={crew.links} onChange={() => {}} isEditable={false} />
+      <div>
+        {topics.map((topic)=> {
+          return (
+            <button
+              key={topic.tag}
+              className={`mr-2 mb-2 inline-block rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200`}
+              onClick={()=> navigate(`/search?tag=${encodeURIComponent(topic.tag)}`)}
+            >
+              {topic.tag}
+            </button> 
+          )
+        })}
+      </div>
+      {crew.links.length > 0 && (
+        crew.links.map((link) => (
+          <a href={link.url} className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">
+                {link.title || link.url}
+          </a>
+        ))
+      )}
+    
       <TabNav
         tabs={tabs.filter((t) => t.isVisible).map((t) => ({ id: t.type, title: t.title }))}
         current={tab}
