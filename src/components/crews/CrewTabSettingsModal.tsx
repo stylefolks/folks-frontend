@@ -93,9 +93,18 @@ export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Pr
               </div>
               {tab.type === 'topic' && (
                 <Input
-                  value={tab.hashtag ?? ''}
-                  onChange={(e) => handleChange(i, 'hashtag', e.target.value)}
-                  placeholder="Hashtag"
+                  value={tab.hashtags?.join(', ') ?? ''}
+                  onChange={(e) =>
+                    handleChange(
+                      i,
+                      'hashtags',
+                      e.target.value
+                        .split(',')
+                        .map((t) => t.trim())
+                        .filter(Boolean),
+                    )
+                  }
+                  placeholder="Hashtags (comma separated)"
                 />
               )}
               <div className="flex gap-2">
