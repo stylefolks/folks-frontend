@@ -48,7 +48,6 @@
   커버 이미지, 소개글 등을 직접 수정하고 삭제할 수 있습니다.
 - [x] 크루 전용 포스트 및 후기 등록
   - @crewname으로 멘션된 글의 hashtag를 통해 해당 글을 필터링함.
-- [x] 크루 공지
   - @crewname + crewMetaType으로 관리하도록 함.
   - CrewTabType은 ('OVERVIEW','POSTS','NOTICE','EVENT','TOPIC')가 존재하며 크루별로 타입에 따라 다른 네이밍을 쓸 수 있음.
     - Topic: 특정 해시태그들을 기반으로 모음집을 만들 수 있는 타입\

@@ -1,4 +1,4 @@
-import { Input } from '../ui/input';
+import { Input } from "../ui/input";
 
 interface Props {
   value: string;
@@ -6,7 +6,11 @@ interface Props {
   placeholder?: string;
 }
 
-export default function SearchInput({ value, onChange, placeholder = '어떤 스타일이 궁금하세요?' }: Props) {
+export default function SearchInput({
+  value,
+  onChange,
+  placeholder = "Folks, find your style",
+}: Props) {
   return (
     <Input
       type="search"

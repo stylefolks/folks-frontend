@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getToken, getMyId } from "@/lib/auth";
-import { getUserCrews, type Crew as UserCrew } from "@/lib/profile";
-import { fetchCrew } from "@/lib/crew";
+import { getToken } from "@/lib/auth";
 import { Editor } from "@/components/Editor";
-import { createPost, type CreatePostDto } from "@/lib/posts";
-import { extractMentionsFromDoc } from "@/lib/mentions";
+import {
+  BrandMetaType,
+  CREW_META_TYPES,
+  CrewMetaType,
+  PostType,
+  type CreatePostDto,
+} from "@/lib/posts";
+import { extractFromDoc } from "@/lib/mentions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { initialDoc } from "@/components/Editor/core/doc";
@@ -13,32 +17,20 @@ import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { useMeta } from "@/lib/meta";
 
-interface Draft {
-  title: string;
-  bigCategory: string;
-  hashtags: string;
-  crewId?: string;
-  metaType?: string;
-  editorState: EditorState | null; //TLDR; 추후 편집 확장성을 위해서 doc만이 아닌 state 전체 저장
-}
-
 const DRAFT_KEY = "write_draft";
 
 export default function WritePage() {
   useMeta({ title: "Write - Stylefolks" });
 
   const [title, setTitle] = useState("");
-  const [bigCategory, setBigCategory] = useState("OOTD");
-  const [hashtags, setHashtags] = useState("");
-  const [metaType, setMetaType] = useState("");
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
-  const [myId, setMyId] = useState<string | null>(null);
-  const [crews, setCrews] = useState<UserCrew[]>([]);
-  const [crewId, setCrewId] = useState("");
-  const [isCrewAdmin, setIsCrewAdmin] = useState(false);
-  const [selectedCrewId, setSelectedCrewId] = useState<string | undefined>(
-    undefined,
+  const [postType, setPostType] = useState<PostType>("BASIC");
+  const [crewMetaType, setCrewMetaType] = useState<CrewMetaType | undefined>(
+    undefined
   );
+  const [brandMetaType, setBrandMetaType] = useState<BrandMetaType | undefined>(
+    undefined
+  );
+  const [content, setContent] = useState<EditorState | null>(null);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,62 +38,49 @@ export default function WritePage() {
   useEffect(() => {
     const raw = localStorage.getItem(DRAFT_KEY);
     if (raw) {
-      const draft: Draft = JSON.parse(raw);
+      const draft: CreatePostDto = JSON.parse(raw);
       setTitle(draft.title);
-      setBigCategory(draft.bigCategory);
-      setHashtags(draft.hashtags);
-      if (draft.metaType) setMetaType(draft.metaType);
-      setEditorState(draft.editorState);
-      if (draft.crewId) {
-        setSelectedCrewId(draft.crewId);
-      }
+      setPostType(draft.type);
+      if (draft.crewMetaType) setCrewMetaType(draft.crewMetaType);
+      setContent(draft.content);
     }
-    getMyId()
-      .then((id) => {
-        setMyId(id);
-        if (id) {
-          getUserCrews(id)
-            .then((c) => setCrews(c))
-            .catch(() => {});
-        }
-      })
-      .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (!crewId) {
-      setIsCrewAdmin(false);
-      return;
-    }
-    fetchCrew(crewId)
-      .then((crew) => {
-        setIsCrewAdmin(crew.ownerId === myId);
-      })
-      .catch(() => setIsCrewAdmin(false));
-  }, [crewId, myId]);
-
-
   const saveDraft = () => {
-    const draft: Draft = {
+    const extractResult = extractFromDoc(content?.toJSON() || {}, [
+      "brand",
+      "crew",
+      "hashtag",
+    ]);
+    const { brandIds, crewIds, hashtags } = extractResult;
+    const draft: CreatePostDto = {
       title,
-      bigCategory,
+      type: postType,
       hashtags,
-      metaType,
-      crewId: selectedCrewId,
-      editorState,
+      brandMetaType,
+      crewMetaType,
+      crewIds,
+      brandIds,
+      content,
     };
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     alert("Draft saved");
   };
 
   const handleSubmit = async () => {
-    const draft: Draft = {
+    if (!editorView) return;
+    const content = editorView.state.doc.toJSON();
+    const extractResult = extractFromDoc(content, ["brand", "crew", "hashtag"]);
+    const { brandIds, crewIds, hashtags } = extractResult;
+    const draft: CreatePostDto = {
       title,
-      bigCategory,
+      type: postType,
       hashtags,
-      metaType,
-      crewId: selectedCrewId,
-      editorState,
+      brandMetaType,
+      crewMetaType,
+      crewIds,
+      brandIds,
+      content,
     };
 
     if (!getToken()) {
@@ -109,28 +88,14 @@ export default function WritePage() {
       navigate("/login", { state: { from: location } });
       return;
     }
-
-    if (!editorView) return;
-    const content = editorView.state.doc.toJSON();
-    const { crewIds, userIds } = extractMentionsFromDoc(content);
-    const payload: CreatePostDto = {
-      title,
-      type: bigCategory as 'BASIC' | 'COLUMN',
-      content,
-      crewMentions: crewIds,
-      userMentions: userIds,
-    };
-    if (metaType) {
-      payload.metaType = metaType as 'EVENT' | 'NOTICE';
-    }
-
-    try {
-      await createPost(payload);
-      clearDraft();
-      alert('Post submitted');
-    } catch {
-      alert('Failed to submit');
-    }
+    console.log(draft);
+    // try {
+    //   await createPost(draft);
+    //   clearDraft();
+    //   alert("Post submitted");
+    // } catch {
+    //   alert("Failed to submit");
+    // }
   };
 
   const clearDraft = () => {
@@ -139,9 +104,8 @@ export default function WritePage() {
   };
 
   const handleChange = (value: EditorState) => {
-    setEditorState(value);
+    setContent(value);
   };
-
 
   const categories = ["BASIC", "COLUMN"];
   const metaTypes = ["EVENT", "NOTICE"];
@@ -154,23 +118,9 @@ export default function WritePage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      {crews.length > 0 && (
-        <select
-          value={crewId}
-          onChange={(e) => setCrewId(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          <option value="">Select Crew (optional)</option>
-          {crews.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      )}
       <select
-        value={bigCategory}
-        onChange={(e) => setBigCategory(e.target.value)}
+        value={postType}
+        onChange={(e) => setPostType(e.target.value as PostType)}
         className="w-full border p-2 rounded"
       >
         {categories.map((cat) => (
@@ -180,22 +130,29 @@ export default function WritePage() {
         ))}
       </select>
       <select
-        value={metaType}
-        onChange={(e) => setMetaType(e.target.value)}
+        value={brandMetaType}
+        onChange={(e) => setBrandMetaType(e.target.value as BrandMetaType)}
         className="w-full border p-2 rounded"
       >
-        <option value="">Meta Type (optional)</option>
+        <option value="">브랜드 메타 타입</option>
         {metaTypes.map((m) => (
           <option key={m} value={m}>
             {m}
           </option>
         ))}
       </select>
-      <Input
-        placeholder="Hashtags (comma separated)"
-        value={hashtags}
-        onChange={(e) => setHashtags(e.target.value)}
-      />
+      <select
+        value={crewMetaType}
+        onChange={(e) => setCrewMetaType(e.target.value as CrewMetaType)}
+        className="w-full border p-2 rounded"
+      >
+        <option value="">크루 메타 타입</option>
+        {CREW_META_TYPES.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
       <div className="relative">
         <Editor
           value={initialDoc}
