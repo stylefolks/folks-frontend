@@ -158,7 +158,7 @@ interface CrewTab {
   type: string;
   isVisible: boolean;
   order: number;
-  hashtag?: string;
+  hashtags?: string[];
 }
 
 const crewTabsMap: Record<string, CrewTab[]> = {};

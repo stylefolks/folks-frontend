@@ -206,7 +206,9 @@ export default function CrewDetailPage() {
       {currentTab?.type === 'topic' && (
         <PostList
           posts={posts.filter((p) =>
-            currentTab?.hashtag ? p.tags?.includes(currentTab.hashtag) : true,
+            currentTab?.hashtags?.length
+              ? currentTab.hashtags.some((tag) => p.tags?.includes(tag))
+              : true,
           )}
         />
       )}
