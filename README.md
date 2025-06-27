@@ -34,6 +34,11 @@
 - [x] 카테고리에 따른 게시글 CRUD
   - BrandMetaType(Notice, Promotion...), CrewMetaType(Notice, Event...)
 - [x] 댓글 CRUD UI/UX 및 API 연결
+- PostType은 두가지로 축약
+  - TALK: 일상적인 소통, 질문, 후기, 정보 공유 등 자유로운 커뮤니티형 게시물
+  - COLUMN: 인사이트, 칼럼, 리뷰, 분석 등 크리에이터/브랜드/마스터가 제공하는 고품질 콘텐츠
+  - CREW, BRAND, NOTICE, 기타 특수 포스트들은 별도의 메타데이터(예: postType이 아니라 postCategory, tag, 혹은 CREW 연동 등)로 처리해서 메인 포스트 타입은 2개로 간소화하는 것이 유지보수 측면에서 뛰어나다고 판단.
+  - 참고: 이후에 CREW 내 공지/브랜드 소식 등은 postType이 아니라, 별도 플래그/카테고리/연관 테이블로 분리해서 구현
 
 ### 🎪 CREW
 
@@ -45,16 +50,20 @@
   - @crewname으로 멘션된 글의 hashtag를 통해 해당 글을 필터링함.
 - [x] 크루 공지
   - @crewname + crewMetaType으로 관리하도록 함.
-- [ ] 크루 외부 링크 관리
-  - 아이콘과 링크를 자유롭게 넣을 수 있도록 열어주기
+  - CrewTabType은 ('OVERVIEW','POSTS','NOTICE','EVENT','TOPIC')가 존재하며 크루별로 타입에 따라 다른 네이밍을 쓸 수 있음.
+    - Topic: 특정 해시태그들을 기반으로 모음집을 만들 수 있는 타입\
+    - Overview: 크루에 대한 소개글 작성
+    - POSTS: 크루가 멘션된 전체 글
+    - NOTICE: 공지사항들
+    - EVENT: 오프라인 이벤트 공지
+      - 추후 v2에서 지도또는 길찾기 관련 UI/UX추가 하면 좋을 것으로 사료됨
+- [x] 크루 외부 링크 관리
+  - 일단 모달 내 텍스트와 링크만 기재 가능하도록
+- [x] CREW 이벤트 탭 등록(날짜, 장소, 링크)
+- [x] 이벤트 리스트 뷰
 - [ ] 팔로우한 회원 리스트 관리
 - [ ] 팔로우한 유저 크루 내 등급 변경
 - [ ] 팔로우한 유저의 등급에 따른 포스팅(OOTD 한정) 노출
-
-### 📆 오프라인 연동
-
-- [ ] CREW 이벤트 탭 등록(날짜, 장소, 링크)
-- [x] 이벤트 리스트 뷰
 - [ ] CREW 활동 히스토리 → 유저 프로필 연결
 
 ### 🏷️ BRAND
@@ -64,12 +73,11 @@
 - [ ] BRAND 글 상단 고정
 - [ ] CREW 페이지 스폰서 영역
 - [ ] 크루와 연결 시스템
-- [ ] 프리미엄 COLUMN 표시
+- [x] 각 페이지들의 게시글은 무한스크롤로 페이지네이션
 
-### Main Page
+### COLUMN
 
-- [x] 메인 페이지 게시글 무한 스크롤
-- [ ] Talks, Column, CREW, Brand 섹션 무한 스크롤
+- [ ] COLUMN
 
 ### Testing & Feedback
 
