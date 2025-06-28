@@ -142,6 +142,7 @@ interface Crew {
   description: string;
   links: { title: string; url: string }[];
   ownerId: string;
+  followers?: SimpleUser[];
 }
 
 let createdCrews: Crew[] = [];
@@ -161,6 +162,7 @@ type SimpleUser = { userId: string; username: string; imageUrl?: string };
 const followersMap: Record<string, SimpleUser[]> = {};
 const followingMap: Record<string, SimpleUser[]> = {};
 const blockedUsers = new Set<string>();
+const crewFollowersMap: Record<string, SimpleUser[]> = {};
 
 interface CrewTab {
   id: number;
@@ -348,8 +350,14 @@ export const handlers = [
   http.get(`${API_BASE}/crews/:id`, ({ params }) => {
     const { id } = params as { id: string };
     const found = createdCrews.find((c) => c.id === id);
+    if (!crewFollowersMap[id]) {
+      crewFollowersMap[id] = Array.from({ length: 5 }, (_, i) => {
+        const p = randomProfile(`crew-${id}-follower-${i}`);
+        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+      });
+    }
     if (found) {
-      return HttpResponse.json(found);
+      return HttpResponse.json({ ...found, followers: crewFollowersMap[id] });
     }
     return HttpResponse.json({
       id,
@@ -359,6 +367,7 @@ export const handlers = [
       description: `This is crew ${id}.`,
       links: [{ title: "Instagram", url: "https://instagram.com" }],
       ownerId: "folks",
+      followers: crewFollowersMap[id],
     });
   }),
 
@@ -469,7 +478,9 @@ export const handlers = [
       description: body.description ?? "",
       links: body.links ?? [],
       ownerId: currentProfile.userId,
+      followers: [],
     };
+    crewFollowersMap[newCrew.id] = [];
     createdCrews.push(newCrew);
     return HttpResponse.json(newCrew);
   }),

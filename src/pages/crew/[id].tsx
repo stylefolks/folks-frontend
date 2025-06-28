@@ -24,12 +24,13 @@ import { useSetAppBarTitle } from '@/lib/appBarTitle';
 import PostList from '@/components/PostList';
 import EditableText from '@/components/EditableText';
 import EditableImageUpload from '@/components/EditableImageUpload';
-import EditableLinkList from '@/components/EditableLinkList';
 import CrewSettingsModal from '@/components/crews/CrewSettingsModal';
 import CrewTabSettingsModal from '@/components/crews/CrewTabSettingsModal';
 import { Settings, LayoutList } from 'lucide-react';
 import TabNav from '@/components/TabNav';
 import EventCard from '@/components/EventCard';
+import FollowListModal from '@/components/users/FollowListModal';
+import type { SimpleUser } from '@/lib/profile';
 
 export default function CrewDetailPage() {
   const params = useParams();
@@ -50,6 +51,8 @@ export default function CrewDetailPage() {
   const [about, setAbout] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showTabSettings, setShowTabSettings] = useState(false);
+  const [followers, setFollowers] = useState<SimpleUser[]>([]);
+  const [showFollowers, setShowFollowers] = useState(false);
 
   useSetAppBarTitle(crew ? `@${crew.name}` : undefined);
 
@@ -105,6 +108,7 @@ export default function CrewDetailPage() {
       fetchCrewTabs(crewId).catch(() => []),
     ]).then(([c, p, e, n, t, tabsData]) => {
       setCrew(c);
+      setFollowers(c.followers ?? []);
       setPosts(p);
       setEvents(e as Event[]);
       setNotices(n as Notice[]);
@@ -131,6 +135,7 @@ export default function CrewDetailPage() {
   const currentTab = tabs.find((t) => t.type === tab);
   
   return (
+    <>
     <div className="relative mx-auto max-w-2xl space-y-4 p-4 mt-4">
       {isEditable && (
         <>  
@@ -191,6 +196,11 @@ export default function CrewDetailPage() {
       )}
       <h1 className="text-xl font-bold">{crew.name}</h1>
       <p className="text-sm text-gray-600">{crew.description}</p>
+      <div className="flex justify-center py-2" onClick={() => setShowFollowers(true)}>
+        <p className="cursor-pointer text-sm text-gray-600">
+          Followers: <span className="font-semibold">{followers.length}</span>
+        </p>
+      </div>
       <div>
         {topics.map((topic)=> {
           return (
@@ -275,5 +285,12 @@ export default function CrewDetailPage() {
         />
       )}
     </div>
+    <FollowListModal
+      open={showFollowers}
+      onClose={() => setShowFollowers(false)}
+      users={followers}
+      type="followers"
+    />
+    </>
   );
 }
