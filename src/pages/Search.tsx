@@ -54,6 +54,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     const initial = applyFilters(getNextPosts(0, PAGE_SIZE));
+    console.log("Initial posts:", initial);
     setPosts(initial);
     setNextId(PAGE_SIZE);
   }, [query, selectedTags, type, applyFilters]);
@@ -80,7 +81,7 @@ export default function SearchPage() {
       ) : (
         <div className="grid grid-cols-2 gap-4">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard withTitle={true} key={post.id} post={post} />
           ))}
           <div ref={ref} />
         </div>

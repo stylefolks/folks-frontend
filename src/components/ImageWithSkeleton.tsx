@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Skeleton } from './ui/skeleton';
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -19,13 +19,18 @@ export default function ImageWithSkeleton({
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className={cn('relative overflow-hidden', className)}>
-      {!loaded && <Skeleton className={cn('absolute inset-0', skeletonClassName)} />}
+    <div className={cn("relative overflow-hidden", className)}>
+      {!loaded && (
+        <Skeleton className={cn("absolute inset-0", skeletonClassName)} />
+      )}
       <img
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
-        className={cn('h-full w-full object-cover', loaded ? 'opacity-100' : 'opacity-0')}
+        className={cn(
+          "h-full w-full object-cover",
+          loaded ? "opacity-100" : "opacity-0"
+        )}
         {...props}
       />
     </div>

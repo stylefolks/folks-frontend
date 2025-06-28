@@ -9,7 +9,7 @@ interface Props {
 export default function SearchInput({
   value,
   onChange,
-  placeholder = "Folks, find your style",
+  placeholder = "Folks, find your",
 }: Props) {
   return (
     <Input
