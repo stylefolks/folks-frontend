@@ -12,6 +12,7 @@ import {buildKeymap} from "./keymap"
 import {buildInputRules} from "./inputrules"
 import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin"
 import { searchCrew } from "@/lib/crew"
+import { searchBrand } from "@/lib/brand"
 
 export {buildMenuItems, buildKeymap, buildInputRules}
 
@@ -71,6 +72,24 @@ export function setup(options: {
             type: 'crew',
           }));
           done(crewItems);
+        } catch {
+          done([]);
+        }
+      },
+      getSuggestionsHTML: (items) =>
+        `<div class="suggestion-item-list">${items
+          .map((i) => `<div class="suggestion-item">${i.name}</div>`)
+          .join('')}</div>`,
+    }),
+    getFolksMentionPlugin({
+      mentionTrigger: '$',
+      pluginKey: 'brand-suggestions',
+      nodeType: 'brand',
+      getSuggestions: async (_type, text, done) => {
+        try {
+          const brands = await searchBrand({ search: text, limit: '5' });
+          const brandItems = brands.map((b) => ({ id: b.id, name: b.name }));
+          done(brandItems);
         } catch {
           done([]);
         }
