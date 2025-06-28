@@ -42,6 +42,12 @@ export async function fetchBrands(
   return res.json();
 }
 
+export async function searchBrand(
+  params: Record<string, string> = {},
+): Promise<BrandSummary[]> {
+  return fetchBrands(params);
+}
+
 export async function fetchBrandPostPreviews(limit = 6): Promise<Post[]> {
   const search = new URLSearchParams({
     authorType: 'BRAND',

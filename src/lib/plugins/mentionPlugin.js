@@ -49,7 +49,7 @@ export function getMatch($position, opts) {
   // set type of match
   var type;
   if (mentionMatch) {
-    type = "mention";
+    type = opts.nodeType;
   } else if (tagMatch) {
     type = "tag";
   }
@@ -117,6 +117,8 @@ export function getFolksMentionPlugin(opts) {
   var defaultOpts = {
     mentionTrigger: "@",
     hashtagTrigger: "#",
+    nodeType: "mention",
+    pluginKey: "autosuggestions",
     allowSpace: true,
     getSuggestions: (type, text, cb) => {
       cb([]);
@@ -236,6 +238,11 @@ export function getFolksMentionPlugin(opts) {
         label: item.name,
         type: item.type
       };
+    } else if (state.type === "brand") {
+      attrs = {
+        id: item.id,
+        label: item.name
+      };
     } else {
       attrs = {
         tag: item.tag
@@ -254,7 +261,7 @@ export function getFolksMentionPlugin(opts) {
    * for the plugin properties spec.
    */
   return new Plugin({
-    key: new PluginKey("autosuggestions"),
+    key: new PluginKey(opts.pluginKey),
 
     // we will need state to track if suggestion dropdown is currently active or not
     state: {
