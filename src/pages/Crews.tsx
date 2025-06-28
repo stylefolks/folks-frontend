@@ -24,6 +24,7 @@ export default function CrewsPage() {
       <h1 className="text-xl font-bold">
         지금, 어떤 CREW들이 움직이고 있을까요?
       </h1>
+      {/* TODO: 권한 확인 후 아래 버튼 렌더 */}
       <div className="text-right">
         <Button asChild>
           <Link to="/crews/new">크루 생성</Link>

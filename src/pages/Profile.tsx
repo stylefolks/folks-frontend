@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   getProfile,
   updateMyProfile,
@@ -14,11 +14,11 @@ import {
   type PostSummary,
   type Brand,
   type SimpleUser,
-} from '@/lib/profile';
-import { getMyId } from '@/lib/auth';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useMeta } from '@/lib/meta';
+} from "@/lib/profile";
+import { getMyId } from "@/lib/auth";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useMeta } from "@/lib/meta";
 
 export default function ProfilePage() {
   const params = useParams();
@@ -27,22 +27,26 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const [username, setUsername] = useState('');
-  const [bio, setBio] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [website, setWebsite] = useState('');
-  const [backgroundUrl, setBackgroundUrl] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [website, setWebsite] = useState("");
+  const [backgroundUrl, setBackgroundUrl] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [crews, setCrews] = useState<Crew[]>([]);
   const [followers, setFollowers] = useState<SimpleUser[]>([]);
   const [following, setFollowing] = useState<SimpleUser[]>([]);
   const [posts, setPosts] = useState<PostSummary[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
 
-  useMeta({ title: profile ? `${profile.username} - Stylefolks` : 'Profile - Stylefolks' });
+  useMeta({
+    title: profile
+      ? `${profile.username} - Stylefolks`
+      : "Profile - Stylefolks",
+  });
 
   useEffect(() => {
     async function load() {
@@ -50,10 +54,10 @@ export default function ProfilePage() {
         const p = await getProfile(userId);
         setProfile(p);
         setUsername(p.username);
-        setBio(p.bio ?? '');
-        setImageUrl(p.imageUrl ?? '');
-        setWebsite(p.website ?? '');
-        setBackgroundUrl(p.backgroundUrl ?? '');
+        setBio(p.bio ?? "");
+        setImageUrl(p.imageUrl ?? "");
+        setWebsite(p.website ?? "");
+        setBackgroundUrl(p.backgroundUrl ?? "");
         const [userPosts, fwr, fwg, cr, br] = await Promise.all([
           getUserPosts(userId),
           getFollowers(userId),
@@ -67,7 +71,7 @@ export default function ProfilePage() {
         setCrews(cr);
         setBrands(br);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load');
+        setError(err instanceof Error ? err.message : "Failed to load");
       }
       try {
         const id = await getMyId();
@@ -93,12 +97,12 @@ export default function ProfilePage() {
       setProfile(updated);
       if (newPassword) {
         await changeMyPassword(oldPassword, newPassword);
-        setOldPassword('');
-        setNewPassword('');
+        setOldPassword("");
+        setNewPassword("");
       }
-      setError('');
+      setError("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update');
+      setError(err instanceof Error ? err.message : "Failed to update");
     }
   };
 
@@ -106,7 +110,7 @@ export default function ProfilePage() {
     return <p className="p-4">Loading...</p>;
   }
   if (!profile) {
-    return <p className="p-4 text-red-500">{error || 'No profile'}</p>;
+    return <p className="p-4 text-red-500">{error || "No profile"}</p>;
   }
 
   const isMe = myId === profile.userId;
@@ -130,7 +134,11 @@ export default function ProfilePage() {
             <label className="block text-sm font-medium" htmlFor="bio">
               Bio
             </label>
-            <Input id="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
+            <Input
+              id="bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
           </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium" htmlFor="imageUrl">
@@ -153,7 +161,10 @@ export default function ProfilePage() {
             />
           </div>
           <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="backgroundUrl">
+            <label
+              className="block text-sm font-medium"
+              htmlFor="backgroundUrl"
+            >
               Background Image URL
             </label>
             <Input
