@@ -1,4 +1,5 @@
 //TODO: crewId와 brandId를 prosemirror 컨텐츠안에서 멘션으로 어떻게 구분할지 고민 필요
+// @mention은 crew 전용으로 진행하고 추후 브랜드 멘션은 별도로 구현하기로
 export const extractFromDoc = (
   doc: any,
   types: Array<"brand" | "crew" | "hashtag">
@@ -40,7 +41,9 @@ export const extractFromDoc = (
   return result;
 };
 
-export const extractMentionsFromDoc = (doc: any): {
+export const extractMentionsFromDoc = (
+  doc: any
+): {
   crewIds: number[];
   userIds: number[];
 } => {
@@ -48,11 +51,11 @@ export const extractMentionsFromDoc = (doc: any): {
   const userIds: number[] = [];
 
   const traverse = (node: any) => {
-    if (node.type === 'mention') {
+    if (node.type === "mention") {
       const id = parseInt(node.attrs.id, 10);
-      if (node.attrs.type === 'crew') {
+      if (node.attrs.type === "crew") {
         if (!isNaN(id) && !crewIds.includes(id)) crewIds.push(id);
-      } else if (node.attrs.type === 'user') {
+      } else if (node.attrs.type === "user") {
         if (!isNaN(id) && !userIds.includes(id)) userIds.push(id);
       }
     }

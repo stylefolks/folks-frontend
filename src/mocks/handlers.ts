@@ -1,10 +1,11 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from "msw";
+import { TAGS } from "./tags";
 
 const PUBLIC_API_URL =
-  typeof window === 'undefined'
+  typeof window === "undefined"
     ? process.env.PUBLIC_API_URL
     : (import.meta as any).env.PUBLIC_API_URL;
-const API_BASE = PUBLIC_API_URL ?? 'http://localhost:3000';
+const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 
 interface Profile {
   userId: string;
@@ -14,18 +15,18 @@ interface Profile {
   imageUrl?: string;
   website?: string;
   backgroundUrl?: string;
-  role?: 'member' | 'master' | 'admin';
+  role?: "member" | "master" | "admin";
 }
 
 let currentProfile: Profile = {
-  userId: 'folks',
-  email: 'folks@gmail.com',
-  username: 'folks',
-  bio: 'Mock user',
-  imageUrl: 'https://picsum.photos/seed/folks/200',
-  website: 'https://example.com',
-  backgroundUrl: 'https://picsum.photos/seed/folks-bg/1200/400',
-  role: 'master',
+  userId: "folks",
+  email: "folks@gmail.com",
+  username: "folks",
+  bio: "Mock user",
+  imageUrl: "https://picsum.photos/seed/folks/200",
+  website: "https://example.com",
+  backgroundUrl: "https://picsum.photos/seed/folks-bg/1200/400",
+  role: "master",
 };
 
 function randomProfile(id: string): Profile {
@@ -38,66 +39,68 @@ function randomProfile(id: string): Profile {
     imageUrl: `https://picsum.photos/seed/${rand}/200`,
     website: `https://example.com/${id}`,
     backgroundUrl: `https://picsum.photos/seed/${rand}-bg/1200/400`,
-    role: 'member',
+    role: "member",
   };
 }
 
 function randomPost(id: number) {
   const seed = Math.random().toString(36).slice(2, 8);
   const author = randomProfile(`user${id}`);
-   const content = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: `Random post ${id}` },
-            { type: 'text', text: `this is new text` },
-          ],
-        },
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: '다양한 스타일의 문단 ' ,
-              marks: [
-                { type: 'font', attrs: { name: 'Georgia' } },
-                { type: 'color', attrs: { color: 'blue' } },
-              ],
-            },
-            { type: 'text', text: '😊' },
-          ],
-        },
-        {
-          type: 'image',
-          attrs: {
-            src: `https://picsum.photos/seed/${seed+1}/600/400`,
-            alt: 'random image',
+  const content = {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: `Random post ${id}` },
+          { type: "text", text: `this is new text` },
+        ],
+      },
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "다양한 스타일의 문단 ",
+            marks: [
+              { type: "font", attrs: { name: "Georgia" } },
+              { type: "color", attrs: { color: "blue" } },
+            ],
           },
+          { type: "text", text: "😊" },
+        ],
+      },
+      {
+        type: "image",
+        attrs: {
+          src: `https://picsum.photos/seed/${seed + 1}/600/400`,
+          alt: "random image",
         },
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              text: 'Comic Sans 폰트의 문단입니다.',
-              marks: [
-                { type: 'font', attrs: { name: 'Comic Sans MS' } },
-              ],
-            },
-          ],
-        },
-      ],
-    };
-    
+      },
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "Comic Sans 폰트의 문단입니다.",
+            marks: [{ type: "font", attrs: { name: "Comic Sans MS" } }],
+          },
+        ],
+      },
+    ],
+  };
+
   return {
     id,
     title: `Post title ${id}`,
     image: `https://picsum.photos/seed/${seed}/600/400`,
     date: new Date().toISOString(),
     views: id * 10,
-    author: { userId: author.userId, username: author.username, imageUrl: author.imageUrl },
+    author: {
+      userId: author.userId,
+      username: author.username,
+      imageUrl: author.imageUrl,
+    },
     tags: [`tag${id}`, `tag${id + 1}`],
     crew: id % 2 === 0 ? { id: `crew${id}`, name: `Crew ${id}` } : undefined,
     brand: id % 3 === 0 ? { id: `brand${id}`, name: `Brand ${id}` } : undefined,
@@ -143,7 +146,7 @@ interface Crew {
 
 let createdCrews: Crew[] = [];
 let crewSeq = 100;
-const masterCrewIds = new Set<string>(['2']);
+const masterCrewIds = new Set<string>(["2"]);
 
 interface Comment {
   id: string;
@@ -183,8 +186,7 @@ interface BrandSummary {
 
 function randomBrand(id: number): BrandSummary {
   const seed = Math.random().toString(36).slice(2, 8);
-  const tags = ['디자이너', '빈티지', '스트릿', '서울팝업'];
-  const brandTags = [tags[id % tags.length], tags[(id + 1) % tags.length]];
+  const brandTags = [TAGS[id % TAGS.length], TAGS[(id + 1) % TAGS.length]];
   const hasEvent = id % 2 === 0;
   const event = hasEvent
     ? { title: `Event ${id}`, date: new Date().toISOString().slice(0, 10) }
@@ -208,14 +210,23 @@ function randomBrand(id: number): BrandSummary {
 export const handlers = [
   http.post(`${API_BASE}/auth/login`, async ({ request }) => {
     const { email, password } = await request.json();
-    if (email === 'folks@gmail.com' && password === 'folks-password') {
-      return HttpResponse.json({ accessToken: 'mock-token', userId: currentProfile.userId });
+    if (email === "folks@gmail.com" && password === "folks-password") {
+      return HttpResponse.json({
+        accessToken: "mock-token",
+        userId: currentProfile.userId,
+      });
     }
-    return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    return HttpResponse.json(
+      { message: "Invalid credentials" },
+      { status: 401 }
+    );
   }),
 
   http.post(`${API_BASE}/auth/signup`, async () => {
-    return HttpResponse.json({ accessToken: 'mock-token', userId: currentProfile.userId }, { status: 200 });
+    return HttpResponse.json(
+      { accessToken: "mock-token", userId: currentProfile.userId },
+      { status: 200 }
+    );
   }),
 
   http.get(`${API_BASE}/user/me`, () => {
@@ -276,9 +287,9 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts`, ({ request }) => {
     const url = new URL(request.url);
-    const authorType = url.searchParams.get('authorType');
-    const limit = Number(url.searchParams.get('limit') ?? '6');
-    if (authorType === 'BRAND') {
+    const authorType = url.searchParams.get("authorType");
+    const limit = Number(url.searchParams.get("limit") ?? "6");
+    if (authorType === "BRAND") {
       const posts = Array.from({ length: limit }, (_, i) => {
         const post = randomPost(i + 1);
         post.brand = { id: `brand${i + 1}`, name: `Brand ${i + 1}` };
@@ -291,14 +302,17 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
-    const search = url.searchParams.get('search');
-    const hasEvent = url.searchParams.get('hasUpcomingEvent');
-    const tag = url.searchParams.get('tag');
-    const sort = url.searchParams.get('sort');
-    let crews = [...createdCrews, ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1))];
+    const search = url.searchParams.get("search");
+    const hasEvent = url.searchParams.get("hasUpcomingEvent");
+    const tag = url.searchParams.get("tag");
+    const sort = url.searchParams.get("sort");
+    let crews = [
+      ...createdCrews,
+      ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1)),
+    ];
     if (search) {
       crews = crews.filter((c) =>
-        c.name.toLowerCase().includes(search.toLowerCase()),
+        c.name.toLowerCase().includes(search.toLowerCase())
       );
     }
     if (hasEvent) {
@@ -307,7 +321,7 @@ export const handlers = [
     if (tag) {
       crews = crews.filter((c) => c.tags.includes(tag));
     }
-    if (sort === 'popular') {
+    if (sort === "popular") {
       crews = crews.sort((a, b) => b.memberCount - a.memberCount);
     }
     return HttpResponse.json(crews);
@@ -315,9 +329,9 @@ export const handlers = [
 
   http.get(`${API_BASE}/brands`, ({ request }) => {
     const url = new URL(request.url);
-    const hasEvent = url.searchParams.get('hasUpcomingEvent');
-    const tag = url.searchParams.get('tag');
-    const sort = url.searchParams.get('sort');
+    const hasEvent = url.searchParams.get("hasUpcomingEvent");
+    const tag = url.searchParams.get("tag");
+    const sort = url.searchParams.get("sort");
     let brands = Array.from({ length: 6 }, (_, i) => randomBrand(i + 1));
     if (hasEvent) {
       brands = brands.filter((b) => b.upcomingEvent);
@@ -325,7 +339,7 @@ export const handlers = [
     if (tag) {
       brands = brands.filter((b) => b.tags.includes(tag));
     }
-    if (sort === 'popular') {
+    if (sort === "popular") {
       brands = brands.sort((a, b) => b.crews.length - a.crews.length);
     }
     return HttpResponse.json(brands);
@@ -343,10 +357,8 @@ export const handlers = [
       profileImage: `https://picsum.photos/seed/crew-${id}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${id}/1200/300`,
       description: `This is crew ${id}.`,
-      links: [
-        { title: 'Instagram', url: 'https://instagram.com' },
-      ],
-      ownerId: 'folks',
+      links: [{ title: "Instagram", url: "https://instagram.com" }],
+      ownerId: "folks",
     });
   }),
 
@@ -381,7 +393,7 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews/:id/topics`, ({ params }) => {
     const { id } = params as { id: string };
-    const topics = ['talk', 'column', 'look'].map((tag, idx) => ({
+    const topics = ["talk", "column", "look"].map((tag, idx) => ({
       tag: `#${tag}-${id}`,
       count: idx + 1,
     }));
@@ -392,12 +404,47 @@ export const handlers = [
     const { id } = params as { id: string };
     if (!crewTabsMap[id]) {
       crewTabsMap[id] = [
-        { id: 1, crewId: Number(id), title: 'Posts', type: 'posts', isVisible: true, order: 0 },
-        { id: 2, crewId: Number(id), title: 'Overview', type: 'overview', isVisible: true, order: 1 },
-        { id: 3, crewId: Number(id), title: 'Notice', type: 'notice', isVisible: true, order: 2 },
-        { id: 4, crewId: Number(id), title: 'Event', type: 'event', isVisible: true, order: 3 },
-        { id: 5, crewId: Number(id), title: 'topic only for tag1', type: 'topic', isVisible: true, order: 4 ,hashtag: "tag1" },
-
+        {
+          id: 1,
+          crewId: Number(id),
+          title: "Posts",
+          type: "posts",
+          isVisible: true,
+          order: 0,
+        },
+        {
+          id: 2,
+          crewId: Number(id),
+          title: "Overview",
+          type: "overview",
+          isVisible: true,
+          order: 1,
+        },
+        {
+          id: 3,
+          crewId: Number(id),
+          title: "Notice",
+          type: "notice",
+          isVisible: true,
+          order: 2,
+        },
+        {
+          id: 4,
+          crewId: Number(id),
+          title: "Event",
+          type: "event",
+          isVisible: true,
+          order: 3,
+        },
+        {
+          id: 5,
+          crewId: Number(id),
+          title: "topic only for tag1",
+          type: "topic",
+          isVisible: true,
+          order: 4,
+          hashtag: "tag1",
+        },
       ];
     }
     return HttpResponse.json(crewTabsMap[id]);
@@ -416,9 +463,10 @@ export const handlers = [
     const newCrew: Crew = {
       id: String(crewSeq),
       name: body.name,
-      profileImage: body.profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
+      profileImage:
+        body.profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
       coverImage: `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
-      description: body.description ?? '',
+      description: body.description ?? "",
       links: body.links ?? [],
       ownerId: currentProfile.userId,
     };
@@ -435,7 +483,7 @@ export const handlers = [
         id,
         name: body.name ?? `Crew ${id}`,
         coverImage: `https://picsum.photos/seed/crew-${id}/400/200`,
-        description: body.description ?? '',
+        description: body.description ?? "",
         links: body.links ?? [],
         ownerId: currentProfile.userId,
       };
@@ -443,7 +491,8 @@ export const handlers = [
     } else {
       if (body.name !== undefined) crew.name = body.name;
       if (body.description !== undefined) crew.description = body.description;
-      if (body.profileImage !== undefined) crew.profileImage = body.profileImage;
+      if (body.profileImage !== undefined)
+        crew.profileImage = body.profileImage;
       if (body.coverImage !== undefined) crew.coverImage = body.coverImage;
       if (body.links !== undefined) crew.links = body.links;
     }
@@ -454,12 +503,12 @@ export const handlers = [
     const { id } = params as { id: string };
     const found = createdCrews.find((c) => c.id === id);
     if (found && found.ownerId === currentProfile.userId) {
-      return HttpResponse.json({ role: 'owner' });
+      return HttpResponse.json({ role: "owner" });
     }
     if (masterCrewIds.has(id)) {
-      return HttpResponse.json({ role: 'master' });
+      return HttpResponse.json({ role: "master" });
     }
-    return HttpResponse.json({ role: 'member' });
+    return HttpResponse.json({ role: "member" });
   }),
 
   http.delete(`${API_BASE}/crews/:id`, ({ params }) => {
@@ -475,9 +524,7 @@ export const handlers = [
       name: `Brand ${id}`,
       logo: `https://picsum.photos/seed/brand-${id}/200/200`,
       description: `This is brand ${id}.`,
-      links: [
-        { title: 'Website', url: 'https://example.com' },
-      ],
+      links: [{ title: "Website", url: "https://example.com" }],
     });
   }),
 
@@ -492,22 +539,25 @@ export const handlers = [
     return HttpResponse.json(commentsMap[postId] ?? []);
   }),
 
-  http.post(`${API_BASE}/posts/:postId/comments`, async ({ params, request }) => {
-    const { postId } = params as { postId: string };
-    const { text } = await request.json();
-    const newComment: Comment = {
-      id: String(Date.now()),
-      postId,
-      text,
-      author: {
-        userId: currentProfile.userId,
-        username: currentProfile.username,
-        imageUrl: currentProfile.imageUrl,
-      },
-    };
-    commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
-    return HttpResponse.json(newComment, { status: 201 });
-  }),
+  http.post(
+    `${API_BASE}/posts/:postId/comments`,
+    async ({ params, request }) => {
+      const { postId } = params as { postId: string };
+      const { text } = await request.json();
+      const newComment: Comment = {
+        id: String(Date.now()),
+        postId,
+        text,
+        author: {
+          userId: currentProfile.userId,
+          username: currentProfile.username,
+          imageUrl: currentProfile.imageUrl,
+        },
+      };
+      commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
+      return HttpResponse.json(newComment, { status: 201 });
+    }
+  ),
 
   http.put(`${API_BASE}/comments/:id`, async ({ params, request }) => {
     const { id } = params as { id: string };
@@ -519,7 +569,7 @@ export const handlers = [
         return HttpResponse.json(commentsMap[postId][idx]);
       }
     }
-    return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+    return HttpResponse.json({ message: "Not found" }, { status: 404 });
   }),
 
   http.delete(`${API_BASE}/comments/:id`, ({ params }) => {

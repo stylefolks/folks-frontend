@@ -8,8 +8,8 @@ import PostCard from "@/components/PostCard";
 import useInfiniteScroll from "@/components/useInfiniteScroll";
 import { getNextPosts, PostType, SearchPostType, type Post } from "@/lib/posts";
 import { useMeta } from "@/lib/meta";
+import { TAGS } from "@/mocks/tags";
 
-const TAGS = ["빈티지", "루즈핏", "페미닌룩", "테크노", "홍대파티"];
 const PAGE_SIZE = 10;
 
 function filterByType(post: Post, type: SearchPostType) {
