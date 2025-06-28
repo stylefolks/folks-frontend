@@ -1,5 +1,6 @@
 import { API_BASE, getToken } from './auth';
 import type { Post } from './posts';
+import type { SimpleUser } from './profile';
 
 export interface CrewLink {
   title: string;
@@ -44,6 +45,7 @@ export interface Crew {
   description: string;
   links: CrewLink[];
   ownerId: string;
+  followers?: SimpleUser[];
 }
 
 export interface CrewSummary {
