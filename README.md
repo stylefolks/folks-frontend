@@ -113,4 +113,71 @@ Fly.io에서 SSR과 MSW를 사용한 MVP를 배포하려면 Fly CLI와 Docker가
    ```bash
    flyctl deploy
    ```
-   배포 후 출력되는 `https://<app>.fly.dev` 주소로 접속하면 프로덕션 모드에서도 MSW가 실행된 화면을 확인할 수 있습니다.
+  배포 후 출력되는 `https://<app>.fly.dev` 주소로 접속하면 프로덕션 모드에서도 MSW가 실행된 화면을 확인할 수 있습니다.
+
+## API 연결 체크리스트
+
+아래 표는 API 명세서상의 엔드포인트 중 현재 프론트엔드 코드와 연결된 것들을 정리한 체크리스트입니다.
+
+### 인증
+- [x] `POST /auth/signup`
+- [ ] `POST /auth/verify-email`
+- [ ] `POST /auth/request-email-verification`
+
+### 유저
+- [x] `GET /users/:id/followers`
+- [x] `GET /users/:id/following`
+- [ ] `POST /users/:id/follow`
+- [ ] `DELETE /users/:id/unfollow`
+- [ ] `PATCH /users/me/status`
+- [ ] `POST /users/request-brand-role`
+- [ ] `POST /users/approve-brand-role`
+
+### 크루
+- [x] `POST /crews`
+- [x] `GET /crews/:id`
+- [ ] `POST /crews/:id/join`
+- [ ] `POST /crews/:id/leave`
+- [ ] `PATCH /crews/:id/status`
+- [ ] `PATCH /crews/:id/transfer-ownership`
+
+### 크루 멤버
+- [ ] `GET /crews/:crewId/members`
+- [ ] `PATCH /crews/:crewId/members/:userId/role`
+- [ ] `DELETE /crews/:crewId/members/:userId`
+
+### 크루 탭 / 토픽
+- [ ] `POST /crews/:crewId/tabs`
+- [ ] `PATCH /crews/:crewId/tabs/:tabId`
+- [ ] `DELETE /crews/:crewId/tabs/:tabId`
+- [ ] `POST /topics`
+
+### 게시글
+- [x] `POST /posts`
+- [ ] `PATCH /posts/:id`
+- [ ] `DELETE /posts/:id`
+- [ ] `PATCH /posts/:id/visibility`
+- [ ] `GET /posts?mention=crewId`
+- [ ] `GET /posts?type=`
+- [ ] `POST /posts/:id/parse-mentions`
+
+### 후원
+- [ ] `POST /sponsorships`
+- [ ] `POST /sponsorships/webhook`
+
+### 광고
+- [ ] `POST /ad-campaigns`
+- [ ] `PATCH /ad-campaigns/:id/status`
+
+### 신고
+- [ ] `POST /reports`
+
+### 알림 템플릿
+- [ ] `GET /notification-templates`
+- [ ] `POST /notification-templates`
+
+### 설정
+- [ ] `GET /config/post-types`
+- [ ] `GET /config/user-roles`
+- [ ] `GET /config/crew-status`
+- [ ] `GET /config/post-visibility`
