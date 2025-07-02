@@ -214,3 +214,67 @@ Fly.io에서 SSR과 MSW를 사용한 MVP를 배포하려면 Fly CLI와 Docker가
 
 - [ERD LINK](https://dbdiagram.io/d/6861ec8cf413ba35086e3ead)
   ![erd](./erd.png)
+## API 연결 체크리스트
+
+### 인증
+- [x] `POST /auth/signup`
+- [ ] `POST /auth/verify-email`
+- [ ] `POST /auth/request-email-verification`
+
+### 유저
+- [ ] `GET /users/:id/followers`
+- [ ] `GET /users/:id/following`
+- [ ] `POST /users/:id/follow`
+- [ ] `DELETE /users/:id/unfollow`
+- [ ] `PATCH /users/me/status`
+- [ ] `POST /users/request-brand-role`
+- [ ] `POST /users/approve-brand-role`
+
+### 크루
+- [x] `POST /crews`
+- [x] `GET /crews/:id`
+- [ ] `POST /crews/:id/join`
+- [ ] `POST /crews/:id/leave`
+- [ ] `PATCH /crews/:id/status`
+- [ ] `PATCH /crews/:id/transfer-ownership`
+
+### 크루 멤버
+- [ ] `GET /crews/:crewId/members`
+- [ ] `PATCH /crews/:crewId/members/:userId/role`
+- [ ] `DELETE /crews/:crewId/members/:userId`
+
+### 크루 탭/토픽
+- [ ] `POST /crews/:crewId/tabs`
+- [ ] `PATCH /crews/:crewId/tabs/:tabId`
+- [ ] `DELETE /crews/:crewId/tabs/:tabId`
+- [ ] `POST /topics`
+
+### 게시글
+- [x] `POST /posts`
+- [ ] `PATCH /posts/:id`
+- [ ] `DELETE /posts/:id`
+- [ ] `PATCH /posts/:id/visibility`
+- [ ] `GET /posts?mention=crewId`
+- [ ] `GET /posts?type=`
+- [ ] `POST /posts/:id/parse-mentions`
+
+### 후원
+- [ ] `POST /sponsorships`
+- [ ] `POST /sponsorships/webhook`
+
+### 광고
+- [ ] `POST /ad-campaigns`
+- [ ] `PATCH /ad-campaigns/:id/status`
+
+### 신고
+- [ ] `POST /reports`
+
+### 알림 템플릿
+- [ ] `GET /notification-templates`
+- [ ] `POST /notification-templates`
+
+### 설정
+- [ ] `GET /config/post-types`
+- [ ] `GET /config/user-roles`
+- [ ] `GET /config/crew-status`
+- [ ] `GET /config/post-visibility`
