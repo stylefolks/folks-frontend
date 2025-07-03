@@ -26,8 +26,9 @@ export default function PostFeedGrid() {
     fetch(`/posts${cursor && cursor !== "start" ? `?cursor=${cursor}` : ""}`)
       .then((res) => res.json())
       .then((data: PostResponse) => {
-        setPosts((prev) => [...prev, ...data.posts]);
-        setNextCursor(data.nextCursor ?? null);
+        // console.log("Fetched posts@@@@@", data);
+        setPosts((prev) => [...prev, ...(data?.posts ?? [])]);
+        setNextCursor(data?.nextCursor ?? null);
         setCursor(null);
       })
       .catch(() => setCursor(null));
@@ -46,7 +47,7 @@ export default function PostFeedGrid() {
 
   return (
     <div className="columns-2 gap-3 p-4" role="feed">
-      {posts.map((post) => (
+      {posts?.map((post) => (
         <div key={post.id} className="break-inside-avoid">
           <FeedCard post={post} />
         </div>
