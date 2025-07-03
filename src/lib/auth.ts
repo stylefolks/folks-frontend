@@ -45,12 +45,14 @@ export async function login(email: string, password: string) {
     throw new Error('Login failed');
   }
   const data = await res.json();
-  if (!data.accessToken) {
+  const token = data.accessToken ?? data.token;
+  if (!token) {
     throw new Error('No token returned');
   }
-  setToken(data.accessToken);
-  if (data.userId) {
-    setUserId(data.userId);
+  setToken(token);
+  const userId = data.userId ?? data.user?.id;
+  if (userId) {
+    setUserId(userId);
   }
 }
 
@@ -71,10 +73,12 @@ export async function signup(email: string, username: string, password: string) 
   } catch {
     // some APIs may return no body
   }
-  if (data.accessToken) {
-    setToken(data.accessToken);
-    if (data.userId) {
-      setUserId(data.userId);
+  const token = data.accessToken ?? data.token;
+  if (token) {
+    setToken(token);
+    const userId = data.userId ?? data.user?.id;
+    if (userId) {
+      setUserId(userId);
     }
     return;
   }
