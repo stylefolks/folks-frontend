@@ -57,9 +57,11 @@ export default function CrewDirectoryPage() {
 
 function CrewCard({ crew }: { crew: CrewSummary }) {
   return (
-    <div className="space-y-1 rounded-2xl transition-all hover:scale-[1.02]">
+    <Link
+      to={`/crew/${crew.id}`}
+      className="space-y-1 rounded-2xl transition-all hover:scale-[1.02]">
       <ImageWithSkeleton
-        src={crew.avatarUrl}
+        src={crew.coverImage}
         alt={crew.name}
         className="aspect-square rounded-lg"
         skeletonClassName="rounded-lg"
@@ -79,15 +81,15 @@ function CrewCard({ crew }: { crew: CrewSummary }) {
             </span>
           ))}
         </div>
-        <Button
+        {/* <Button
           asChild
           variant="outline"
           size="sm"
           className="rounded-full px-3 py-1 text-xs"
         >
-          <Link to={`/crew/${crew.id}/posts`}>ENTER</Link>
-        </Button>
+          
+        </Button> */}
       </div>
-    </div>
+    </Link>
   );
 }

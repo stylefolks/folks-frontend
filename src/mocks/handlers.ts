@@ -12,23 +12,38 @@ const directoryCrews = [
     id: "1",
     name: "Shinchon Crew",
     memberCount: 2250,
-    avatarUrl: "https://picsum.photos/seed/crew1/400/400",
+    coverImage: "https://picsum.photos/seed/crew1/400/400",
     tags: ["빈티지", "홍대"],
   },
   {
     id: "2",
     name: "Hongdae Cafe",
     memberCount: 1800,
-    avatarUrl: "https://picsum.photos/seed/crew2/400/400",
+    coverImage: "https://picsum.photos/seed/crew2/400/400",
     tags: ["카페", "사진"],
   },
   {
     id: "3",
     name: "비정인돌",
     memberCount: 1482,
-    avatarUrl: "https://picsum.photos/seed/crew3/400/400",
+    coverImage: "https://picsum.photos/seed/crew3/400/400",
     tags: ["스트릿", "블랙"],
   },
+  {
+    id: "4",
+    name: "AAAAAAA",
+    memberCount: 1482,
+    coverImage: "https://picsum.photos/seed/crew3/400/400",
+    tags: ["스트릿", "블랙"],
+  },
+  {
+    id: "5",
+    name: "BBBBB",
+    memberCount: 1482,
+    coverImage: "https://picsum.photos/seed/crew3/400/400",
+    tags: ["스트릿", "블랙"],
+  },
+
 ];
 
 interface FeedPost {

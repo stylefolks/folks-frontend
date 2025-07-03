@@ -16,6 +16,8 @@ import CreatePostPage from '@/pages/CreatePostPage';
 import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
+import Search from './pages/Search';
+
 
 
 export default function App() {
@@ -28,7 +30,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/crew-directory" element={<CrewDirectoryPage />} />
+          <Route path="/crews" element={<CrewDirectoryPage />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/crew/:id" element={<CrewDetailPage />} />
           <Route path="/posts/:id" element={<PostDetailPage />} />
           <Route path="/profile/:userId" element={<UserProfilePage />} />

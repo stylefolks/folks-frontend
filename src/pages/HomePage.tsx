@@ -1,6 +1,5 @@
 import React from "react";
 import HashtagChips from "@/components/HashtagChips";
-import FloatingMenu from "@/components/FloatingMenu";
 import HomeCrewGrid from "@/components/HomeCrewGrid";
 import { useMeta } from "@/lib/meta";
 import PostGrid from "@/components/PostGrid";
@@ -28,7 +27,7 @@ export default function HomePage() {
       </section>
       <HomeCrewGrid />
       <PostGrid />
-      {/* <FloatingMenu /> */}
+      
     </div>
   );
 }
