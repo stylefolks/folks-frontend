@@ -17,17 +17,24 @@ export default function HashtagChips() {
   }, []);
 
   return (
-    <div className="flex overflow-x-auto gap-2 pb-1" role="list">
-      {tags.map((tag) => (
-        <span
-          key={tag.name}
-          className={cn(
-            "px-3 py-1 bg-muted rounded-full text-sm whitespace-nowrap cursor-pointer hover:bg-muted/80"
-          )}
-        >
-          #{tag.name}
-        </span>
-      ))}
+    <div>
+      <h2 className="pb-2 pt-1 text-sm font-bold">HOT Hashtags</h2>
+      <div
+        className="flex gap-2 overflow-x-auto whitespace-nowrap scroll-snap-x pb-1"
+        role="list"
+      >
+        {tags.map((tag) => (
+          <button
+            key={tag.name}
+            onClick={() => {}}
+            className={cn(
+              "rounded-full bg-[#F7F7F7] px-3 py-1 text-sm hover:bg-black hover:text-white transition"
+            )}
+          >
+            #{tag.name} ({tag.postCount})
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
