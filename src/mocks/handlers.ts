@@ -338,7 +338,17 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts/:id`, ({ params }) => {
     const { id } = params as { id: string };
-    return HttpResponse.json(randomPost(Number(id)));
+    return HttpResponse.json({
+      id: 'abc123',
+      title: 'The Art of Effortless Chic',
+      content: "<p>Hello...</p><img src='/mock/spring-outfit-1.jpg' />",
+      hashtags: ['#StreetStyle', '#OOTD', '#Minimalist'],
+      author: { name: 'Sophia Lee', initials: 'SL' },
+      createdAt: '2025-06-28',
+      crewName: 'Fashion Forward Crew',
+      likes: 128,
+      comments: 34,
+    });
   }),
 
   http.get(`${API_BASE}/posts`, ({ request }) => {
@@ -619,7 +629,29 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts/:postId/comments`, ({ params }) => {
     const { postId } = params as { postId: string };
-    return HttpResponse.json(commentsMap[postId] ?? []);
+    if (postId) {
+      return HttpResponse.json([
+        {
+          id: 'c1',
+          author: { name: 'Alex Kim', initials: 'AK' },
+          createdAt: '2025-06-29',
+          content: 'Love these tips!'
+        },
+        {
+          id: 'c2',
+          author: { name: 'Jessica Wong', initials: 'JW' },
+          createdAt: '2025-06-29',
+          content: 'Effortless chic is my favorite!'
+        },
+        {
+          id: 'c3',
+          author: { name: 'Mark Chen', initials: 'MC' },
+          createdAt: '2025-06-30',
+          content: 'Great post, Sophia!'
+        }
+      ]);
+    }
+    return HttpResponse.json([]);
   }),
 
   http.post(
