@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import TopAppBar from '@/components/TopAppBar';
 import { fetchCrews, type CrewSummary } from '@/lib/crew';
 import { useMeta } from '@/lib/meta';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,6 @@ export default function CrewDirectoryPage() {
 
   return (
     <div className="min-h-screen bg-white pb-8">
-      <TopAppBar />
       <div className="space-y-4 pt-4">
         <section className="px-4">
           <h2 className="pb-2 text-md font-bold">HOT Hashtags</h2>
