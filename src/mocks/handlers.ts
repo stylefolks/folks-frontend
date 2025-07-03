@@ -212,6 +212,38 @@ interface Comment {
 
 const commentsMap: Record<string, Comment[]> = {};
 
+interface PostDetailComment {
+  id: string;
+  author: { name: string; initials: string };
+  createdAt: string;
+  content: string;
+}
+
+const postDetailCommentsMap: Record<string, PostDetailComment[]> = {
+  'abc123': [
+    {
+      id: 'c1',
+      author: { name: 'Alex Kim', initials: 'AK' },
+      createdAt: '2025-06-29',
+      content: 'Love these tips!',
+    },
+    {
+      id: 'c2',
+      author: { name: 'Jessica Wong', initials: 'JW' },
+      createdAt: '2025-06-29',
+      content: 'Effortless chic is my favorite!',
+    },
+    {
+      id: 'c3',
+      author: { name: 'Mark Chen', initials: 'MC' },
+      createdAt: '2025-06-30',
+      content: 'Great post, Sophia!',
+    },
+  ],
+};
+
+const postLikeMap: Record<string, number> = { 'abc123': 128 };
+
 type SimpleUser = { userId: string; username: string; imageUrl?: string };
 const followersMap: Record<string, SimpleUser[]> = {};
 const followingMap: Record<string, SimpleUser[]> = {};
@@ -338,6 +370,9 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts/:id`, ({ params }) => {
     const { id } = params as { id: string };
+    const likes = postLikeMap[id] ?? 128;
+    const comments = postDetailCommentsMap[id]?.length ?? 0;
+    postLikeMap[id] = likes;
     return HttpResponse.json({
       id: 'abc123',
       title: 'The Art of Effortless Chic',
@@ -346,8 +381,8 @@ export const handlers = [
       author: { name: 'Sophia Lee', initials: 'SL' },
       createdAt: '2025-06-28',
       crewName: 'Fashion Forward Crew',
-      likes: 128,
-      comments: 34,
+      likes,
+      comments,
     });
   }),
 
@@ -629,50 +664,39 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts/:postId/comments`, ({ params }) => {
     const { postId } = params as { postId: string };
-    if (postId) {
-      return HttpResponse.json([
-        {
-          id: 'c1',
-          author: { name: 'Alex Kim', initials: 'AK' },
-          createdAt: '2025-06-29',
-          content: 'Love these tips!'
-        },
-        {
-          id: 'c2',
-          author: { name: 'Jessica Wong', initials: 'JW' },
-          createdAt: '2025-06-29',
-          content: 'Effortless chic is my favorite!'
-        },
-        {
-          id: 'c3',
-          author: { name: 'Mark Chen', initials: 'MC' },
-          createdAt: '2025-06-30',
-          content: 'Great post, Sophia!'
-        }
-      ]);
-    }
-    return HttpResponse.json([]);
+    return HttpResponse.json(postDetailCommentsMap[postId] ?? []);
   }),
 
   http.post(
     `${API_BASE}/posts/:postId/comments`,
     async ({ params, request }) => {
       const { postId } = params as { postId: string };
-      const { text } = await request.json();
-      const newComment: Comment = {
+      const { content } = await request.json();
+      const newComment: PostDetailComment = {
         id: String(Date.now()),
-        postId,
-        text,
-        author: {
-          userId: currentProfile.userId,
-          username: currentProfile.username,
-          imageUrl: currentProfile.imageUrl,
-        },
+        author: { name: 'ME', initials: 'ME' },
+        createdAt: '2025-07-03',
+        content,
       };
-      commentsMap[postId] = [...(commentsMap[postId] ?? []), newComment];
+      const list = postDetailCommentsMap[postId] ?? [];
+      postDetailCommentsMap[postId] = [...list, newComment];
       return HttpResponse.json(newComment, { status: 201 });
     }
   ),
+
+  http.post(`${API_BASE}/posts/:postId/like`, ({ params }) => {
+    const { postId } = params as { postId: string };
+    const current = postLikeMap[postId] ?? 0;
+    postLikeMap[postId] = current + 1;
+    return HttpResponse.json({ success: true });
+  }),
+
+  http.delete(`${API_BASE}/posts/:postId/unlike`, ({ params }) => {
+    const { postId } = params as { postId: string };
+    const current = postLikeMap[postId] ?? 1;
+    postLikeMap[postId] = Math.max(0, current - 1);
+    return HttpResponse.json({ success: true });
+  }),
 
   http.put(`${API_BASE}/comments/:id`, async ({ params, request }) => {
     const { id } = params as { id: string };

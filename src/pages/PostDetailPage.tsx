@@ -1,8 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageSquare, Menu } from 'lucide-react';
+import { ArrowLeft, HeartIcon, MessageSquare, Menu } from 'lucide-react';
 import Badge from '@/components/ui/badge';
-import { fetchPostDetail, fetchPostComments, type PostDetail, type PostComment } from '@/lib/postDetail';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  fetchPostDetail,
+  fetchPostComments,
+  addPostComment,
+  likePost,
+  unlikePost,
+  type PostDetail,
+  type PostComment,
+} from '@/lib/postDetail';
 import { cn } from '@/lib/utils';
 
 const avatarColors = ['bg-blue-400','bg-green-400','bg-yellow-400','bg-pink-400','bg-purple-400'];
@@ -22,12 +32,49 @@ export default function PostDetailPage() {
   const navigate = useNavigate();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [comments, setComments] = useState<PostComment[]>([]);
+  const [commentInput, setCommentInput] = useState('');
+  const [likeCount, setLikeCount] = useState(0);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    fetchPostDetail(id).then(setPost).catch(() => setPost(null));
+    fetchPostDetail(id)
+      .then((data) => {
+        setPost(data);
+        setLikeCount(data.likes);
+      })
+      .catch(() => setPost(null));
     fetchPostComments(id).then(setComments).catch(() => setComments([]));
   }, [id]);
+
+  const toggleLike = async () => {
+    if (!id) return;
+    const next = !liked;
+    setLiked(next);
+    setLikeCount((c) => c + (next ? 1 : -1));
+    try {
+      if (next) await likePost(id);
+      else await unlikePost(id);
+    } catch {
+      setLiked(!next);
+      setLikeCount((c) => c - (next ? 1 : -1));
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!id || !commentInput.trim()) return;
+    try {
+      await addPostComment(id, commentInput);
+      setCommentInput('');
+      const updated = await fetchPostComments(id);
+      setComments(updated);
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 0);
+    } catch {
+      // ignore errors for now
+    }
+  };
 
   if (!post) return <p className="p-4">Loading...</p>;
 
@@ -69,8 +116,14 @@ export default function PostDetailPage() {
         />
         <div className="flex justify-between items-center py-3 border-t mt-6 text-sm">
           <div className="flex items-center gap-1">
-            <Heart className="fill-black stroke-black" size={16} />
-            <span>{post.likes}</span>
+            <HeartIcon
+              className={cn(
+                'w-5 h-5 cursor-pointer transition',
+                liked ? 'fill-black stroke-black' : 'stroke-black'
+              )}
+              onClick={toggleLike}
+            />
+            <span>{likeCount}</span>
           </div>
           <div className="flex items-center gap-1">
             <MessageSquare size={16} />
@@ -91,6 +144,21 @@ export default function PostDetailPage() {
             </div>
           ))}
         </section>
+        <div className="mt-6">
+          <div className="flex gap-3 items-start">
+            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">ME</div>
+            <div className="flex-1 space-y-2">
+              <Textarea
+                placeholder="댓글을 입력하세요"
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+              />
+              <Button className="ml-auto block" type="button" onClick={handleAddComment}>
+                등록
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
