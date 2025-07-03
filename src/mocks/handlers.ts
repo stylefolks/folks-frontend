@@ -329,10 +329,17 @@ export const handlers = [
     );
   }),
 
-  http.post(`${API_BASE}/auth/signup`, async () => {
+  http.post(`${API_BASE}/auth/signup`, async ({ request }) => {
+    const { email, password, nickname } = await request.json();
+    if (email && password && nickname) {
+      return HttpResponse.json(
+        { user: { id: "user-123", nickname } },
+        { status: 200 }
+      );
+    }
     return HttpResponse.json(
-      { accessToken: "mock-token", userId: currentProfile.userId },
-      { status: 200 }
+      { message: "Missing required fields" },
+      { status: 400 }
     );
   }),
 
