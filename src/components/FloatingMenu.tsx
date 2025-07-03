@@ -11,11 +11,17 @@ export default function FloatingMenu() {
     { href: "/profile", icon: <User size={20} />, label: "마이" },
   ];
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-10 pb-[env(safe-area-inset-bottom)]">
-      <ul className="mx-auto mb-2 flex max-w-md items-center justify-around rounded-2xl bg-background/60 backdrop-blur p-2 shadow">
-        {items.map((item) => (
-          <li key={item.href}>
-            <Link to={item.href} aria-label={item.label} className="p-2">{item.icon}</Link>
+    <nav className="pointer-events-none fixed inset-x-0 bottom-4 z-10">
+      <ul className="mx-auto flex h-[64px] w-[85%] items-center justify-around rounded-full bg-white/30 p-2 backdrop-blur-md shadow-md">
+        {items.map((item, idx) => (
+          <li key={item.href} className={idx === 2 ? 'translate-y-[-12px]' : ''}>
+            <Link
+              to={item.href}
+              aria-label={item.label}
+              className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full"
+            >
+              {item.icon}
+            </Link>
           </li>
         ))}
       </ul>

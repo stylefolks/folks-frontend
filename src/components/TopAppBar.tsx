@@ -21,13 +21,11 @@ export default function TopAppBar() {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b bg-background/80 backdrop-blur sticky top-0 z-10">
-      <Link to="/" className="font-bold text-lg">
-        Folks
-      </Link>
+    <header className="sticky top-0 z-10 flex items-center justify-between bg-white px-4 py-2">
+      <span className="text-xl font-bold">Folks</span>
       {user ? (
         <div className="flex items-center gap-2">
-          <Avatar src={user.avatarUrl} size="sm" />
+          <Avatar src={user.avatarUrl} className="h-9 w-9" />
           <button aria-label="menu">
             <Menu size={20} />
           </button>

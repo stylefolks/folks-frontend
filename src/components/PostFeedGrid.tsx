@@ -45,7 +45,7 @@ export default function PostFeedGrid() {
   }, [loaderRef, nextCursor]);
 
   return (
-    <div className="columns-2 gap-4 p-4" role="feed">
+    <div className="columns-2 gap-3 p-4" role="feed">
       {posts.map((post) => (
         <div key={post.id} className="break-inside-avoid">
           <FeedCard post={post} />

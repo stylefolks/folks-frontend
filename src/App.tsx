@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar';
 import { AppBarTitleProvider } from '@/lib/appBarTitle';
-import Home from '@/pages/Home';
+import HomePage from '@/pages/HomePage';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import Posts from '@/pages/Posts';
@@ -25,7 +25,7 @@ export default function App() {
       <Navbar />
       <main className="pt-4">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/post/:postId" element={<Post />} />
