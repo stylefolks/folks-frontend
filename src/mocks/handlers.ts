@@ -1,6 +1,36 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "./tags";
 
+const hotTags = [
+  { name: "빈티지", postCount: 27 },
+  { name: "홍대카페", postCount: 12 },
+  { name: "90s", postCount: 5 },
+];
+
+interface FeedPost {
+  id: string;
+  title: string;
+  imageUrl: string;
+  author: { nickname: string };
+  tags: string[];
+  likeCount: number;
+}
+
+const feedPosts: FeedPost[] = Array.from({ length: 15 }, (_, i) => ({
+  id: String(i + 1),
+  title: `오늘의 OOTD ${i + 1}`,
+  imageUrl: `https://picsum.photos/seed/post-${i + 1}/400/300`,
+  author: { nickname: `user${i + 1}` },
+  tags: ["빈티지", "홍대"],
+  likeCount: 10 * (i + 1),
+}));
+
+const me = {
+  id: "me",
+  nickname: "cloudlee",
+  avatarUrl: "https://picsum.photos/seed/me/100",
+};
+
 const PUBLIC_API_URL =
   typeof window === "undefined"
     ? process.env.PUBLIC_API_URL
@@ -617,5 +647,22 @@ export const handlers = [
       followingMap[key] = followingMap[key].filter((u) => u.userId !== id);
     }
     return new HttpResponse(null, { status: 200 });
+  }),
+
+  // Folks HomePage mock APIs
+  http.get('/tags/hot', () => {
+    return HttpResponse.json(hotTags);
+  }),
+  http.get('/posts', ({ request }) => {
+    const url = new URL(request.url);
+    const cursor = url.searchParams.get('cursor');
+    const start = cursor ? parseInt(cursor, 10) : 0;
+    const pageSize = 6;
+    const posts = feedPosts.slice(start, start + pageSize);
+    const next = start + pageSize < feedPosts.length ? String(start + pageSize) : undefined;
+    return HttpResponse.json({ posts, nextCursor: next });
+  }),
+  http.get('/users/me', () => {
+    return HttpResponse.json(me);
   }),
 ];
