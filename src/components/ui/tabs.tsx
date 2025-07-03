@@ -14,7 +14,7 @@ interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Tabs({ value, onValueChange, items, className }: TabsProps) {
   return (
-    <div className={cn('flex border-b', className)}>
+    <div className={cn('flex border-b w-full overflow-hidden overflow-x-scroll', className)}>
       {items.map((item) => (
         <button
           key={item.value}

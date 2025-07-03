@@ -3,13 +3,14 @@ import ImageWithSkeleton from "./ImageWithSkeleton";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Heart } from "lucide-react";
 
 interface Props {
   post: Post;
   withTitle?: boolean;
 }
 
-export default function PostCard({ post, withTitle }: Props) {
+export default function PostCard({ post, withTitle = true }: Props) {
   // Height based on id for consistent randomness
   const navigate = useNavigate();
   const height = 150 + (post.id % 3) * 50;
@@ -33,11 +34,14 @@ export default function PostCard({ post, withTitle }: Props) {
           <Skeleton className={cn("absolute inset-0")} />
         )}
       </div>
+      <div className="flex items-center justify-between mt-2 text-sm opacity-80">
+        <Heart size={14} /> {post.likeCount}
       {withTitle && (
-        <h3 className="mt-2 text-sm font-medium text-black text-center">
+        <h3 className="text-sm font-medium text-black text-center w-full">
           {post.title}
         </h3>
       )}
+      </div>
     </div>
   );
 }

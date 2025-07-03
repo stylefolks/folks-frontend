@@ -4,25 +4,19 @@ import HomePage from '@/pages/HomePage';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import ResetPasswordPage from '@/pages/ResetPassword';
-import Posts from '@/pages/Posts';
 import Post from '@/pages/Post';
 import PostDetailPage from '@/pages/PostDetailPage';
-import Crews from '@/pages/Crews';
 import CrewDetailPage from '@/pages/CrewDetailPage';
 import CrewDirectoryPage from '@/pages/CrewDirectoryPage';
 import CreateCrewPage from '@/pages/CreateCrew';
-import BrandDetailPage from '@/pages/brand/[id]';
-import SearchPage from '@/pages/Search';
 import UserProfilePage from '@/pages/profile/[userId]';
-import MyProfile from '@/pages/MyProfile';
-import MyPage from '@/pages/MyPage';
+
 import SettingsPage from '@/pages/Settings';
-import Write from '@/pages/Write';
 import CreatePostPage from '@/pages/CreatePostPage';
 import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
-import Brands from './pages/Brands';
+
 
 export default function App() {
   return (
@@ -34,23 +28,17 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/post/:postId" element={<Post />} />
-          <Route path="/posts/:id" element={<PostDetailPage />} />
-          <Route path="/crews" element={<Crews />} />
           <Route path="/crew-directory" element={<CrewDirectoryPage />} />
           <Route path="/crew/:id" element={<CrewDetailPage />} />
-          <Route path="/brands" element={<Brands />} />
-          <Route path="/brand/:id" element={<BrandDetailPage />} />
-          <Route path="/search" element={<SearchPage />} />
+          <Route path="/posts/:id" element={<PostDetailPage />} />
+          <Route path="/profile/:userId" element={<UserProfilePage />} />
+          <Route path="/write" element={<CreatePostPage />} />
           <Route element={<RequireAuth />}>
-            {/* <Route path="/profile" element={<MyProfile />} /> */}
-            <Route path="/profile/:userId" element={<UserProfilePage />} />
-            <Route path="/mypage" element={<MyPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/crews/new" element={<CreateCrewPage />} />
           </Route>
-        <Route path="/write" element={<Write />} />
-        <Route path="/create-post" element={<CreatePostPage />} />
+          {/* <Route path="/brands" element={<Brands />} />
+          <Route path="/brand/:id" element={<BrandDetailPage />} /> */}
       </Routes>
       </main>
     </AppBarTitleProvider>

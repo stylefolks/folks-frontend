@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "./tags";
+import { Post } from "@/lib/posts";
 
 const hotTags = [
   { name: "비건카페", postCount: 32 },
@@ -37,6 +38,40 @@ interface FeedPost {
   author: { nickname: string };
   tags: string[];
   likeCount: number;
+}
+const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
+
+export function mockPost(id: number): Post {
+  const author: SimpleUser = {
+    userId: `user${id}`,
+    username: `User ${id}`,
+    imageUrl: `https://picsum.photos/seed/user${id}/100`,
+  };
+  return {
+    id,
+    title: `Post ${id}`,
+    type: id % 2 === 0 ? "BASIC" : "COLUMN", // alternating types for mock data
+    brandMetaType: id % 3 === 0 ? "POSTS" : undefined,
+    crewMetaType: id % 4 === 0 ? "TOPIC" : undefined,
+    image: `https://picsum.photos/seed/${id}/600/400`,
+    date: new Date(BASE_TIME - id * 24 * 60 * 60 * 1000).toISOString(),
+    views: id * 10,
+    author,
+    tags: [`tag${id}`, `tag${id + 1}`],
+    crew: id % 2 === 0 ? { id: `crew${id}`, name: `Crew ${id}` } : undefined,
+    brand: id % 3 === 0 ? { id: `brand${id}`, name: `Brand ${id}` } : undefined,
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: `This is the content for post ${id}.` },
+          ],
+        },
+      ],
+    },
+  };
 }
 
 const feedPosts: FeedPost[] = Array.from({ length: 15 }, (_, i) => ({
@@ -464,33 +499,31 @@ export const handlers = [
     const { id } = params as { id: string };
     if (id === 'crew-1') {
       return HttpResponse.json({
-        id: 'crew-1',
-        name: 'Shinchon Crew',
-        avatarUrl: 'https://picsum.photos/seed/crew-1-banner/1200/675',
-        memberCount: 2250,
-        description: 'Street fashion crew in Shinchon, Seoul.',
-        tags: ['힙합', '스트릿'],
+        "id": "crew-1",
+        "name": "Shinchon Crew",
+        "avatarUrl": "https://picsum.photos/seed/crew-1-banner/1200/675",
+        "memberCount": 2250,
+        "description": "Street fashion crew in Shinchon, Seoul.",
+        "tags": ["힙합", "스트릿"]
       });
     }
     const found = createdCrews.find((c) => c.id === id);
     if (!crewFollowersMap[id]) {
       crewFollowersMap[id] = Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`crew-${id}-follower-${i}`);
-        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+        return { "userId": p.userId, "username": p.username, "imageUrl": p.imageUrl };
       });
     }
     if (found) {
-      return HttpResponse.json({ ...found, followers: crewFollowersMap[id] });
+      return HttpResponse.json({ ...found, "followers": crewFollowersMap[id] });
     }
     return HttpResponse.json({
-      id,
-      name: `Crew ${id}`,
-      profileImage: `https://picsum.photos/seed/crew-${id}/80/80`,
-      coverImage: `https://picsum.photos/seed/crew-${id}/1200/300`,
-      description: `This is crew ${id}.`,
-      links: [{ title: 'Instagram', url: 'https://instagram.com' }],
-      ownerId: 'folks',
-      followers: crewFollowersMap[id],
+      "id": id,
+      "name": `Crew ${id}`,
+      "avatarUrl": `https://picsum.photos/seed/crew-${id}/400/400`,
+      "memberCount": 1000,
+      "description": `This is crew ${id} description` ,
+      "tags": ["테스트", "샘플"]
     });
   }),
 
@@ -499,25 +532,42 @@ export const handlers = [
     if (id === 'crew-1') {
       return HttpResponse.json([
         {
-          id: 'p1',
-          title: 'OOTD',
-          imageUrl: 'https://picsum.photos/seed/crew-post1/400/500',
-          author: { nickname: 'sophie' },
-          tags: ['OOTD'],
-          likeCount: 132,
+          "id": "p1",
+          "title": "OOTD",
+          "imageUrl": "https://picsum.photos/seed/crew-post1/400/500",
+          "author": { "nickname": "sophie" },
+          "tags": ["OOTD"],
+          "likeCount": 132
         },
         {
-          id: 'p2',
-          title: '#비건카페',
-          imageUrl: 'https://picsum.photos/seed/crew-post2/400/500',
-          author: { nickname: 'matt' },
-          tags: ['비건카페'],
-          likeCount: 136,
-        },
+          "id": "p2",
+          "title": "#비건카페",
+          "imageUrl": "https://picsum.photos/seed/crew-post2/400/500",
+          "author": { "nickname": "matt" },
+          "tags": ["비건카페"],
+          "likeCount": 136
+        }
       ]);
     }
-    const posts = Array.from({ length: 4 }, (_, i) => randomPost(i + 1));
-    return HttpResponse.json(posts);
+    // 샘플 데이터 (id별로 다르게)
+    return HttpResponse.json([
+      {
+        "id": "p3",
+        "title": `Crew ${id}의 첫번째 게시물`,
+        "imageUrl": `https://picsum.photos/seed/crew-${id}-post1/400/500`,
+        "author": { "nickname": "user1" },
+        "tags": ["테스트"],
+        "likeCount": 10
+      },
+      {
+        "id": "p4",
+        "title": `Crew ${id}의 두번째 게시물`,
+        "imageUrl": `https://picsum.photos/seed/crew-${id}-post2/400/500`,
+        "author": { "nickname": "user2" },
+        "tags": ["샘플"],
+        "likeCount": 5
+      }
+    ]);
   }),
 
   http.get(`${API_BASE}/crews/:id/events`, ({ params }) => {

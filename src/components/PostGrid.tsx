@@ -3,6 +3,7 @@ import PostCard from './PostCard';
 import useInfiniteScroll from './useInfiniteScroll';
 import { getPosts, type Post } from '@/lib/posts';
 import { useNavigate } from 'react-router-dom';
+import FeedCard from './FeedCard';
 
 const PAGE_SIZE = 20;
 
@@ -21,11 +22,13 @@ export default function PostGrid() {
 
   const handlePostClick = (id: string) => {
     document.startViewTransition(() => {
-      navigate(`/post/${id}`);
+      navigate(`/posts/${id}`);
     });
   };
 
   return (
+    <>
+    <h2 className="text-l font-bold p-4">Latest Posts</h2>
     <div className="columns-2 md:columns-3 gap-4 p-4">
       {posts.map((post) => (
         <div
@@ -39,5 +42,6 @@ export default function PostGrid() {
       ))}
       <div ref={ref} />
     </div>
+    </>
   );
 }

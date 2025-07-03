@@ -53,15 +53,6 @@ export default function CrewDetailPage() {
 
   return (
     <div className="min-h-screen pb-16">
-      <header className="flex items-center justify-between px-4 pt-4 pb-2">
-        <button onClick={() => navigate(-1)} aria-label="back">
-          <ArrowLeft />
-        </button>
-        <Avatar
-          src={me?.avatarUrl ?? 'https://picsum.photos/seed/me/80/80'}
-          className="w-9 h-9"
-        />
-      </header>
       <section className="relative px-4">
         <img
           src={crew.avatarUrl}

@@ -80,17 +80,15 @@ export default function PostDetailPage() {
 
   return (
     <div className="pb-16">
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-white px-4 py-3">
-        <button onClick={() => navigate(-1)} aria-label="back">
+      
+        
+      
+      <div className="px-4 pt-2">
+        <div className='flex items-center justify-between'>
+<button onClick={() => navigate(-1)} aria-label="back">
           <ArrowLeft />
         </button>
-        <span className="text-base font-semibold">{post.crewName}</span>
-        <button aria-label="menu">
-          <Menu />
-        </button>
-      </header>
-      <div className="px-4 pt-2">
-        <div className="flex flex-wrap gap-2">
+<div className="flex flex-wrap gap-2">
           {post.hashtags.map((tag) => (
             <Badge
               key={tag}
@@ -101,6 +99,8 @@ export default function PostDetailPage() {
             </Badge>
           ))}
         </div>
+        </div>
+        
         <h1 className="mt-2 text-xl font-bold leading-snug">{post.title}</h1>
         <div className="mt-2 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-pink-400 text-white text-sm flex items-center justify-center">

@@ -49,7 +49,7 @@ export default function Navbar() {
 
   return (
     <>
-    <nav className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-4">
+    <nav className="sticky top-0 z-30 flex items-center justify-between border-b bg-white px-4 py-4">
       {title ? (
         <span className="absolute left-1/2 -translate-x-1/2 truncate text-center text-base font-semibold">
           {title}

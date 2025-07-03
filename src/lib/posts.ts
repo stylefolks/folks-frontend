@@ -15,6 +15,8 @@ export interface Post {
   type: "BASIC" | "COLUMN"; // assuming these are the only types
   brandMetaType?: "POSTS" | "EVENT" | "NOTICE"; // optional meta type
   crewMetaType?: "TOPIC" | "OVERVIEW" | "POSTS" | "EVENT" | "NOTICE"; // optional meta type
+  likeCount?: number; // optional like count
+  commentCount?: number; // optional comment count
 }
 
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
