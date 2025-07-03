@@ -3,6 +3,7 @@ import { AppBarTitleProvider } from '@/lib/appBarTitle';
 import HomePage from '@/pages/HomePage';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
+import ResetPasswordPage from '@/pages/ResetPassword';
 import Posts from '@/pages/Posts';
 import Post from '@/pages/Post';
 import PostDetailPage from '@/pages/PostDetailPage';
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/posts/:id" element={<PostDetailPage />} />
           <Route path="/crews" element={<Crews />} />
