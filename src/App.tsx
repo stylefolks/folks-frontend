@@ -7,6 +7,7 @@ import Posts from '@/pages/Posts';
 import Post from '@/pages/Post';
 import Crews from '@/pages/Crews';
 import CrewDetailPage from '@/pages/crew/[id]';
+import CrewDirectoryPage from '@/pages/CrewDirectoryPage';
 import CreateCrewPage from '@/pages/CreateCrew';
 import BrandDetailPage from '@/pages/brand/[id]';
 import SearchPage from '@/pages/Search';
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/post/:postId" element={<Post />} />
           <Route path="/crews" element={<Crews />} />
+          <Route path="/crew-directory" element={<CrewDirectoryPage />} />
           <Route path="/crew/:id/:tab?" element={<CrewDetailPage />} />
           <Route path="/brands" element={<Brands />} />
           <Route path="/brand/:id" element={<BrandDetailPage />} />

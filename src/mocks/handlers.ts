@@ -2,9 +2,32 @@ import { http, HttpResponse } from "msw";
 import { TAGS } from "./tags";
 
 const hotTags = [
-  { name: "빈티지", postCount: 27 },
-  { name: "홍대카페", postCount: 12 },
-  { name: "90s", postCount: 5 },
+  { name: "비건카페", postCount: 32 },
+  { name: "90s", postCount: 12 },
+  { name: "한남", postCount: 7 },
+];
+const directoryCrews = [
+  {
+    id: "1",
+    name: "Shinchon Crew",
+    memberCount: 2250,
+    avatarUrl: "https://picsum.photos/seed/crew1/400/400",
+    tags: ["빈티지", "홍대"],
+  },
+  {
+    id: "2",
+    name: "Hongdae Cafe",
+    memberCount: 1800,
+    avatarUrl: "https://picsum.photos/seed/crew2/400/400",
+    tags: ["카페", "사진"],
+  },
+  {
+    id: "3",
+    name: "비정인돌",
+    memberCount: 1482,
+    avatarUrl: "https://picsum.photos/seed/crew3/400/400",
+    tags: ["스트릿", "블랙"],
+  },
 ];
 
 interface FeedPost {
@@ -334,31 +357,19 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
-    const search = url.searchParams.get("search");
-    const hasEvent = url.searchParams.get("hasUpcomingEvent");
-    const tag = url.searchParams.get("tag");
-    const sort = url.searchParams.get("sort");
-    let crews = [
-      ...createdCrews,
-      ...Array.from({ length: 6 }, (_, i) => randomCrew(i + 1)),
-    ];
-    if (search) {
+    const keyword = url.searchParams.get('keyword');
+    const tag = url.searchParams.get('tag');
+    let crews = directoryCrews;
+    if (keyword) {
       crews = crews.filter((c) =>
-        c.name.toLowerCase().includes(search.toLowerCase())
+        c.name.toLowerCase().includes(keyword.toLowerCase())
       );
-    }
-    if (hasEvent) {
-      crews = crews.filter((c) => c.upcomingEvent);
     }
     if (tag) {
       crews = crews.filter((c) => c.tags.includes(tag));
     }
-    if (sort === "popular") {
-      crews = crews.sort((a, b) => b.memberCount - a.memberCount);
-    }
     return HttpResponse.json(crews);
   }),
-
   http.get(`${API_BASE}/brands`, ({ request }) => {
     const url = new URL(request.url);
     const hasEvent = url.searchParams.get("hasUpcomingEvent");
