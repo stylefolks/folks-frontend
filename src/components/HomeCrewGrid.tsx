@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import type { CrewSummary } from "@/lib/crew";
+import { useNavigate } from "react-router-dom";
 
 export default function HomeCrewGrid() {
   const [crews, setCrews] = useState<CrewSummary[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/crews?sort=popular")
       .then((res) => res.json())
-      .then((data: CrewSummary[]) => setCrews(data.slice(0, 3)))
+      .then((data: CrewSummary[]) => setCrews(data.slice(0)))
       .catch(() => setCrews([]));
   }, []);
 
   return (
     <section className="mt-5 px-4">
       <h2 className="mb-3 text-md font-bold">Crews</h2>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-row gap-3 overflow-x-auto pb-2 w-full">
         {crews.map((crew) => (
           <div
             key={crew.id}
-            onClick={() => {}}
-            className="relative cursor-pointer"
+            onClick={() => navigate(`/crew/${crew.id}`)}
+            className="active:scale-95 relative cursor-pointer min-w-[120px]"
           >
             <ImageWithSkeleton
               src={crew.coverImage}

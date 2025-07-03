@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface Tag {
   name: string;
@@ -8,6 +9,8 @@ interface Tag {
 
 export default function HashtagChips() {
   const [tags, setTags] = useState<Tag[]>([]);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetch("/tags/hot")
@@ -26,8 +29,9 @@ export default function HashtagChips() {
         {tags.map((tag) => (
           <button
             key={tag.name}
-            onClick={() => {}}
+            onClick={() => navigate(`/search?tag=${tag.name}`)}
             className={cn(
+              'active:scale-95',
               "rounded-full bg-[#F7F7F7] px-3 py-1 text-sm hover:bg-black hover:text-white transition"
             )}
           >

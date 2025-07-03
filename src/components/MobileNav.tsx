@@ -23,7 +23,7 @@ export default function MobileNav({ open, onClose, loggedIn }: MobileNavProps) {
       {/* 네비게이션 패널 */}
       <div
         className={cn(
-          "fixed left-12 right-12 z-50 flex flex-col sm:hidden transition-opacity duration-300 bottom-4 rounded-lg shadow-lg bg-white overflow-hidden",
+          "fixed left-4 right-4 z-50 flex flex-col sm:hidden transition-opacity duration-300 bottom-4 rounded-lg shadow-lg bg-white overflow-hidden",
           open
             ? "opacity-80 pointer-events-auto"
             : "opacity-0 pointer-events-none"

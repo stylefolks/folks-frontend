@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Avatar from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import Tabs, { TabItem } from '@/components/ui/tabs';
@@ -66,9 +66,9 @@ export default function CrewDetailPage() {
       </section>
       <div className="mt-2 flex flex-wrap gap-2 px-4">
         {crew.tags.map((tag) => (
-          <span key={tag} className="rounded-full bg-muted px-3 py-1 text-sm">
+          <Link to={`/search?tag=${tag}`} key={tag} className="rounded-full bg-muted  bg-[#F7F7F7] px-3 py-1 text-sm hover:bg-black hover:text-white transition">
             #{tag}
-          </span>
+          </Link>
         ))}
       </div>
       <p className="px-4 py-2 text-sm text-muted leading-relaxed">

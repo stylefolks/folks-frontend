@@ -28,6 +28,7 @@ export default function HotHashtagChips({ selected, onSelect }: Props) {
           key={tag.name}
           onClick={() => onSelect(selected === tag.name ? null : tag.name)}
           className={cn(
+            'active:scale-95',
             'whitespace-nowrap rounded-full bg-[#F5F5F5] px-3 py-1 text-sm transition',
             'hover:bg-black hover:text-white',
             selected === tag.name && 'bg-black text-white'

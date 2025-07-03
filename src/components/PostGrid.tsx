@@ -34,7 +34,7 @@ export default function PostGrid() {
         <div
           key={`post-${post.id}`}
           className="break-inside-avoid"
-          onClick={() => handlePostClick(String(post.id))}
+          // onClick={() => handlePostClick(String(post.id))}
           style={{ cursor: 'pointer' }}
         >
           <PostCard post={post} />

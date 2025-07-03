@@ -120,7 +120,7 @@ export default function CreatePostPage() {
           onChange={(e) => setTitle(e.target.value)}
           className="mt-4 rounded-md border px-4 py-2 text-base"
         />
-        <div className="bg-white border min-h-[300px] px-4 py-3 rounded-lg">
+        <div className="bg-white border min-h-[300px] p-1 rounded-lg">
           <Editor value={initialDoc} onChange={setEditorState} onReady={setView} />
         </div>
         <div className="flex gap-3">

@@ -94,6 +94,7 @@ export default function PostDetailPage() {
               key={tag}
               variant="outline"
               className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-black"
+              onClick={() => navigate(`/search?tag=${tag.replace('#', '')}`)}
             >
               {tag}
             </Badge>

@@ -20,7 +20,7 @@ export default function PostCard({ post, withTitle = true }: Props) {
       <div
         style={{ height, viewTransitionName: `post-${post.id}` }}
         className="relative w-full overflow-hidden rounded-lg bg-gray-100 cursor-pointer"
-        onClick={() => navigate(`/post/${post.id}`)}
+        onClick={() => navigate(`/posts/${post.id}`)}
       >
         {post.image ? (
           <>
