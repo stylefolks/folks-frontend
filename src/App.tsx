@@ -14,6 +14,7 @@ import BrandDetailPage from '@/pages/brand/[id]';
 import SearchPage from '@/pages/Search';
 import UserProfilePage from '@/pages/profile/[userId]';
 import MyProfile from '@/pages/MyProfile';
+import MyPage from '@/pages/MyPage';
 import SettingsPage from '@/pages/Settings';
 import Write from '@/pages/Write';
 import CreatePostPage from '@/pages/CreatePostPage';
@@ -42,9 +43,10 @@ export default function App() {
           <Route element={<RequireAuth />}>
             {/* <Route path="/profile" element={<MyProfile />} /> */}
             <Route path="/profile/:userId" element={<UserProfilePage />} />
+            <Route path="/mypage" element={<MyPage />} />
             <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/crews/new" element={<CreateCrewPage />} />
-        </Route>
+            <Route path="/crews/new" element={<CreateCrewPage />} />
+          </Route>
         <Route path="/write" element={<Write />} />
         <Route path="/create-post" element={<CreatePostPage />} />
       </Routes>

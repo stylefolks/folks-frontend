@@ -51,9 +51,28 @@ const feedPosts: FeedPost[] = Array.from({ length: 15 }, (_, i) => ({
 const me = {
   id: "me",
   role: "USER",
-  nickname: "cloudlee",
-  avatarUrl: "https://picsum.photos/seed/me/100",
+  nickname: "shane",
+  bio: "Hello there!",
+  followerCount: 123,
+  followingCount: 88,
+  avatarUrl: "/mock/user.jpg",
 };
+
+const myCrews = [
+  { id: "crew-1", avatarUrl: "/mock/crew-1.jpg" },
+  { id: "crew-2", avatarUrl: "/mock/crew-2.jpg" },
+];
+
+const myPosts = [
+  {
+    id: "post-1",
+    title: "My first post!",
+    subtitle: "introduction · welcome",
+    hashtags: ["#landscape"],
+    imageUrl: "/mock/post-1.jpg",
+    likeCount: 24,
+  },
+];
 
 const PUBLIC_API_URL =
   typeof window === "undefined"
@@ -753,6 +772,10 @@ export const handlers = [
   }),
   http.get('/posts', ({ request }) => {
     const url = new URL(request.url);
+    const author = url.searchParams.get('author');
+    if (author === 'me') {
+      return HttpResponse.json(myPosts);
+    }
     const cursor = url.searchParams.get('cursor');
     const start = cursor ? parseInt(cursor, 10) : 0;
     const pageSize = 6;
@@ -762,6 +785,9 @@ export const handlers = [
   }),
   http.get('/users/me', () => {
     return HttpResponse.json(me);
+  }),
+  http.get('/users/me/crews', () => {
+    return HttpResponse.json(myCrews);
   }),
 
   http.post(`${API_BASE}/posts`, async ({ request }) => {
