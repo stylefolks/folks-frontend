@@ -50,6 +50,7 @@ const feedPosts: FeedPost[] = Array.from({ length: 15 }, (_, i) => ({
 
 const me = {
   id: "me",
+  role: "USER",
   nickname: "cloudlee",
   avatarUrl: "https://picsum.photos/seed/me/100",
 };
@@ -705,5 +706,15 @@ export const handlers = [
   }),
   http.get('/users/me', () => {
     return HttpResponse.json(me);
+  }),
+
+  http.post(`${API_BASE}/posts`, async ({ request }) => {
+    await request.json();
+    return HttpResponse.json({ success: true, postId: 'abc123' }, { status: 201 });
+  }),
+
+  http.post(`${API_BASE}/posts/draft`, async ({ request }) => {
+    await request.json();
+    return HttpResponse.json({ success: true }, { status: 201 });
   }),
 ];

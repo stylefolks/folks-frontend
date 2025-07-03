@@ -15,6 +15,7 @@ import UserProfilePage from '@/pages/profile/[userId]';
 import MyProfile from '@/pages/MyProfile';
 import SettingsPage from '@/pages/Settings';
 import Write from '@/pages/Write';
+import CreatePostPage from '@/pages/CreatePostPage';
 import RequireAuth from '@/components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
 import './styles/globals.css';
@@ -40,10 +41,11 @@ export default function App() {
             {/* <Route path="/profile" element={<MyProfile />} /> */}
             <Route path="/profile/:userId" element={<UserProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/crews/new" element={<CreateCrewPage />} />
-          </Route>
-          <Route path="/write" element={<Write />} />
-        </Routes>
+          <Route path="/crews/new" element={<CreateCrewPage />} />
+        </Route>
+        <Route path="/write" element={<Write />} />
+        <Route path="/create-post" element={<CreatePostPage />} />
+      </Routes>
       </main>
     </AppBarTitleProvider>
   );
