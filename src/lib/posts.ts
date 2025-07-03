@@ -106,6 +106,18 @@ export async function createPost(data: CreatePostDto): Promise<Post> {
   return res.json();
 }
 
+export async function savePostDraft(data: CreatePostDto): Promise<{ success: boolean; postId?: string }> {
+  const res = await fetch(`${API_BASE}/posts/draft`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to save draft');
+  return res.json();
+}
+
 const TYPES = ["BASIC", "COLUMN"] as const;
 export const SEARCH_POST_TYPES = ["ALL", ...TYPES] as const;
 export type PostType = (typeof TYPES)[number];
