@@ -12,7 +12,7 @@ import {
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 declare global {
-  // eslint-disable-next-line no-var
+   
   var localStorage: Storage;
   // using 'any' to simplify mock typing
   var fetch: any;
