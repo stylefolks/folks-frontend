@@ -677,7 +677,7 @@ export const handlers = [
           type: "topic",
           isVisible: true,
           order: 4,
-          hashtag: "tag1",
+          hashtags: ["#tag1"],
         },
       ];
     }

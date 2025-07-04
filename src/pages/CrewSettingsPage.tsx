@@ -22,6 +22,62 @@ export default function CrewSettingsPage() {
   const [members, setMembers] = useState<CrewMember[]>([]);
   const [tabs, setTabs] = useState<CrewTab[]>([]);
   const [search, setSearch] = useState('');
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  const TAB_OPTIONS = ['posts', 'overview', 'notice', 'event', 'topic'];
+
+  const isOptionDisabled = (type: string, id: number) => {
+    if (type === 'topic') {
+      const count = tabs.filter((t) => t.type === 'topic' && t.id !== id).length;
+      return count >= 3 && tabs.find((t) => t.id === id)?.type !== 'topic';
+    }
+    return tabs.some((t) => t.type === type && t.id !== id);
+  };
+
+  const changeType = (index: number, newType: string) => {
+    setTabs((prev) =>
+      prev.map((t, i) => (i === index ? { ...t, type: newType } : t)),
+    );
+  };
+
+  const canAddTab = () => {
+    const topicCount = tabs.filter((t) => t.type === 'topic').length;
+    if (topicCount < 3) return true;
+    return ['posts', 'overview', 'notice', 'event'].some(
+      (t) => !tabs.some((tab) => tab.type === t),
+    );
+  };
+
+  const addTab = () => {
+    const topicCount = tabs.filter((t) => t.type === 'topic').length;
+    const nonTopic = ['posts', 'overview', 'notice', 'event'].find(
+      (t) => !tabs.some((tab) => tab.type === t),
+    );
+    const type = nonTopic ?? (topicCount < 3 ? 'topic' : undefined);
+    if (!type) return;
+    setTabs([
+      ...tabs,
+      {
+        id: Date.now(),
+        crewId: Number(crewId),
+        title: '',
+        type,
+        isVisible: true,
+        order: tabs.length,
+      },
+    ]);
+  };
+
+  const handleDrop = (index: number) => {
+    if (dragIndex === null || dragIndex === index) return;
+    setTabs((ts) => {
+      const updated = [...ts];
+      const [item] = updated.splice(dragIndex, 1);
+      updated.splice(index, 0, item);
+      return updated.map((t, i) => ({ ...t, order: i }));
+    });
+    setDragIndex(null);
+  };
 
   useEffect(() => {
     if (!crewId) return;
@@ -95,8 +151,15 @@ export default function CrewSettingsPage() {
         <h2 className="font-semibold">Tab management</h2>
         <ul className="space-y-2">
           {tabs.map((t, i) => (
-            <li key={t.id} className="flex items-center gap-2">
-              <span className="flex-1">
+            <li
+              key={t.id}
+              className="flex flex-col gap-2 border p-2 rounded cursor-move"
+              draggable
+              onDragStart={() => setDragIndex(i)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => handleDrop(i)}
+            >
+              <div className="flex items-center gap-2">
                 <Input
                   value={t.title}
                   onChange={(e) =>
@@ -104,35 +167,53 @@ export default function CrewSettingsPage() {
                       tabs.map((tab) => (tab.id === t.id ? { ...tab, title: e.target.value } : tab)),
                     )
                   }
+                  className="flex-1"
+                  placeholder="Title"
                 />
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTabs((tabs) => tabs.filter((tab) => tab.id !== t.id))}
-              >
-                Delete
-              </Button>
+                <select
+                  value={t.type}
+                  onChange={(e) => changeType(i, e.target.value)}
+                  className="border rounded px-1 text-sm"
+                >
+                  {TAB_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt} disabled={isOptionDisabled(opt, t.id)}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTabs((tabs) => tabs.filter((tab) => tab.id !== t.id))}
+                >
+                  Delete
+                </Button>
+              </div>
+              {t.type === 'topic' && (
+                <Input
+                  value={t.hashtags?.join(', ') ?? ''}
+                  onChange={(e) =>
+                    setTabs((tabs) =>
+                      tabs.map((tab) =>
+                        tab.id === t.id
+                          ? {
+                              ...tab,
+                              hashtags: e.target.value
+                                .split(',')
+                                .map((s) => s.trim())
+                                .filter(Boolean),
+                            }
+                          : tab,
+                      ),
+                    )
+                  }
+                  placeholder="Hashtags (comma separated)"
+                />
+              )}
             </li>
           ))}
         </ul>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            setTabs((ts) => [
-              ...ts,
-              {
-                id: Date.now(),
-                crewId: Number(crewId),
-                title: '',
-                type: 'topic',
-                isVisible: true,
-                order: ts.length,
-              },
-            ])
-          }
-        >
+        <Button variant="outline" size="sm" onClick={addTab} disabled={!canAddTab()}>
           Add Tab
         </Button>
       </section>
