@@ -153,34 +153,44 @@ export default function CrewSettingsPage() {
           {tabs.map((t, i) => (
             <li
               key={t.id}
-              className="flex flex-col gap-2 border p-2 rounded cursor-move"
+              className="space-y-2 border p-2 rounded cursor-move"
               draggable
               onDragStart={() => setDragIndex(i)}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDrop(i)}
             >
               <div className="flex items-center gap-2">
-                <Input
-                  value={t.title}
-                  onChange={(e) =>
-                    setTabs((tabs) =>
-                      tabs.map((tab) => (tab.id === t.id ? { ...tab, title: e.target.value } : tab)),
-                    )
-                  }
-                  className="flex-1"
-                  placeholder="Title"
-                />
-                <select
-                  value={t.type}
-                  onChange={(e) => changeType(i, e.target.value)}
-                  className="border rounded px-1 text-sm"
-                >
-                  {TAB_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt} disabled={isOptionDisabled(opt, t.id)}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex-1 space-y-1">
+                  <label htmlFor={`title-${t.id}`} className="block text-sm font-medium">
+                    exposed name
+                  </label>
+                  <Input
+                    id={`title-${t.id}`}
+                    value={t.title}
+                    onChange={(e) =>
+                      setTabs((tabs) =>
+                        tabs.map((tab) => (tab.id === t.id ? { ...tab, title: e.target.value } : tab)),
+                      )
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor={`type-${t.id}`} className="block text-sm font-medium">
+                    type
+                  </label>
+                  <select
+                    id={`type-${t.id}`}
+                    value={t.type}
+                    onChange={(e) => changeType(i, e.target.value)}
+                    className="border rounded px-1 text-sm"
+                  >
+                    {TAB_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt} disabled={isOptionDisabled(opt, t.id)}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
@@ -190,25 +200,31 @@ export default function CrewSettingsPage() {
                 </Button>
               </div>
               {t.type === 'topic' && (
-                <Input
-                  value={t.hashtags?.join(', ') ?? ''}
-                  onChange={(e) =>
-                    setTabs((tabs) =>
-                      tabs.map((tab) =>
-                        tab.id === t.id
-                          ? {
-                              ...tab,
-                              hashtags: e.target.value
-                                .split(',')
-                                .map((s) => s.trim())
-                                .filter(Boolean),
-                            }
-                          : tab,
-                      ),
-                    )
-                  }
-                  placeholder="Hashtags (comma separated)"
-                />
+                <div className="space-y-1">
+                  <label htmlFor={`hashtags-${t.id}`} className="block text-sm font-medium">
+                    relavant hashtag
+                  </label>
+                  <Input
+                    id={`hashtags-${t.id}`}
+                    value={t.hashtags?.join(', ') ?? ''}
+                    onChange={(e) =>
+                      setTabs((tabs) =>
+                        tabs.map((tab) =>
+                          tab.id === t.id
+                            ? {
+                                ...tab,
+                                hashtags: e.target.value
+                                  .split(',')
+                                  .map((s) => s.trim())
+                                  .filter(Boolean),
+                              }
+                            : tab,
+                        ),
+                      )
+                    }
+                    placeholder="Hashtags (comma separated)"
+                  />
+                </div>
               )}
             </li>
           ))}
