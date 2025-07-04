@@ -120,6 +120,23 @@ export async function savePostDraft(data: CreatePostDto): Promise<{ success: boo
   return res.json();
 }
 
+export interface SearchPostParams {
+  query?: string;
+  tags?: string[];
+  tab?: SearchPostType;
+}
+
+export async function searchPosts({ query, tags, tab }: SearchPostParams = {}): Promise<Post[]> {
+  const params = new URLSearchParams();
+  if (query) params.set('query', query);
+  if (tags && tags.length) params.set('tag', tags.join(','));
+  if (tab && tab !== 'ALL') params.set('tab', tab);
+  const search = params.toString();
+  const res = await fetch(`${API_BASE}/posts${search ? `?${search}` : ''}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load posts');
+  return res.json();
+}
+
 const TYPES = ["BASIC", "COLUMN"] as const;
 export const SEARCH_POST_TYPES = ["ALL", ...TYPES] as const;
 export type PostType = (typeof TYPES)[number];

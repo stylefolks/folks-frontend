@@ -1,82 +1,54 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/search/SearchInput";
 import PostTypeTabs from "@/components/search/PostTypeTabs";
 import TagFilterChips from "@/components/search/TagFilterChips";
 import EmptyState from "@/components/search/EmptyState";
 import PostCard from "@/components/PostCard";
-import useInfiniteScroll from "@/components/useInfiniteScroll";
-import { getNextPosts, SearchPostType, type Post } from "@/lib/posts";
+import { searchPosts, SearchPostType, type Post } from "@/lib/posts";
 import { buildSearchParams, parseSearchParams } from "@/lib/searchParams";
 import { useMeta } from "@/lib/meta";
 import { TAGS } from "@/mocks/tags";
 
-const PAGE_SIZE = 10;
-
-function filterByType(post: Post, type: SearchPostType) {
-  switch (type) {
-    case "BASIC":
-      return post.type === "BASIC";
-    case "COLUMN":
-      return post.type === "COLUMN";
-    default:
-      return true;
-  }
-}
+const DEBOUNCE_MS = 500;
 
 export default function SearchPage() {
   useMeta({ title: "Search - Stylefolks" });
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = parseSearchParams(searchParams);
   const [query, setQuery] = useState(initial.query ?? "");
-  const [type, setType] = useState<SearchPostType>(initial.type ?? "ALL");
+  const [tab, setTab] = useState<SearchPostType>(initial.tab ?? "ALL");
   const [selectedTags, setSelectedTags] = useState<string[]>(initial.tags ?? []);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [nextId, setNextId] = useState(0);
-
-  const applyFilters = useCallback(
-    (list: Post[]) =>
-      list.filter((p) => {
-        const matchesQuery = !query || p.title.includes(query);
-        const matchesTags = selectedTags.every((t) => p.tags?.includes(t));
-        const matchesType = filterByType(p, type);
-        return matchesQuery && matchesTags && matchesType;
-      }),
-    [query, selectedTags, type]
-  );
-
-  const loadMore = useCallback(() => {
-    const fetched = getNextPosts(nextId, PAGE_SIZE);
-    const filtered = applyFilters(fetched);
-    setPosts((prev) => [...prev, ...filtered]);
-    setNextId((id) => id + PAGE_SIZE);
-  }, [nextId, applyFilters]);
-
-  const ref = useInfiniteScroll(loadMore);
+  const [debounced, setDebounced] = useState(initial.query ?? "");
 
   useEffect(() => {
-    const initial = applyFilters(getNextPosts(0, PAGE_SIZE));
-    console.log("Initial posts:", initial);
-    setPosts(initial);
-    setNextId(PAGE_SIZE);
-  }, [query, selectedTags, type, applyFilters]);
+    const id = setTimeout(() => setDebounced(query), DEBOUNCE_MS);
+    return () => clearTimeout(id);
+  }, [query]);
+
+  useEffect(() => {
+    searchPosts({ query: debounced, tags: selectedTags, tab })
+      .then(setPosts)
+      .catch(() => setPosts([]));
+  }, [debounced, selectedTags, tab]);
 
   useEffect(() => {
     const parsed = parseSearchParams(searchParams);
     setQuery(parsed.query ?? "");
     setSelectedTags(parsed.tags ?? []);
-    setType(parsed.type ?? "ALL");
+    setTab(parsed.tab ?? "ALL");
   }, [searchParams]);
 
   useEffect(() => {
-    const params = buildSearchParams({ query, tags: selectedTags, type });
+    const params = buildSearchParams({ query: debounced, tags: selectedTags, tab });
     setSearchParams(params);
-  }, [query, selectedTags, type, setSearchParams]);
+  }, [debounced, selectedTags, tab, setSearchParams]);
 
   return (
     <div className="p-4 space-y-4">
       <SearchInput value={query} onChange={setQuery} />
-      <PostTypeTabs value={type} onChange={setType} />
+      <PostTypeTabs value={tab} onChange={setTab} />
       <TagFilterChips
         tags={TAGS}
         selected={selectedTags}
@@ -89,7 +61,6 @@ export default function SearchPage() {
           {posts.map((post) => (
             <PostCard withTitle={true} key={post.id} post={post} />
           ))}
-          <div ref={ref} />
         </div>
       )}
     </div>

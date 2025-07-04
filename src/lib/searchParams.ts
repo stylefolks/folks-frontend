@@ -3,14 +3,14 @@ import type { SearchPostType } from './posts';
 export interface SearchOptions {
   query?: string;
   tags?: string[];
-  type?: SearchPostType;
+  tab?: SearchPostType;
 }
 
-export function buildSearchParams({ query, tags, type }: SearchOptions): URLSearchParams {
+export function buildSearchParams({ query, tags, tab }: SearchOptions): URLSearchParams {
   const params = new URLSearchParams();
   if (query) params.set('query', query);
   if (tags && tags.length) params.set('tag', tags.join(','));
-  if (type && type !== 'ALL') params.set('type', type);
+  if (tab && tab !== 'ALL') params.set('tab', tab);
   return params;
 }
 
@@ -19,6 +19,6 @@ export function parseSearchParams(search: string | URLSearchParams): SearchOptio
   const query = params.get('query') ?? undefined;
   const tag = params.get('tag');
   const tags = tag ? tag.split(',').filter(Boolean) : [];
-  const type = (params.get('type') as SearchPostType) ?? 'ALL';
-  return { query, tags, type };
+  const tab = (params.get('tab') as SearchPostType) ?? 'ALL';
+  return { query, tags, tab };
 }
