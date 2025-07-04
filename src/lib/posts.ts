@@ -123,4 +123,4 @@ export async function savePostDraft(data: CreatePostDto): Promise<{ success: boo
 const TYPES = ["BASIC", "COLUMN"] as const;
 export const SEARCH_POST_TYPES = ["ALL", ...TYPES] as const;
 export type PostType = (typeof TYPES)[number];
-export type SearchPostType = "TALK" | "COLUMN" | "ALL";
+export type SearchPostType = "BASIC" | "COLUMN" | "ALL";
