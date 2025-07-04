@@ -7,6 +7,7 @@ import ResetPasswordPage from '@/pages/ResetPassword';
 import Post from '@/pages/Post';
 import PostDetailPage from '@/pages/PostDetailPage';
 import CrewDetailPage from '@/pages/CrewDetailPage';
+import CrewSettingsPage from '@/pages/CrewSettingsPage';
 import CrewDirectoryPage from '@/pages/CrewDirectoryPage';
 import CreateCrewPage from '@/pages/CreateCrew';
 import UserProfilePage from '@/pages/profile/[userId]';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/crews" element={<CrewDirectoryPage />} />
           <Route path="/search" element={<Search />} />
           <Route path="/crew/:id" element={<CrewDetailPage />} />
+          <Route path="/crew/:crewId/settings" element={<CrewSettingsPage />} />
           <Route path="/posts/:id" element={<PostDetailPage />} />
           <Route path="/profile/:userId" element={<UserProfilePage />} />
           <Route path="/write" element={<CreatePostPage />} />

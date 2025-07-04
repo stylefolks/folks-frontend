@@ -330,6 +330,13 @@ interface CrewTab {
 }
 
 const crewTabsMap: Record<string, CrewTab[]> = {};
+interface CrewMember {
+  userId: string;
+  nickname: string;
+  role: 'owner' | 'manager' | 'member';
+}
+
+const crewMembersMap: Record<string, CrewMember[]> = {};
 
 interface BrandSummary {
   id: string;
@@ -675,6 +682,33 @@ export const handlers = [
       ];
     }
     return HttpResponse.json(crewTabsMap[id]);
+  }),
+
+  http.get(`${API_BASE}/crews/:id/members`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!crewMembersMap[id]) {
+      crewMembersMap[id] = [
+        { userId: 'u1', nickname: 'owner', role: 'owner' },
+        { userId: 'u2', nickname: 'manager1', role: 'manager' },
+        { userId: 'u3', nickname: 'member1', role: 'member' },
+      ];
+    }
+    return HttpResponse.json(crewMembersMap[id]);
+  }),
+
+  http.patch(`${API_BASE}/crews/:id/members/:userId`, async ({ params, request }) => {
+    const { id, userId } = params as { id: string; userId: string };
+    const { role } = await request.json();
+    crewMembersMap[id] = crewMembersMap[id].map((m) =>
+      m.userId === userId ? { ...m, role } : m,
+    );
+    return HttpResponse.json({});
+  }),
+
+  http.delete(`${API_BASE}/crews/:id/members/:userId`, ({ params }) => {
+    const { id, userId } = params as { id: string; userId: string };
+    crewMembersMap[id] = crewMembersMap[id].filter((m) => m.userId !== userId);
+    return new HttpResponse(null, { status: 204 });
   }),
 
   http.put(`${API_BASE}/crews/:id/tabs`, async ({ params, request }) => {
