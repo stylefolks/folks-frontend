@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import Avatar from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import Tabs, { TabItem } from '@/components/ui/tabs';
-import CrewFeedCard, { CrewPost } from '@/components/crew/CrewFeedCard';
-import { ArrowLeft } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Avatar from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import Tabs, { TabItem } from "@/components/ui/tabs";
+import CrewFeedCard, { CrewPost } from "@/components/crew/CrewFeedCard";
+import { ArrowLeft } from "lucide-react";
 
 interface Crew {
   id: string;
@@ -20,11 +20,11 @@ export default function CrewDetailPage() {
   const navigate = useNavigate();
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<CrewPost[]>([]);
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState("all");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
 
   useEffect(() => {
-    fetch('/users/me')
+    fetch("/users/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setMe(data))
       .catch(() => setMe(null));
@@ -43,10 +43,10 @@ export default function CrewDetailPage() {
   }, [id]);
 
   const tabs: TabItem[] = [
-    { value: 'all', label: 'All Posts' },
-    { value: 'hashtags', label: 'Hashtags' },
-    { value: 'announcements', label: 'Announcements' },
-    { value: 'notices', label: 'Notices' },
+    { value: "all", label: "All Posts" },
+    { value: "hashtags", label: "Hashtags" },
+    { value: "announcements", label: "Announcements" },
+    { value: "notices", label: "Notices" },
   ];
 
   if (!crew) return <p className="p-4">Loading...</p>;
@@ -66,7 +66,11 @@ export default function CrewDetailPage() {
       </section>
       <div className="mt-2 flex flex-wrap gap-2 px-4">
         {crew.tags.map((tag) => (
-          <Link to={`/search?tag=${tag}`} key={tag} className="rounded-full bg-muted  bg-[#F7F7F7] px-3 py-1 text-sm hover:bg-black hover:text-white transition">
+          <Link
+            to={`/search?tag=${tag}`}
+            key={tag}
+            className="rounded-full bg-muted  bg-[#F7F7F7] px-3 py-1 text-sm hover:bg-black hover:text-white transition"
+          >
             #{tag}
           </Link>
         ))}
@@ -75,7 +79,10 @@ export default function CrewDetailPage() {
         {crew.description}
       </p>
       <div className="px-4">
-        <Button className="w-full bg-black text-white" onClick={() => alert('Joined!')}>
+        <Button
+          className="w-full bg-black text-white"
+          onClick={() => alert("Joined!")}
+        >
           Join
         </Button>
       </div>
@@ -85,14 +92,14 @@ export default function CrewDetailPage() {
         items={tabs}
         className="mt-4 px-4"
       />
-      {tab === 'all' && (
-        <div className="columns-2 gap-4 px-4 pb-4" role="feed">
+      {tab === "all" && (
+        <div className="columns-2 gap-4 p-4" role="feed">
           {posts.map((post) => (
             <CrewFeedCard key={post.id} post={post} />
           ))}
         </div>
       )}
-      {tab !== 'all' && (
+      {tab !== "all" && (
         <div className="p-4 text-center text-sm text-muted-foreground">
           {tab} content
         </div>
