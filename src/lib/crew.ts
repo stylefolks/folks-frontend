@@ -168,6 +168,38 @@ export async function fetchMyCrewRole(id: string): Promise<CrewRole> {
   return data.role as CrewRole;
 }
 
+export interface CrewMember {
+  userId: string;
+  nickname: string;
+  role: CrewRole;
+}
+
+export async function fetchCrewMembers(id: string): Promise<CrewMember[]> {
+  const res = await fetch(`${API_BASE}/crews/${id}/members`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to load members');
+  return res.json();
+}
+
+export async function updateCrewMemberRole(
+  crewId: string,
+  userId: string,
+  role: CrewRole,
+): Promise<void> {
+  const res = await fetch(`${API_BASE}/crews/${crewId}/members/${userId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
+  if (!res.ok) throw new Error('Failed to update role');
+}
+
+export async function removeCrewMember(crewId: string, userId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/crews/${crewId}/members/${userId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to remove member');
+}
+
 export async function deleteCrew(id: string): Promise<void> {
   const token = getToken();
   const res = await fetch(`${API_BASE}/crews/${id}`, {
