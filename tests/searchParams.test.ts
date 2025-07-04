@@ -7,22 +7,22 @@ describe('search params utils', () => {
     expect(params.get('tag')).toBe('a,b');
   });
 
-  it('omits query and type when not provided or ALL', () => {
-    const params = buildSearchParams({ query: '', type: 'ALL', tags: [] });
+  it('omits query and tab when not provided or ALL', () => {
+    const params = buildSearchParams({ query: '', tab: 'ALL', tags: [] });
     expect(params.toString()).toBe('');
   });
 
-  it('includes query and type', () => {
-    const params = buildSearchParams({ query: 'hello', tags: ['t'], type: 'COLUMN' });
+  it('includes query and tab', () => {
+    const params = buildSearchParams({ query: 'hello', tags: ['t'], tab: 'COLUMN' });
     expect(params.get('query')).toBe('hello');
     expect(params.get('tag')).toBe('t');
-    expect(params.get('type')).toBe('COLUMN');
+    expect(params.get('tab')).toBe('COLUMN');
   });
 
   it('parses values back', () => {
-    const opts = parseSearchParams('query=x&tag=a,b&type=BASIC');
+    const opts = parseSearchParams('query=x&tag=a,b&tab=BASIC');
     expect(opts.query).toBe('x');
     expect(opts.tags).toEqual(['a', 'b']);
-    expect(opts.type).toBe('BASIC');
+    expect(opts.tab).toBe('BASIC');
   });
 });

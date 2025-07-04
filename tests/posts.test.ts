@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createPost, type CreatePostDto } from '../src/lib/posts';
+import { createPost, searchPosts, type CreatePostDto } from '../src/lib/posts';
 import { extractMentionsFromDoc } from '../src/lib/mentions';
 
 declare global {
@@ -28,6 +28,17 @@ describe('posts helpers', () => {
         body: JSON.stringify(dto),
       }),
     );
+  });
+
+  it('searchPosts requests with query params', async () => {
+    global.fetch.mockResolvedValue({ ok: true, json: async () => [] });
+    await searchPosts({ query: 'q', tags: ['a', 'b'], tab: 'COLUMN' });
+    const called = global.fetch.mock.calls[0][0] as string;
+    const url = new URL(called, 'http://example.com');
+    expect(url.pathname).toContain('/posts');
+    expect(url.searchParams.get('query')).toBe('q');
+    expect(url.searchParams.get('tag')).toBe('a,b');
+    expect(url.searchParams.get('tab')).toBe('COLUMN');
   });
 
   it('extractMentionsFromDoc parses ids', () => {

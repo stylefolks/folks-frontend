@@ -464,9 +464,18 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts`, ({ request }) => {
     const url = new URL(request.url);
-    const authorType = url.searchParams.get("authorType");
-    const limit = Number(url.searchParams.get("limit") ?? "6");
-    if (authorType === "BRAND") {
+    const authorType = url.searchParams.get('authorType');
+    const query = url.searchParams.get('query');
+    const tab = url.searchParams.get('tab');
+    const tag = url.searchParams.get('tag');
+    const limit = Number(url.searchParams.get('limit') ?? '6');
+
+    if (query || tab || tag) {
+      const posts = Array.from({ length: limit }, (_, i) => randomPost(i + 1));
+      return HttpResponse.json(posts);
+    }
+
+    if (authorType === 'BRAND') {
       const posts = Array.from({ length: limit }, (_, i) => {
         const post = randomPost(i + 1);
         post.brand = { id: `brand${i + 1}`, name: `Brand ${i + 1}` };
@@ -474,6 +483,7 @@ export const handlers = [
       });
       return HttpResponse.json(posts);
     }
+
     return HttpResponse.json([]);
   }),
 
