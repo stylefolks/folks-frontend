@@ -13,6 +13,8 @@ export interface Event {
   date: string;
   location: string;
   image?: string;
+  commentCount?: number;
+  likeCount?: number;
 }
 
 export interface Notice {
@@ -20,6 +22,9 @@ export interface Notice {
   title: string;
   content: string;
   date: string;
+  image?: string;
+  commentCount?: number;
+  likeCount?: number;
 }
 
 export interface CrewTopic {
