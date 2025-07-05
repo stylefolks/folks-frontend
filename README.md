@@ -21,7 +21,7 @@
 - [ ] Latest Posts
   - [x] 최신순으로 글 Infinite scroll
   - [x] 클릭 시 게시글 상세로 이동
-  - [ ] 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
+  - [x] 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
 
 ## 크루 디렉토리
 
@@ -45,8 +45,8 @@
   - [x] Tab(전체, Basic, Column) 클릭 시 posts?tab=탭이름
 - [x] Hashtags
   - [x] 조인 가장 많이된 해시태그 10개 렌더, 클릭 시 posts?tags=태그명1,태그명2...
-- [ ] 게시글 카드들
-  - [ ] 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
+- [x] 게시글 카드들
+  - [x] 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
 
 ## 게시글 작성 페이지
 
@@ -84,9 +84,9 @@
   - [ ] 크루 Manager또는 Owner면 crew-settings로 넘어가는 UI보여주기
 - 크루 description
 - [ ] 미 가입인 경우 join버튼 가입인 경우 dismiss버튼 노출 (크루 description우측으로 이동 시키고 작은 아이콘으로 변경하기)
-- [ ] All Posts, Topic, Notice, Event 탭 UI 재 정립 필요
-  - [ ] All Posts : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
-  - [ ] Topic : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
+  - [ ] All Posts, Topic, Notice, Event 탭 UI 재 정립 필요
+  - [x] All Posts : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
+  - [x] Topic : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
   - [ ] Notice : 게시글은 좌측 작은 이미지 중간 타이틀 우측 덧글 개수 및 좋아요 개수 간단하게 렌더 (테이블 형태의 리스트로 렌더)
   - [ ] Event : 게시글은 좌측 작은 이미지 중간 타이틀 우측 덧글 개수 및 좋아요 개수 간단하게 렌더 (나중에 위치 멘션 넣으면 위치도 렌더되도록 하자)
 

@@ -93,7 +93,7 @@ export default function CrewDetailPage() {
         className="mt-4 px-4"
       />
       {tab === "all" && (
-        <div className="columns-2 gap-4 p-4" role="feed">
+        <div className="columns-2 gap-4 p-4 sm:columns-3" role="feed">
           {posts.map((post) => (
             <CrewFeedCard key={post.id} post={post} />
           ))}

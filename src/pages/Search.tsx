@@ -57,9 +57,9 @@ export default function SearchPage() {
       {posts.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="columns-2 gap-4 sm:columns-3">
           {posts.map((post) => (
-            <PostCard withTitle={true} key={post.id} post={post} />
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       )}
