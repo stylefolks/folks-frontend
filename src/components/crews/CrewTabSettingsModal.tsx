@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import Modal from '../ui/Modal';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import type { CrewTab } from '@/lib/crew';
+import { useState } from "react";
+import Modal from "../ui/Modal";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import type { CrewTab } from "@/lib/crew";
 
 interface Props {
   open: boolean;
@@ -12,19 +12,24 @@ interface Props {
 }
 
 const TAB_OPTIONS = [
-  { value: 'overview', label: 'Overview' },
-  { value: 'posts', label: 'Posts' },
-  { value: 'notice', label: 'Notice' },
-  { value: 'event', label: 'Event' },
-  { value: 'topic', label: 'Topic' },
+  { value: "overview", label: "Overview" },
+  { value: "posts", label: "Posts" },
+  { value: "notice", label: "Notice" },
+  { value: "event", label: "Event" },
+  { value: "topic", label: "Topic" },
 ];
 
-export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Props) {
+export default function CrewTabSettingsModal({
+  open,
+  tabs,
+  onSave,
+  onClose,
+}: Props) {
   const [localTabs, setLocalTabs] = useState<CrewTab[]>(tabs);
 
   const handleChange = (index: number, field: keyof CrewTab, value: any) => {
     setLocalTabs((prev) =>
-      prev.map((t, i) => (i === index ? { ...t, [field]: value } : t)),
+      prev.map((t, i) => (i === index ? { ...t, [field]: value } : t))
     );
   };
 
@@ -33,7 +38,14 @@ export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Pr
     const order = localTabs.length;
     setLocalTabs([
       ...localTabs,
-      { id, crewId: tabs[0]?.crewId ?? 0, title: '', type: 'posts', isVisible: true, order },
+      {
+        id,
+        crewId: tabs[0]?.crewId ?? 0,
+        title: "",
+        type: "posts",
+        isVisible: true,
+        order,
+      },
     ]);
   };
 
@@ -58,7 +70,11 @@ export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Pr
   };
 
   return (
-    <Modal open={open} onClose={onClose} className="max-h-[90vh] overflow-y-auto">
+    <Modal
+      open={open}
+      onClose={onClose}
+      className="max-h-[90vh] overflow-y-auto"
+    >
       <div className="space-y-4">
         <h2 className="text-lg font-semibold">Manage Tabs</h2>
         <div className="space-y-3">
@@ -67,13 +83,13 @@ export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Pr
               <div className="flex items-center gap-2">
                 <Input
                   value={tab.title}
-                  onChange={(e) => handleChange(i, 'title', e.target.value)}
+                  onChange={(e) => handleChange(i, "title", e.target.value)}
                   placeholder="Title"
                   className="flex-1"
                 />
                 <select
                   value={tab.type}
-                  onChange={(e) => handleChange(i, 'type', e.target.value)}
+                  onChange={(e) => handleChange(i, "type", e.target.value)}
                   className="border rounded px-1 text-sm"
                 >
                   {TAB_OPTIONS.map((opt) => (
@@ -86,16 +102,27 @@ export default function CrewTabSettingsModal({ open, tabs, onSave, onClose }: Pr
                   <input
                     type="checkbox"
                     checked={tab.isVisible}
-                    onChange={(e) => handleChange(i, 'isVisible', e.target.checked)}
+                    onChange={(e) =>
+                      handleChange(i, "isVisible", e.target.checked)
+                    }
                   />
                   Visible
                 </label>
               </div>
-              {tab.type === 'topic' && (
+              {tab.type === "topic" && (
                 <Input
-                  value={tab.hashtag ?? ''}
-                  onChange={(e) => handleChange(i, 'hashtag', e.target.value)}
-                  placeholder="Hashtag"
+                  value={tab.hashtags?.join(", ") ?? ""}
+                  onChange={(e) =>
+                    handleChange(
+                      i,
+                      "hashtags",
+                      e.target.value
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean)
+                    )
+                  }
+                  placeholder="Hashtags (comma separated)"
                 />
               )}
               <div className="flex gap-2">

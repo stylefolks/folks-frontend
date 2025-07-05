@@ -1,8 +1,17 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import PostCard from '@/components/PostCard';
-import TagList from '@/components/TagList';
-import { mockPost, type Post } from '@/lib/posts';
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import PostCard from "@/components/PostCard";
+import { mockPost, type Post } from "@/lib/posts";
+
+import {
+  getFollowers,
+  getFollowing,
+  getMyProfile,
+  type SimpleUser,
+} from "@/lib/profile";
+import Avatar from "@/components/ui/avatar";
+import { logout } from "@/lib/auth";
+import { Menu } from "lucide-react";
 
 interface CrewItem {
   id: string;
@@ -16,14 +25,12 @@ interface ProfileData {
   bio: string;
   imageUrl: string;
   tags: string[];
-  following: number;
-  followers: number;
-  posts: (Post & { category: 'TALK' | 'COLUMN' | 'CREW' })[];
+  posts: (Post & { category: "TALK" | "COLUMN" | "CREW" })[];
   crews: CrewItem[];
 }
 
 function generateMockProfile(userId: string): ProfileData {
-  const base = parseInt(userId.replace(/\D/g, ''), 10) || 1;
+  const base = parseInt(userId.replace(/\D/g, ""), 10) || 1;
   const tags = Array.from({ length: 5 }, (_, i) => `tag${base + i}`);
   const crews = Array.from({ length: 5 }, (_, i) => ({
     id: `crew${base + i}`,
@@ -32,128 +39,114 @@ function generateMockProfile(userId: string): ProfileData {
   }));
   const posts = Array.from({ length: 12 }, (_, i) => {
     const post = mockPost(base * 10 + i) as Post & {
-      category: 'TALK' | 'COLUMN' | 'CREW';
+      category: "TALK" | "COLUMN" | "CREW";
     };
-    post.category = i % 3 === 0 ? 'TALK' : i % 3 === 1 ? 'COLUMN' : 'CREW';
+    post.category = i % 3 === 0 ? "TALK" : i % 3 === 1 ? "COLUMN" : "CREW";
     return post;
   });
   return {
     userId,
     username: `User ${userId}`,
-    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet.',
+    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet.",
     imageUrl: `https://picsum.photos/seed/user-${userId}/100`,
     tags,
-    following: 100 + base,
-    followers: 200 + base,
     posts,
     crews,
   };
 }
 
 export default function UserProfilePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
   const userId = params.userId as string;
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [filter, setFilter] = useState<'ALL' | 'TALK' | 'COLUMN' | 'CREW'>('ALL');
+
+  const [followers, setFollowers] = useState<SimpleUser[]>([]);
+  const [following, setFollowing] = useState<SimpleUser[]>([]);
+  const [modal, setModal] = useState<"followers" | "following" | null>(null);
+  const [isMaster, setIsMaster] = useState(false);
 
   useEffect(() => {
-    if (userId) {
-      setProfile(generateMockProfile(userId));
-    }
+    if (!userId) return;
+    setProfile(generateMockProfile(userId));
+    Promise.all([getFollowers(userId), getFollowing(userId), getMyProfile()])
+      .then(([fwr, fwg, me]) => {
+        setFollowers(fwr);
+        setFollowing(fwg);
+        setIsMaster(me.role === "master" || me.role === "admin");
+      })
+      .catch(() => {
+        setFollowers([]);
+        setFollowing([]);
+        setIsMaster(false);
+      });
   }, [userId]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   if (!profile) return <p className="p-4">Loading...</p>;
 
-  const posts =
-    filter === 'ALL'
-      ? profile.posts
-      : profile.posts.filter((p) => p.category === filter);
+  const posts = profile.posts;
 
   return (
-    <div className="mx-auto max-w-xl space-y-4 p-4">
-      <div className="flex items-center space-x-4">
-        <img
-          src={profile.imageUrl}
-          alt={profile.username}
-          className="h-16 w-16 rounded-full object-cover"
-        />
-        <div className="flex-1">
-          <p className="text-lg font-bold">{profile.username}</p>
-          <p
-            className="text-sm text-gray-500"
-            style={{
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              WebkitLineClamp: 2,
-            }}
-          >
-            {profile.bio}
-          </p>
-          <TagList tags={profile.tags} />
-        </div>
-        <button className="rounded border px-3 py-1 text-sm">Follow</button>
-      </div>
-
-      <div className="flex justify-around border-y py-2 text-center text-sm">
-        <div
-          className="cursor-pointer"
-          onClick={() => navigate(`/profile/${userId}/following`)}
+    <div className="space-y-6 p-4">
+      <div className="relative flex flex-col items-center">
+        <Avatar src={profile.imageUrl} className="h-16 w-16" />
+        <h2 className="mt-2 text-xl font-bold">{profile.username}</h2>
+        <p className="text-sm text-gray-500">{profile.bio}</p>
+        <p className="mt-1 text-sm">
+          {followers.length} followers · {following.length} following
+        </p>
+        <button
+          aria-label="menu"
+          className="absolute right-0 top-0"
+          onClick={() => setMenuOpen((o) => !o)}
         >
-          <p className="font-semibold">{profile.following}</p>
-          <p className="text-gray-500">Following</p>
-        </div>
-        <div
-          className="cursor-pointer"
-          onClick={() => navigate(`/profile/${userId}/followers`)}
-        >
-          <p className="font-semibold">{profile.followers}</p>
-          <p className="text-gray-500">Followers</p>
-        </div>
-        <div className="cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-          <p className="font-semibold">{profile.posts.length}</p>
-          <p className="text-gray-500">Posts</p>
-        </div>
-      </div>
-
-      <div>
-        <h2 className="mb-2 font-semibold">Crews</h2>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {profile.crews.map((c) => (
+          <Menu />
+        </button>
+        {menuOpen && (
+          <div className="absolute right-0 top-8 w-32 rounded-md border bg-white shadow">
             <div
-              key={c.id}
-              className="w-16 flex-shrink-0 text-center"
-              onClick={() => navigate(`/crew/${c.id}/posts`)}
+              className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+              onClick={handleLogout}
             >
-              <img
-                src={c.imageUrl}
-                alt={c.name}
-                className="mx-auto h-14 w-14 rounded-full object-cover"
-              />
-              <p className="mt-1 text-xs">{c.name}</p>
+              Logout
             </div>
+            <div
+              className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+              onClick={() => navigate("/settings")}
+            >
+              Settings
+            </div>
+            <div className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100">
+              Help Center
+            </div>
+          </div>
+        )}
+      </div>
+      <div>
+        <h3 className="mb-2 font-semibold">Joined Crews</h3>
+        <div className="flex space-x-2 overflow-x-auto pb-1">
+          {profile.crews.map((c) => (
+            <Avatar
+              key={c.id}
+              src={c.imageUrl}
+              size="sm"
+              className="cursor-pointer"
+              onClick={() => navigate(`/crew/${c.id}`)}
+            />
           ))}
         </div>
       </div>
-
       <div>
-        <div className="flex gap-2 pb-2">
-          {['ALL', 'TALK', 'COLUMN', 'CREW'].map((t) => (
-            <button
-              key={t}
-              onClick={() => setFilter(t as any)}
-              className={`rounded px-3 py-1 text-sm ${filter === t ? 'bg-black text-white' : 'border'}`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+        <h3 className="mb-2 font-semibold">My Posts</h3>
+        <div className="columns-2 gap-3">
           {posts.map((post) => (
-            <div key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
-              <PostCard post={post} />
-            </div>
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       </div>

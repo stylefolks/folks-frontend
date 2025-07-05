@@ -5,7 +5,6 @@
 
 .editor-viewer-wrapper {
   width: 100%;
-  ;
 }
 
 .editor-viewer-wrapper > .ProseMirror {
@@ -19,7 +18,7 @@
   padding-bottom: 12px;
   border: 1px solid gray;
   border-radius: 8px;
-  overflow:hidden;
+  overflow: hidden;
   font-family: "Pretendard";
   color: #2e3538;
 }
@@ -381,6 +380,10 @@ img.ProseMirror-separator {
 }
 
 .mention {
+  color: #2563eb;
+}
+
+.hashtag {
   color: #2563eb;
 }
 

@@ -49,7 +49,7 @@ async function startServer() {
         )
         
         // entry-server.js is an ES module, so use dynamic import instead of require
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         
         // @ts-expect-error no type definitions for js module
         render = (await import('./entry-server.js')).render
 

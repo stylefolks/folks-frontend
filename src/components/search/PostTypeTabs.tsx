@@ -1,26 +1,26 @@
-import { cn } from '@/lib/utils';
-
-const TYPES = ['ALL', 'TALK', 'COLUMN', 'CREW', 'BRAND'] as const;
-export type PostType = typeof TYPES[number];
+import { PostType, SEARCH_POST_TYPES, SearchPostType } from "@/lib/posts";
+import { cn } from "@/lib/utils";
 
 interface Props {
-  value: PostType;
-  onChange: (value: PostType) => void;
+  value: SearchPostType;
+  onChange: (value: SearchPostType) => void;
 }
 
 export default function PostTypeTabs({ value, onChange }: Props) {
   return (
     <div className="flex gap-4 overflow-x-auto">
-      {TYPES.map((type) => (
+      {SEARCH_POST_TYPES.map((type) => (
         <button
           key={type}
           onClick={() => onChange(type)}
           className={cn(
-            'pb-1 text-sm whitespace-nowrap',
-            value === type ? 'border-b-2 border-black font-semibold' : 'text-gray-500'
+            "pb-1 text-sm whitespace-nowrap",
+            value === type
+              ? "border-b-2 border-black font-semibold"
+              : "text-gray-500"
           )}
         >
-          {type === 'ALL' ? '전체' : type}
+          {type === "ALL" ? "전체" : type}
         </button>
       ))}
     </div>

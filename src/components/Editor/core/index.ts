@@ -1,19 +1,19 @@
-import {keymap} from "prosemirror-keymap"
-import {history} from "prosemirror-history"
-import {baseKeymap} from "prosemirror-commands"
-import {Plugin} from "prosemirror-state"
-import {dropCursor} from "prosemirror-dropcursor"
-import {gapCursor} from "prosemirror-gapcursor"
-import {menuBar, MenuElement} from "prosemirror-menu"
-import {Schema} from "prosemirror-model"
+import { keymap } from "prosemirror-keymap";
+import { history } from "prosemirror-history";
+import { baseKeymap } from "prosemirror-commands";
+import { Plugin } from "prosemirror-state";
+import { dropCursor } from "prosemirror-dropcursor";
+import { gapCursor } from "prosemirror-gapcursor";
+import { menuBar, MenuElement } from "prosemirror-menu";
+import { Schema } from "prosemirror-model";
 
-import {buildMenuItems} from "./menu"
-import {buildKeymap} from "./keymap"
-import {buildInputRules} from "./inputrules"
-import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin"
-import { searchCrew } from "@/lib/crew"
+import { buildMenuItems } from "./menu";
+import { buildKeymap } from "./keymap";
+import { buildInputRules } from "./inputrules";
+import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin";
+import { searchCrew } from "@/lib/crew";
 
-export {buildMenuItems, buildKeymap, buildInputRules}
+export { buildMenuItems, buildKeymap, buildInputRules };
 
 /// Create an array of plugins pre-configured for the given schema.
 /// The resulting array will include the following plugins:
@@ -43,32 +43,32 @@ export {buildMenuItems, buildKeymap, buildInputRules}
 /// real-world situations.
 export function setup(options: {
   /// The schema to generate key bindings and menu items for.
-  schema: Schema
+  schema: Schema;
 
   /// Can be used to [adjust](#example-setup.buildKeymap) the key bindings created.
-  mapKeys?: {[key: string]: string | false}
+  mapKeys?: { [key: string]: string | false };
 
   /// Set to false to disable the menu bar.
-  menuBar?: boolean
+  menuBar?: boolean;
 
   /// Set to false to disable the history plugin.
-  history?: boolean
+  history?: boolean;
 
   /// Set to false to make the menu bar non-floating.
-  floatingMenu?: boolean
+  floatingMenu?: boolean;
 
   /// Can be used to override the menu content.
-  menuContent?: MenuElement[][]
+  menuContent?: MenuElement[][];
 }) {
   let plugins = [
     getFolksMentionPlugin({
       getSuggestions: async (_type, text, done) => {
         try {
-          const crews = await searchCrew({ search: text, limit: '5' });
+          const crews = await searchCrew({ search: text, limit: "5" });
           const crewItems = crews.map((c) => ({
             id: c.id,
             name: c.name,
-            type: 'crew',
+            type: "crew",
           }));
           done(crewItems);
         } catch {
@@ -78,23 +78,28 @@ export function setup(options: {
       getSuggestionsHTML: (items) =>
         `<div class="suggestion-item-list">${items
           .map((i) => `<div class="suggestion-item">${i.name}</div>`)
-          .join('')}</div>`,
+          .join("")}</div>`,
     }),
     buildInputRules(options.schema),
     keymap(buildKeymap(options.schema, options.mapKeys)),
     keymap(baseKeymap),
     dropCursor(),
-    gapCursor()
-  ]
+    gapCursor(),
+  ];
   if (options.menuBar !== false)
-    plugins.push(menuBar({floating: options.floatingMenu !== false,
-                          content: options.menuContent || buildMenuItems(options.schema).fullMenu}))
-  if (options.history !== false)
-    plugins.push(history())
+    plugins.push(
+      menuBar({
+        floating: options.floatingMenu !== false,
+        content: options.menuContent || buildMenuItems(options.schema).fullMenu,
+      })
+    );
+  if (options.history !== false) plugins.push(history());
 
-  return plugins.concat(new Plugin({
-    props: {
-      attributes: {class: "ProseMirror-example-setup-style"}
-    }
-  }))
+  return plugins.concat(
+    new Plugin({
+      props: {
+        attributes: { class: "ProseMirror-example-setup-style" },
+      },
+    })
+  );
 }

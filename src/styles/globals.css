@@ -1,15 +1,14 @@
 @import "tailwindcss";
 
-
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/public/fonts/Pretendard-Regular.woff') format('woff');
+  font-family: "Pretendard";
+  src: url("/public/fonts/Pretendard-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Pretendard';
-  src: url('/public/fonts/Pretendard-Bold.woff') format('woff');
+  font-family: "Pretendard";
+  src: url("/public/fonts/Pretendard-Bold.woff") format("woff");
   font-weight: 700;
   font-style: normal;
 }
@@ -17,7 +16,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-pretendard: 'Pretendard';
+  --font-pretendard: "Pretendard";
 }
 
 @theme inline {
@@ -55,9 +54,19 @@ button {
   cursor: pointer;
 }
 
+/* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-  .bg-white {
-    background-color: #1a1a1a !important;
+  /* body {
+    background: white;
+    color: black;
+  }
+
+  input {
+    background-color: white;
+    border: 1px solid #444;
+  } */
+  /* .bg-white {
+    background-color: white !important;
   }
   .bg-gray-100 {
     background-color: #222 !important;
@@ -76,5 +85,5 @@ button {
   }
   .border-gray-300 {
     border-color: #444 !important;
-  }
+  } */
 }

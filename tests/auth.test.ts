@@ -12,7 +12,7 @@ import {
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 declare global {
-  // eslint-disable-next-line no-var
+   
   var localStorage: Storage;
   // using 'any' to simplify mock typing
   var fetch: any;
@@ -56,7 +56,7 @@ describe('auth helpers', () => {
     expect(getToken()).toBeNull();
   });
 
-  it('login saves token from API', async () => {
+  it('login saves token from API with legacy field', async () => {
     global.fetch.mockResolvedValue({
       ok: true,
       json: async () => ({ accessToken: 'token123', userId: 'me' }),
@@ -64,6 +64,16 @@ describe('auth helpers', () => {
     await login('a@a.com', 'pass');
     expect(getToken()).toBe('token123');
     expect(getUserId()).toBe('me');
+  });
+
+  it('login saves token from API with new field', async () => {
+    global.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({ token: 'token456', user: { id: 'you' } }),
+    });
+    await login('b@b.com', 'pass');
+    expect(getToken()).toBe('token456');
+    expect(getUserId()).toBe('you');
   });
 
   it('signup then login stores token', async () => {
