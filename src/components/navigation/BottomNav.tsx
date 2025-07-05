@@ -10,9 +10,7 @@ interface BottomNavProps {
 export default function BottomNav({ loggedIn }: BottomNavProps) {
   
 
-  const items = makeNavItem(navItems, loggedIn).filter(({ href }) =>
-    loggedIn ? href !== '/profile' && href !== '/settings' : true
-  )
+  const items = makeNavItem(navItems, loggedIn)
 
   return (
       <ul className="flex justify-around py-2">

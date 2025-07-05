@@ -8,9 +8,7 @@ interface TopNavProps {
 
 export default function TopNav({ loggedIn }: TopNavProps) {
   
-const items = makeNavItem(navItems, loggedIn).filter(({ href }) =>
-    loggedIn ? href !== '/profile' && href !== '/settings' : true
-  )
+const items = makeNavItem(navItems, loggedIn)
 
   return (
     <div className='hidden sm:inline-block'>

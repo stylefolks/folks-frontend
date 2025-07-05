@@ -1,8 +1,10 @@
 import { NavItem } from "@/constants/navigation"
 
 export const makeNavItem = (items: NavItem[], loggedIn?: boolean) => {
-  if(loggedIn) {
-    return items.filter(item => item.href !== '/login' && item.href !== '/signup')
+  if (loggedIn) {
+    const allowed = ['/search', '/crews', '/write']
+    return items.filter((item) => allowed.includes(item.href))
   }
-  return items.filter(item => item.href !== '/login' && item.href !== '/settings')
+  const allowed = ['/search', '/signup', '/login']
+  return items.filter((item) => allowed.includes(item.href))
 }
