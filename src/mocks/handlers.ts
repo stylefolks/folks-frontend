@@ -561,45 +561,15 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews/:id/posts`, ({ params }) => {
     const { id } = params as { id: string };
-    if (id === 'crew-1') {
-      return HttpResponse.json([
-        {
-          "id": "p1",
-          "title": "OOTD",
-          "imageUrl": "https://picsum.photos/seed/crew-post1/400/500",
-          "author": { "nickname": "sophie" },
-          "tags": ["OOTD"],
-          "likeCount": 132
-        },
-        {
-          "id": "p2",
-          "title": "#비건카페",
-          "imageUrl": "https://picsum.photos/seed/crew-post2/400/500",
-          "author": { "nickname": "matt" },
-          "tags": ["비건카페"],
-          "likeCount": 136
-        }
-      ]);
-    }
-    // 샘플 데이터 (id별로 다르게)
-    return HttpResponse.json([
-      {
-        "id": "p3",
-        "title": `Crew ${id}의 첫번째 게시물`,
-        "imageUrl": `https://picsum.photos/seed/crew-${id}-post1/400/500`,
-        "author": { "nickname": "user1" },
-        "tags": ["테스트"],
-        "likeCount": 10
-      },
-      {
-        "id": "p4",
-        "title": `Crew ${id}의 두번째 게시물`,
-        "imageUrl": `https://picsum.photos/seed/crew-${id}-post2/400/500`,
-        "author": { "nickname": "user2" },
-        "tags": ["샘플"],
-        "likeCount": 5
-      }
-    ]);
+    const posts = Array.from({ length: 4 }, (_, i) => {
+      const p = randomPost(i + 1);
+      return {
+        ...p,
+        likeCount: (i + 1) * 5,
+        commentCount: (i + 1) * 2,
+      };
+    });
+    return HttpResponse.json(posts);
   }),
 
   http.get(`${API_BASE}/crews/:id/events`, ({ params }) => {
@@ -610,6 +580,8 @@ export const handlers = [
       date: new Date().toISOString().slice(0, 10),
       location: `Location ${i + 1}`,
       image: `https://picsum.photos/seed/${id}-event-${i}/200/200`,
+      likeCount: (i + 1) * 3,
+      commentCount: (i + 1),
     }));
     return HttpResponse.json(events);
   }),
@@ -621,6 +593,9 @@ export const handlers = [
       title: `Notice ${i + 1}`,
       content: `Notice content ${i + 1}`,
       date: new Date().toISOString().slice(0, 10),
+      image: `https://picsum.photos/seed/${id}-notice-${i}/200/200`,
+      likeCount: (i + 1) * 4,
+      commentCount: (i + 1) * 2,
     }));
     return HttpResponse.json(notices);
   }),

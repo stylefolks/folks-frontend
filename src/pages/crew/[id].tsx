@@ -21,14 +21,13 @@ import {
 } from "@/lib/crew";
 import type { Post } from "@/lib/posts";
 import { useSetAppBarTitle } from "@/lib/appBarTitle";
-import PostList from "@/components/PostList";
+import PostCard from "@/components/PostCard";
 import EditableText from "@/components/EditableText";
 import EditableImageUpload from "@/components/EditableImageUpload";
 import CrewSettingsModal from "@/components/crews/CrewSettingsModal";
 import CrewTabSettingsModal from "@/components/crews/CrewTabSettingsModal";
 import { Settings, LayoutList, UsersRoundIcon } from "lucide-react";
 import TabNav from "@/components/TabNav";
-import EventCard from "@/components/EventCard";
 import FollowListModal from "@/components/users/FollowListModal";
 import type { SimpleUser } from "@/lib/profile";
 
@@ -250,46 +249,72 @@ export default function CrewDetailPage() {
           }}
         />
         {currentTab?.type === "posts" && (
-          <PostList
-            posts={
-              selectedTopics.length
-                ? posts.filter((post) =>
-                    selectedTopics.every((t) => post.tags?.includes(t))
-                  )
-                : posts
-            }
-          />
-        )}
-        {currentTab?.type === "topic" && (
-          <PostList
-            posts={posts.filter((p) =>
-              currentTab?.hashtags?.length
-                ? currentTab.hashtags.some((tag) => p.tags?.includes(tag))
-                : true
-            )}
-          />
-        )}
-        {currentTab?.type === "event" && (
-          <div className="space-y-2">
-            {events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onClick={() => navigate(`/post/${event.id}`)}
-              />
+          <div className="columns-2 gap-4 sm:columns-3">
+            {(selectedTopics.length
+              ? posts.filter((post) =>
+                  selectedTopics.every((t) => post.tags?.includes(t))
+                )
+              : posts
+            ).map((post) => (
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
         )}
+        {currentTab?.type === "topic" && (
+          <div className="columns-2 gap-4 sm:columns-3">
+            {posts
+              .filter((p) =>
+                currentTab?.hashtags?.length
+                  ? currentTab.hashtags.some((tag) => p.tags?.includes(tag))
+                  : true
+              )
+              .map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+          </div>
+        )}
+        {currentTab?.type === "event" && (
+          <ul className="divide-y">
+            {events.map((e) => (
+              <li
+                key={e.id}
+                className="flex items-center gap-2 py-2 cursor-pointer"
+                onClick={() => navigate(`/post/${e.id}`)}
+              >
+                {e.image && (
+                  <img
+                    src={e.image}
+                    className="h-12 w-12 rounded object-cover"
+                  />
+                )}
+                <span className="flex-1 text-sm">{e.title}</span>
+                <span className="text-xs text-gray-500 flex gap-2">
+                  <span>💬 {e.commentCount ?? 0}</span>
+                  <span>❤️ {e.likeCount ?? 0}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
         {currentTab?.type === "notice" && (
-          <ul className="space-y-2">
+          <ul className="divide-y">
             {notices.map((n) => (
               <li
                 key={n.id}
-                className="cursor-pointer rounded border p-2"
+                className="flex items-center gap-2 py-2 cursor-pointer"
                 onClick={() => navigate(`/post/${n.id}`)}
               >
-                <h3 className="font-semibold">{n.title}</h3>
-                <p className="text-sm text-gray-500">{n.date}</p>
+                {n.image && (
+                  <img
+                    src={n.image}
+                    className="h-12 w-12 rounded object-cover"
+                  />
+                )}
+                <span className="flex-1 text-sm">{n.title}</span>
+                <span className="text-xs text-gray-500 flex gap-2">
+                  <span>💬 {n.commentCount ?? 0}</span>
+                  <span>❤️ {n.likeCount ?? 0}</span>
+                </span>
               </li>
             ))}
           </ul>
