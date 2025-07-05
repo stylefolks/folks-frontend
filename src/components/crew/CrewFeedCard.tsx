@@ -13,18 +13,24 @@ export interface CrewPost {
 export default function CrewFeedCard({ post }: { post: CrewPost }) {
   const firstTag = post.tags[0];
   return (
-    <Link to={`/posts/${post.id}`} className="block break-inside-avoid mb-4">
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-md">
+    <Link
+      to={`/posts/${post.id}`}
+      className="mb-4 block break-inside-avoid overflow-hidden rounded-xl bg-white shadow-md"
+    >
+      <div className="relative aspect-[4/5] w-full overflow-hidden">
         <img src={post.imageUrl} alt={post.title} className="h-full w-full object-cover" />
         {firstTag && (
           <span className="absolute left-2 top-2 rounded-full bg-muted px-2 py-1 text-xs">#{firstTag}</span>
         )}
       </div>
-      <div className="mt-1 flex items-center justify-between text-sm text-muted-foreground">
-        <span>{post.author.nickname}</span>
-        <span className="flex items-center gap-1">
-          <Heart size={14} /> {post.likeCount}
-        </span>
+      <div className="space-y-1 p-3">
+        <div className="text-sm font-semibold text-black">{post.title}</div>
+        <div className="flex items-center justify-between text-sm text-neutral-500">
+          <span className="flex items-center gap-1">
+            <Heart size={14} /> {post.likeCount}
+          </span>
+          <span className="text-xs">{post.author.nickname}</span>
+        </div>
       </div>
     </Link>
   );
