@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Avatar from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import Tabs, { TabItem } from "@/components/ui/tabs";
-import CrewFeedCard, { CrewPost } from "@/components/crew/CrewFeedCard";
-import { ArrowLeft } from "lucide-react";
+import Tabs from "@/components/ui/tabs";
+import PostCard from "@/components/PostCard";
+import { CrewMetaType, Post } from "@/lib/posts";
 
 interface Crew {
   id: string;
@@ -15,12 +14,17 @@ interface Crew {
   tags: string[];
 }
 
+export interface TabItem {
+  value: CrewMetaType;
+  label: string;
+}
+
 export default function CrewDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [crew, setCrew] = useState<Crew | null>(null);
-  const [posts, setPosts] = useState<CrewPost[]>([]);
-  const [tab, setTab] = useState("all");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
 
   useEffect(() => {
@@ -42,11 +46,13 @@ export default function CrewDetailPage() {
       .catch(() => {});
   }, [id]);
 
+  // TODO :나중에는 crew config를 호출해서 받아온걸 렌더해야한다.
   const tabs: TabItem[] = [
-    { value: "all", label: "All Posts" },
-    { value: "hashtags", label: "Hashtags" },
-    { value: "announcements", label: "Announcements" },
-    { value: "notices", label: "Notices" },
+    { value: "TOPIC", label: "어떤토픽일까요" },
+    { value: "POSTS", label: "All Posts" },
+    { value: "OVERVIEW", label: "소개" },
+    { value: "NOTICE", label: "Notices" },
+    { value: "EVENT", label: "이벤트들" },
   ];
 
   if (!crew) return <p className="p-4">Loading...</p>;
@@ -92,16 +98,33 @@ export default function CrewDetailPage() {
         items={tabs}
         className="mt-4 px-4"
       />
-      {tab === "all" && (
+      {tab === "POSTS" && (
         <div className="columns-2 gap-4 p-4 sm:columns-3" role="feed">
           {posts.map((post) => (
-            <CrewFeedCard key={post.id} post={post} />
+            <PostCard post={post} />
           ))}
         </div>
       )}
-      {tab !== "all" && (
-        <div className="p-4 text-center text-sm text-muted-foreground">
-          {tab} content
+      {tab === "TOPIC" && (
+        <div className="columns-2 gap-4 p-4 sm:columns-3" role="feed">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      )}
+      {tab === "NOTICE" && (
+        <div>
+          <p className="p-4">공지글입니다.</p>
+        </div>
+      )}
+      {tab === "OVERVIEW" && (
+        <div>
+          <p className="p-4">소개글입니다.</p>
+        </div>
+      )}
+      {tab === "EVENT" && (
+        <div>
+          <p className="p-4">이벤트는 준비중입니다.</p>
         </div>
       )}
     </div>

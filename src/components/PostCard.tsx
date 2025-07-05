@@ -3,7 +3,8 @@ import ImageWithSkeleton from "./ImageWithSkeleton";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Heart } from "lucide-react";
+import { Heart, MessageCircleIcon } from "lucide-react";
+import Comments from "./Comments";
 
 interface Props {
   post: Post;
@@ -18,28 +19,29 @@ export default function PostCard({ post, withTitle = true }: Props) {
       onClick={() => navigate(`/posts/${post.id}`)}
       className="mb-4 break-inside-avoid cursor-pointer overflow-hidden rounded-xl bg-white shadow-md transition-opacity hover:opacity-80"
     >
-      {post.image ? (
-        <ImageWithSkeleton
-          src={post.image}
-          alt={post.title}
-          className="aspect-[4/5] w-full"
-        />
-      ) : (
-        <div className="aspect-[4/5] w-full">
-          <Skeleton className="h-full w-full" />
-        </div>
-      )}
-      <div className="space-y-1 p-3">
-        {withTitle && (
-          <div className="text-sm font-semibold text-black">{post.title}</div>
+      <div className="relative">
+        {post.image ? (
+          <ImageWithSkeleton
+            src={post.image}
+            alt={post.title}
+            className="aspect-[4/5] w-full"
+          />
+        ) : (
+          <div className="aspect-[4/5] w-full">
+            <Skeleton className="h-full w-full" />
+          </div>
         )}
-        <div className="flex items-center justify-between text-sm text-neutral-500">
-          <span className="flex items-center gap-1">
-            <span role="img" aria-label="likes">
-              ❤️
-            </span>
-            {post.likeCount}
+        <span className="absolute flex items-center gap-1 bottom-0 bg-white px-2 rounded-tr-xl py-1">
+          <span role="img" aria-label="likes">
+            <Heart size={12} fill="black" />
           </span>
+          <span className="text-xs">{post.likeCount || 0}</span>
+        </span>
+      </div>
+
+      <div className="py-1 px-3">
+        <div className="text-sm font-semibold text-black">{post.title}</div>
+        <div className="flex items-center justify-between text-sm text-neutral-500 py-1">
           <div className="flex items-center gap-1">
             {post.author.imageUrl && (
               <img
@@ -48,7 +50,12 @@ export default function PostCard({ post, withTitle = true }: Props) {
                 className="h-5 w-5 rounded-full"
               />
             )}
-            <span className="text-xs">@{post.author.username}</span>
+
+            <span className="text-xs">{post.author.username}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MessageCircleIcon size={12} />
+            <span className="text-xs">{post.commentCount || 0}</span>
           </div>
         </div>
       </div>
