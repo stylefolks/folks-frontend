@@ -43,7 +43,6 @@ const directoryCrews = [
     coverImage: "https://picsum.photos/seed/crew3/400/400",
     tags: ["스트릿", "블랙"],
   },
-
 ];
 
 interface FeedPost {
@@ -289,29 +288,29 @@ interface PostDetailComment {
 }
 
 const postDetailCommentsMap: Record<string, PostDetailComment[]> = {
-  'abc123': [
+  abc123: [
     {
-      id: 'c1',
-      author: { name: 'Alex Kim', initials: 'AK' },
-      createdAt: '2025-06-29',
-      content: 'Love these tips!',
+      id: "c1",
+      author: { name: "Alex Kim", initials: "AK" },
+      createdAt: "2025-06-29",
+      content: "Love these tips!",
     },
     {
-      id: 'c2',
-      author: { name: 'Jessica Wong', initials: 'JW' },
-      createdAt: '2025-06-29',
-      content: 'Effortless chic is my favorite!',
+      id: "c2",
+      author: { name: "Jessica Wong", initials: "JW" },
+      createdAt: "2025-06-29",
+      content: "Effortless chic is my favorite!",
     },
     {
-      id: 'c3',
-      author: { name: 'Mark Chen', initials: 'MC' },
-      createdAt: '2025-06-30',
-      content: 'Great post, Sophia!',
+      id: "c3",
+      author: { name: "Mark Chen", initials: "MC" },
+      createdAt: "2025-06-30",
+      content: "Great post, Sophia!",
     },
   ],
 };
 
-const postLikeMap: Record<string, number> = { 'abc123': 128 };
+const postLikeMap: Record<string, number> = { abc123: 128 };
 
 type SimpleUser = { userId: string; username: string; imageUrl?: string };
 const followersMap: Record<string, SimpleUser[]> = {};
@@ -333,7 +332,7 @@ const crewTabsMap: Record<string, CrewTab[]> = {};
 interface CrewMember {
   userId: string;
   nickname: string;
-  role: 'owner' | 'manager' | 'member';
+  role: "owner" | "manager" | "member";
 }
 
 const crewMembersMap: Record<string, CrewMember[]> = {};
@@ -457,13 +456,13 @@ export const handlers = [
     const comments = postDetailCommentsMap[id]?.length ?? 0;
     postLikeMap[id] = likes;
     return HttpResponse.json({
-      id: 'abc123',
-      title: 'The Art of Effortless Chic',
+      id: "abc123",
+      title: "The Art of Effortless Chic",
       content: "<p>Hello...</p><img src='/mock/spring-outfit-1.jpg' />",
-      hashtags: ['#StreetStyle', '#OOTD', '#Minimalist'],
-      author: { name: 'Sophia Lee', initials: 'SL' },
-      createdAt: '2025-06-28',
-      crewName: 'Fashion Forward Crew',
+      hashtags: ["#StreetStyle", "#OOTD", "#Minimalist"],
+      author: { name: "Sophia Lee", initials: "SL" },
+      createdAt: "2025-06-28",
+      crewName: "Fashion Forward Crew",
       likes,
       comments,
     });
@@ -471,18 +470,18 @@ export const handlers = [
 
   http.get(`${API_BASE}/posts`, ({ request }) => {
     const url = new URL(request.url);
-    const authorType = url.searchParams.get('authorType');
-    const query = url.searchParams.get('query');
-    const tab = url.searchParams.get('tab');
-    const tag = url.searchParams.get('tag');
-    const limit = Number(url.searchParams.get('limit') ?? '6');
+    const authorType = url.searchParams.get("authorType");
+    const query = url.searchParams.get("query");
+    const tab = url.searchParams.get("tab");
+    const tag = url.searchParams.get("tag");
+    const limit = Number(url.searchParams.get("limit") ?? "6");
 
     if (query || tab || tag) {
       const posts = Array.from({ length: limit }, (_, i) => randomPost(i + 1));
       return HttpResponse.json(posts);
     }
 
-    if (authorType === 'BRAND') {
+    if (authorType === "BRAND") {
       const posts = Array.from({ length: limit }, (_, i) => {
         const post = randomPost(i + 1);
         post.brand = { id: `brand${i + 1}`, name: `Brand ${i + 1}` };
@@ -496,8 +495,8 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews`, ({ request }) => {
     const url = new URL(request.url);
-    const keyword = url.searchParams.get('keyword');
-    const tag = url.searchParams.get('tag');
+    const keyword = url.searchParams.get("keyword");
+    const tag = url.searchParams.get("tag");
     let crews = directoryCrews;
     if (keyword) {
       crews = crews.filter((c) =>
@@ -529,33 +528,33 @@ export const handlers = [
 
   http.get(`${API_BASE}/crews/:id`, ({ params }) => {
     const { id } = params as { id: string };
-    if (id === 'crew-1') {
+    if (id === "crew-1") {
       return HttpResponse.json({
-        "id": "crew-1",
-        "name": "Shinchon Crew",
-        "avatarUrl": "https://picsum.photos/seed/crew-1-banner/1200/675",
-        "memberCount": 2250,
-        "description": "Street fashion crew in Shinchon, Seoul.",
-        "tags": ["힙합", "스트릿"]
+        id: "crew-1",
+        name: "Shinchon Crew",
+        avatarUrl: "https://picsum.photos/seed/crew-1-banner/1200/675",
+        memberCount: 2250,
+        description: "Street fashion crew in Shinchon, Seoul.",
+        tags: ["힙합", "스트릿"],
       });
     }
     const found = createdCrews.find((c) => c.id === id);
     if (!crewFollowersMap[id]) {
       crewFollowersMap[id] = Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`crew-${id}-follower-${i}`);
-        return { "userId": p.userId, "username": p.username, "imageUrl": p.imageUrl };
+        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
       });
     }
     if (found) {
-      return HttpResponse.json({ ...found, "followers": crewFollowersMap[id] });
+      return HttpResponse.json({ ...found, followers: crewFollowersMap[id] });
     }
     return HttpResponse.json({
-      "id": id,
-      "name": `Crew ${id}`,
-      "avatarUrl": `https://picsum.photos/seed/crew-${id}/400/400`,
-      "memberCount": 1000,
-      "description": `This is crew ${id} description` ,
-      "tags": ["테스트", "샘플"]
+      id: id,
+      name: `Crew ${id}`,
+      avatarUrl: `https://picsum.photos/seed/crew-${id}/400/400`,
+      memberCount: 1000,
+      description: `This is crew ${id} description`,
+      tags: ["테스트", "샘플"],
     });
   }),
 
@@ -581,7 +580,7 @@ export const handlers = [
       location: `Location ${i + 1}`,
       image: `https://picsum.photos/seed/${id}-event-${i}/200/200`,
       likeCount: (i + 1) * 3,
-      commentCount: (i + 1),
+      commentCount: i + 1,
     }));
     return HttpResponse.json(events);
   }),
@@ -663,22 +662,25 @@ export const handlers = [
     const { id } = params as { id: string };
     if (!crewMembersMap[id]) {
       crewMembersMap[id] = [
-        { userId: 'u1', nickname: 'owner', role: 'owner' },
-        { userId: 'u2', nickname: 'manager1', role: 'manager' },
-        { userId: 'u3', nickname: 'member1', role: 'member' },
+        { userId: "u1", nickname: "owner", role: "owner" },
+        { userId: "u2", nickname: "manager1", role: "manager" },
+        { userId: "u3", nickname: "member1", role: "member" },
       ];
     }
     return HttpResponse.json(crewMembersMap[id]);
   }),
 
-  http.patch(`${API_BASE}/crews/:id/members/:userId`, async ({ params, request }) => {
-    const { id, userId } = params as { id: string; userId: string };
-    const { role } = await request.json();
-    crewMembersMap[id] = crewMembersMap[id].map((m) =>
-      m.userId === userId ? { ...m, role } : m,
-    );
-    return HttpResponse.json({});
-  }),
+  http.patch(
+    `${API_BASE}/crews/:id/members/:userId`,
+    async ({ params, request }) => {
+      const { id, userId } = params as { id: string; userId: string };
+      const { role } = await request.json();
+      crewMembersMap[id] = crewMembersMap[id].map((m) =>
+        m.userId === userId ? { ...m, role } : m
+      );
+      return HttpResponse.json({});
+    }
+  ),
 
   http.delete(`${API_BASE}/crews/:id/members/:userId`, ({ params }) => {
     const { id, userId } = params as { id: string; userId: string };
@@ -784,8 +786,8 @@ export const handlers = [
       const { content } = await request.json();
       const newComment: PostDetailComment = {
         id: String(Date.now()),
-        author: { name: 'ME', initials: 'ME' },
-        createdAt: '2025-07-03',
+        author: { name: "ME", initials: "ME" },
+        createdAt: "2025-07-03",
         content,
       };
       const list = postDetailCommentsMap[postId] ?? [];
@@ -858,32 +860,38 @@ export const handlers = [
   }),
 
   // Folks HomePage mock APIs
-  http.get('/tags/hot', () => {
+  http.get("/tags/hot", () => {
     return HttpResponse.json(hotTags);
   }),
-  http.get('/posts', ({ request }) => {
+  http.get("/posts", ({ request }) => {
     const url = new URL(request.url);
-    const author = url.searchParams.get('author');
-    if (author === 'me') {
+    const author = url.searchParams.get("author");
+    if (author === "me") {
       return HttpResponse.json(myPosts);
     }
-    const cursor = url.searchParams.get('cursor');
+    const cursor = url.searchParams.get("cursor");
     const start = cursor ? parseInt(cursor, 10) : 0;
     const pageSize = 6;
     const posts = feedPosts.slice(start, start + pageSize);
-    const next = start + pageSize < feedPosts.length ? String(start + pageSize) : undefined;
+    const next =
+      start + pageSize < feedPosts.length
+        ? String(start + pageSize)
+        : undefined;
     return HttpResponse.json({ posts, nextCursor: next });
   }),
-  http.get('/users/me', () => {
+  http.get("/users/me", () => {
     return HttpResponse.json(me);
   }),
-  http.get('/users/me/crews', () => {
+  http.get("/users/me/crews", () => {
     return HttpResponse.json(myCrews);
   }),
 
   http.post(`${API_BASE}/posts`, async ({ request }) => {
     await request.json();
-    return HttpResponse.json({ success: true, postId: 'abc123' }, { status: 201 });
+    return HttpResponse.json(
+      { success: true, postId: "abc123" },
+      { status: 201 }
+    );
   }),
 
   http.post(`${API_BASE}/posts/draft`, async ({ request }) => {

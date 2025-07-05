@@ -108,15 +108,17 @@ export async function createPost(data: CreatePostDto): Promise<Post> {
   return res.json();
 }
 
-export async function savePostDraft(data: CreatePostDto): Promise<{ success: boolean; postId?: string }> {
+export async function savePostDraft(
+  data: CreatePostDto
+): Promise<{ success: boolean; postId?: string }> {
   const res = await fetch(`${API_BASE}/posts/draft`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to save draft');
+  if (!res.ok) throw new Error("Failed to save draft");
   return res.json();
 }
 
@@ -126,14 +128,20 @@ export interface SearchPostParams {
   tab?: SearchPostType;
 }
 
-export async function searchPosts({ query, tags, tab }: SearchPostParams = {}): Promise<Post[]> {
+export async function searchPosts({
+  query,
+  tags,
+  tab,
+}: SearchPostParams = {}): Promise<Post[]> {
   const params = new URLSearchParams();
-  if (query) params.set('query', query);
-  if (tags && tags.length) params.set('tag', tags.join(','));
-  if (tab && tab !== 'ALL') params.set('tab', tab);
+  if (query) params.set("query", query);
+  if (tags && tags.length) params.set("tag", tags.join(","));
+  if (tab && tab !== "ALL") params.set("tab", tab);
   const search = params.toString();
-  const res = await fetch(`${API_BASE}/posts${search ? `?${search}` : ''}`, { cache: 'no-store' });
-  if (!res.ok) throw new Error('Failed to load posts');
+  const res = await fetch(`${API_BASE}/posts${search ? `?${search}` : ""}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to load posts");
   return res.json();
 }
 

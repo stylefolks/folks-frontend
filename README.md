@@ -51,9 +51,9 @@
 ## 게시글 작성 페이지
 
 - [x] 뒤로가기 & postType tab(설명) & 타이틀 작성
-- [ ] 크루에서 Manager나 Master글 작성 시 BrandMetaTag or CrewMetaTag 설정 가능하도록 하기
 - [x] ProseMirror editor
 - [x] @멘션 및 #멘션 별도 노드 파싱
+- [ ] 크루에서 Manager나 Master글 작성 시 BrandMetaTag or CrewMetaTag 설정 가능하도록 하기
 - [ ] 이미지 업로드 후 url 렌더로 변경해줘야 함.
 - [ ] 타이틀 미작성 또는 게시글 미작성시에 대한 validation추가 필요 (가능하면 사진 업로드 유무 또는 해시 태그 유무에 따라 가이드 Alert제공)
 - [ ] body에 내용 담아서 post api 호출(디바운스 필요 | 서버에서 타임아웃 걸어야함)
@@ -107,7 +107,8 @@
 - [x] 가입한 크루 리스트
   - [x] 클릭 시 해당 크루로 이동
 - [x] 본인이 작성한 게시글 리스트
-  - [ ] 게시글은 Masonary UI + 좋아요 수 + 게시글 타이틀 보여주기 + 해당글의 hashtags
+  - [x] 게시글은 Masonary UI + 좋아요 수 + 게시글 타이틀 보여주기
+    - [ ] 해당글의 hashtags
 
 ## 회원가입
 

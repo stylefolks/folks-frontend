@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import Modal from '../ui/Modal';
-import EditableImageUpload from '../EditableImageUpload';
-import EditableLinkList from '../EditableLinkList';
-import { Button } from '../ui/button';
-import type { Crew, CrewLink } from '@/lib/crew';
+import { useState } from "react";
+import Modal from "../ui/Modal";
+import EditableImageUpload from "../EditableImageUpload";
+import EditableLinkList from "../EditableLinkList";
+import { Button } from "../ui/button";
+import type { Crew, CrewLink } from "@/lib/crew";
 
 interface CrewSettingsModalProps {
   open: boolean;
@@ -16,8 +16,14 @@ interface CrewSettingsModalProps {
 /**
  * @description Crew settings modal for editing crew profile and links.
  */
-export default function CrewSettingsModal({ open, crew, onClose, onSave, onDelete }: CrewSettingsModalProps) {
-  const [profileImage, setProfileImage] = useState(crew.profileImage || '');
+export default function CrewSettingsModal({
+  open,
+  crew,
+  onClose,
+  onSave,
+  onDelete,
+}: CrewSettingsModalProps) {
+  const [profileImage, setProfileImage] = useState(crew.profileImage || "");
   const [coverImage, setCoverImage] = useState(crew.coverImage);
   const [links, setLinks] = useState<CrewLink[]>(crew.links);
 
@@ -49,7 +55,7 @@ export default function CrewSettingsModal({ open, crew, onClose, onSave, onDelet
             variant="outline"
             className="text-red-600"
             onClick={() => {
-              if (window.confirm('Delete this crew?')) onDelete();
+              if (window.confirm("Delete this crew?")) onDelete();
             }}
           >
             Delete Crew

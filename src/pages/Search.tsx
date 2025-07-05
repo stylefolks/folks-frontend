@@ -18,7 +18,9 @@ export default function SearchPage() {
   const initial = parseSearchParams(searchParams);
   const [query, setQuery] = useState(initial.query ?? "");
   const [tab, setTab] = useState<SearchPostType>(initial.tab ?? "ALL");
-  const [selectedTags, setSelectedTags] = useState<string[]>(initial.tags ?? []);
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    initial.tags ?? []
+  );
   const [posts, setPosts] = useState<Post[]>([]);
   const [debounced, setDebounced] = useState(initial.query ?? "");
 
@@ -41,9 +43,21 @@ export default function SearchPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    const params = buildSearchParams({ query: debounced, tags: selectedTags, tab });
+    const params = buildSearchParams({
+      query: debounced,
+      tags: selectedTags,
+      tab,
+    });
     setSearchParams(params);
   }, [debounced, selectedTags, tab, setSearchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tag = params.get("tag");
+    if (tag) {
+      setSelectedTags([tag]);
+    }
+  }, [location.search]);
 
   return (
     <div className="p-4 space-y-4">
