@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, HeartIcon, MessageSquare } from 'lucide-react';
-import Badge from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
+import Badge from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   fetchPostDetail,
   fetchPostComments,
@@ -15,17 +15,28 @@ import {
   unlikePost,
   type PostDetail,
   type PostComment,
-} from '@/lib/postDetail';
-import { cn } from '@/lib/utils';
-import { getMyId } from '@/lib/auth';
+} from "@/lib/postDetail";
+import { cn } from "@/lib/utils";
+import { getMyId } from "@/lib/auth";
 
-const avatarColors = ['bg-blue-400','bg-green-400','bg-yellow-400','bg-pink-400','bg-purple-400'];
+const avatarColors = [
+  "bg-blue-400",
+  "bg-green-400",
+  "bg-yellow-400",
+  "bg-pink-400",
+  "bg-purple-400",
+];
 
 function InitialAvatar({ initials }: { initials: string }) {
   const idx = initials.charCodeAt(0) % avatarColors.length;
   const color = avatarColors[idx];
   return (
-    <div className={cn('w-8 h-8 rounded-full text-white text-sm flex items-center justify-center', color)}>
+    <div
+      className={cn(
+        "w-8 h-8 rounded-full text-white text-sm flex items-center justify-center",
+        color
+      )}
+    >
       {initials}
     </div>
   );
@@ -41,7 +52,7 @@ export default function PostDetailPage() {
   const [liked, setLiked] = useState(false);
   const [myId, setMyId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editText, setEditText] = useState('');
+  const [editText, setEditText] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -51,7 +62,9 @@ export default function PostDetailPage() {
         setLikeCount(data.likes);
       })
       .catch(() => setPost(null));
-    fetchPostComments(id).then(setComments).catch(() => setComments([]));
+    fetchPostComments(id)
+      .then(setComments)
+      .catch(() => setComments([]));
   }, [id]);
 
   useEffect(() => {
@@ -99,15 +112,18 @@ export default function PostDetailPage() {
   };
 
   const handleAddComment = async () => {
-    const text = commentRef.current?.value ?? '';
+    const text = commentRef.current?.value ?? "";
     if (!id || !text.trim()) return;
     try {
       await addPostComment(id, text);
-      if (commentRef.current) commentRef.current.value = '';
+      if (commentRef.current) commentRef.current.value = "";
       const updated = await fetchPostComments(id);
       setComments(updated);
       setTimeout(() => {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
       }, 0);
     } catch {
       // ignore errors for now
@@ -118,28 +134,25 @@ export default function PostDetailPage() {
 
   return (
     <div className="pb-16">
-      
-        
-      
       <div className="px-4 pt-2">
-        <div className='flex items-center justify-between'>
-<button onClick={() => navigate(-1)} aria-label="back">
-          <ArrowLeft />
-        </button>
-<div className="flex flex-wrap gap-2">
-          {post.hashtags.map((tag) => (
-            <Badge
-              key={tag}
-              variant="outline"
-              className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-black"
-              onClick={() => navigate(`/search?tag=${tag.replace('#', '')}`)}
-            >
-              {tag}
-            </Badge>
-          ))}
+        <div className="flex items-center justify-between">
+          <button onClick={() => navigate(-1)} aria-label="back">
+            <ArrowLeft />
+          </button>
+          <div className="flex flex-wrap gap-2">
+            {post.hashtags.map((tag) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-black"
+                onClick={() => navigate(`/search?tag=${tag.replace("#", "")}`)}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
         </div>
-        </div>
-        
+
         <h1 className="mt-2 text-xl font-bold leading-snug">{post.title}</h1>
         <div className="mt-2 flex items-center gap-2">
           <div
@@ -163,8 +176,8 @@ export default function PostDetailPage() {
           <div className="flex items-center gap-1">
             <HeartIcon
               className={cn(
-                'w-5 h-5 cursor-pointer transition',
-                liked ? 'fill-black stroke-black' : 'stroke-black'
+                "w-5 h-5 cursor-pointer transition",
+                liked ? "fill-black stroke-black" : "stroke-black"
               )}
               onClick={toggleLike}
             />
@@ -176,7 +189,9 @@ export default function PostDetailPage() {
           </div>
         </div>
         <section className="mt-4 space-y-4">
-          <h2 className="text-base font-semibold">Comments ({comments.length})</h2>
+          <h2 className="text-base font-semibold">
+            Comments ({comments.length})
+          </h2>
           {comments.map((c) => (
             <div key={c.id} className="flex items-start gap-3">
               <div
@@ -240,13 +255,16 @@ export default function PostDetailPage() {
         </section>
         <div className="mt-6">
           <div className="flex gap-3 items-start">
-            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">ME</div>
+            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm">
+              ME
+            </div>
             <div className="flex-1 space-y-2">
-              <Textarea
-                placeholder="댓글을 입력하세요"
-                ref={commentRef}
-              />
-              <Button className="ml-auto block" type="button" onClick={handleAddComment}>
+              <Textarea placeholder="댓글을 입력하세요" ref={commentRef} />
+              <Button
+                className="ml-auto block"
+                type="button"
+                onClick={handleAddComment}
+              >
                 등록
               </Button>
             </div>
