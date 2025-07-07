@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import useDebounce from '@/hooks/useDebounce';
 import { Link } from 'react-router-dom';
 import { fetchCrews, type CrewSummary } from '@/lib/crew';
 import { useMeta } from '@/lib/meta';
@@ -6,25 +7,31 @@ import { Button } from '@/components/ui/button';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import HotHashtagChips from '@/components/crew-directory/HotHashtagChips';
 import SearchInput from '@/components/crew-directory/SearchInput';
+import CrewEventBannerSlider from '@/components/crews/CrewEventBannerSlider';
 
 export default function CrewDirectoryPage() {
   useMeta({ title: 'Crews Directory - Stylefolks' });
   const [tag, setTag] = useState<string | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [debounced, setDebounced] = useState('');
+  // fetch crews only after the keyword settles
+  const debouncedKeyword = useDebounce(keyword);
   const [crews, setCrews] = useState<CrewSummary[]>([]);
+  const [eventCrews, setEventCrews] = useState<CrewSummary[]>([]);
 
   useEffect(() => {
-    const id = setTimeout(() => setDebounced(keyword), 500);
-    return () => clearTimeout(id);
-  }, [keyword]);
+    fetchCrews()
+      .then((data) =>
+        setEventCrews(data.filter((c) => c.upcomingEvent).slice(0, 5)),
+      )
+      .catch(() => setEventCrews([]));
+  }, []);
 
   useEffect(() => {
     const params: Record<string, string> = {};
     if (tag) params.tag = tag;
-    else if (debounced) params.keyword = debounced;
+    else if (debouncedKeyword) params.keyword = debouncedKeyword;
     fetchCrews(params).then(setCrews).catch(() => setCrews([]));
-  }, [tag, debounced]);
+  }, [tag, debouncedKeyword]);
 
   const handleTagSelect = (value: string | null) => {
     setTag(value);
@@ -44,6 +51,10 @@ export default function CrewDirectoryPage() {
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="해시태그 또는 크루명을 검색해보세요"
           />
+        </section>
+        <section className="space-y-2 px-4">
+          <h2 className="text-md font-bold">Latest Events</h2>
+          <CrewEventBannerSlider crews={eventCrews} />
         </section>
         <section className="grid grid-cols-2 gap-3 px-4">
           {crews.map((crew) => (

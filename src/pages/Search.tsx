@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useDebounce from "@/hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "@/components/search/SearchInput";
 import PostTypeTabs from "@/components/search/PostTypeTabs";
@@ -10,8 +11,6 @@ import { buildSearchParams, parseSearchParams } from "@/lib/searchParams";
 import { useMeta } from "@/lib/meta";
 import { TAGS } from "@/mocks/tags";
 
-const DEBOUNCE_MS = 500;
-
 export default function SearchPage() {
   useMeta({ title: "Search - Stylefolks" });
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,18 +21,14 @@ export default function SearchPage() {
     initial.tags ?? []
   );
   const [posts, setPosts] = useState<Post[]>([]);
-  const [debounced, setDebounced] = useState(initial.query ?? "");
+  // run search only after the query stops changing
+  const debouncedQuery = useDebounce(query);
 
   useEffect(() => {
-    const id = setTimeout(() => setDebounced(query), DEBOUNCE_MS);
-    return () => clearTimeout(id);
-  }, [query]);
-
-  useEffect(() => {
-    searchPosts({ query: debounced, tags: selectedTags, tab })
+    searchPosts({ query: debouncedQuery, tags: selectedTags, tab })
       .then(setPosts)
       .catch(() => setPosts([]));
-  }, [debounced, selectedTags, tab]);
+  }, [debouncedQuery, selectedTags, tab]);
 
   useEffect(() => {
     const parsed = parseSearchParams(searchParams);
@@ -44,12 +39,12 @@ export default function SearchPage() {
 
   useEffect(() => {
     const params = buildSearchParams({
-      query: debounced,
+      query: debouncedQuery,
       tags: selectedTags,
       tab,
     });
     setSearchParams(params);
-  }, [debounced, selectedTags, tab, setSearchParams]);
+  }, [debouncedQuery, selectedTags, tab, setSearchParams]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
