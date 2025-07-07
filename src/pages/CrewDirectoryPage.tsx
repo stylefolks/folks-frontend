@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import useDebounce from '@/hooks/useDebounce';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { fetchCrews, type CrewSummary } from '@/lib/crew';
 import { useMeta } from '@/lib/meta';
+import {
+  buildCrewSearchParams,
+  parseCrewSearchParams,
+} from '@/lib/crewSearchParams';
 import { Button } from '@/components/ui/button';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import HotHashtagChips from '@/components/crew-directory/HotHashtagChips';
@@ -11,8 +15,10 @@ import CrewEventBannerSlider from '@/components/crews/CrewEventBannerSlider';
 
 export default function CrewDirectoryPage() {
   useMeta({ title: 'Crews Directory - Stylefolks' });
-  const [tag, setTag] = useState<string | null>(null);
-  const [keyword, setKeyword] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initial = parseCrewSearchParams(searchParams);
+  const [tag, setTag] = useState<string | null>(initial.tag ?? null);
+  const [keyword, setKeyword] = useState(initial.keyword ?? '');
   // fetch crews only after the keyword settles
   const debouncedKeyword = useDebounce(keyword);
   const [crews, setCrews] = useState<CrewSummary[]>([]);
@@ -27,11 +33,22 @@ export default function CrewDirectoryPage() {
   }, []);
 
   useEffect(() => {
+    const parsed = parseCrewSearchParams(searchParams);
+    setTag(parsed.tag ?? null);
+    setKeyword(parsed.keyword ?? '');
+  }, [searchParams]);
+
+  useEffect(() => {
     const params: Record<string, string> = {};
     if (tag) params.tag = tag;
     else if (debouncedKeyword) params.keyword = debouncedKeyword;
     fetchCrews(params).then(setCrews).catch(() => setCrews([]));
   }, [tag, debouncedKeyword]);
+
+  useEffect(() => {
+    const params = buildCrewSearchParams({ keyword: debouncedKeyword, tag });
+    setSearchParams(params);
+  }, [debouncedKeyword, tag, setSearchParams]);
 
   const handleTagSelect = (value: string | null) => {
     setTag(value);
