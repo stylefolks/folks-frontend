@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { fetchCrews, type CrewSummary } from '@/lib/crew';
 import { useMeta } from '@/lib/meta';
 import { Button } from '@/components/ui/button';
@@ -9,49 +9,15 @@ import SearchInput from '@/components/crew-directory/SearchInput';
 
 export default function CrewDirectoryPage() {
   useMeta({ title: 'Crews Directory - Stylefolks' });
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialTag = searchParams.get('tag');
-  const initialKeyword = searchParams.get('keyword') ?? '';
-
-  const [tag, setTag] = useState<string | null>(initialTag);
-  const [keyword, setKeyword] = useState(initialKeyword);
-  const [debounced, setDebounced] = useState(initialTag ? '' : initialKeyword);
+  const [tag, setTag] = useState<string | null>(null);
+  const [keyword, setKeyword] = useState('');
+  const [debounced, setDebounced] = useState('');
   const [crews, setCrews] = useState<CrewSummary[]>([]);
 
   useEffect(() => {
     const id = setTimeout(() => setDebounced(keyword), 500);
     return () => clearTimeout(id);
   }, [keyword]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (tag) {
-      params.set('tag', tag);
-      params.delete('keyword');
-    } else if (debounced) {
-      params.set('keyword', debounced);
-      params.delete('tag');
-    } else {
-      params.delete('tag');
-      params.delete('keyword');
-    }
-    if (params.toString() !== searchParams.toString()) {
-      setSearchParams(params);
-    }
-  }, [tag, debounced, searchParams, setSearchParams]);
-
-  useEffect(() => {
-    const t = searchParams.get('tag');
-    const kw = searchParams.get('keyword') ?? '';
-    setTag(t);
-    if (t) {
-      setKeyword('');
-      setDebounced('');
-    } else {
-      setKeyword(kw);
-      setDebounced(kw);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const params: Record<string, string> = {};
