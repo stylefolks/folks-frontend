@@ -3,6 +3,8 @@ import {
   fetchPostDetail,
   fetchPostComments,
   addPostComment,
+  updatePostComment,
+  deletePostComment,
   likePost,
   unlikePost,
 } from '../src/lib/postDetail';
@@ -56,6 +58,26 @@ describe('post detail api', () => {
     await unlikePost('1');
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining('/posts/1/unlike'),
+      expect.objectContaining({ method: 'DELETE' })
+    );
+  });
+
+  it('updatePostComment sends PATCH request', async () => {
+    await updatePostComment('c1', 'edit');
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/comment/c1'),
+      expect.objectContaining({
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: 'edit' }),
+      })
+    );
+  });
+
+  it('deletePostComment sends DELETE request', async () => {
+    await deletePostComment('c1');
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('/comment/c1'),
       expect.objectContaining({ method: 'DELETE' })
     );
   });
