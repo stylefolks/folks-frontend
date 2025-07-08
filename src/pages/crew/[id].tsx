@@ -17,7 +17,6 @@ import {
   type Notice,
   type CrewTopic,
   type CrewTab,
-  type CrewRole,
 } from '@/lib/crew';
 import type { Post } from '@/lib/posts';
 import { useSetAppBarTitle } from '@/lib/appBarTitle';
@@ -30,6 +29,7 @@ import CrewTabSettingsModal from '@/components/crews/CrewTabSettingsModal';
 import { Settings, LayoutList } from 'lucide-react';
 import TabNav from '@/components/TabNav';
 import EventCard from '@/components/EventCard';
+import { CrewRole } from '@/constants/user';
 
 export default function CrewDetailPage() {
   const params = useParams();
@@ -46,7 +46,7 @@ export default function CrewDetailPage() {
   const [tabs, setTabs] = useState<CrewTab[]>([]);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [tab, setTab] = useState('');
-  const [role, setRole] = useState<CrewRole>('member');
+  const [role, setRole] = useState<CrewRole>(CrewRole.MEMBER);
   const [about, setAbout] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showTabSettings, setShowTabSettings] = useState(false);
@@ -91,7 +91,7 @@ export default function CrewDetailPage() {
     if (!crewId) return;
     fetchMyCrewRole(crewId)
       .then(setRole)
-      .catch(() => setRole('member'));
+      .catch(() => setRole(CrewRole.MEMBER));
   }, [crewId]);
 
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function CrewDetailPage() {
 
   if (!crew) return <p className="p-4">Loading...</p>;
 
-  const isEditable = role === 'owner' || role === 'master';
+  const isEditable = role === CrewRole.OWNER || role === CrewRole.MANAGER;
 
   const handleDelete = async () => {
     try {

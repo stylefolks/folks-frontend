@@ -129,6 +129,8 @@ const PUBLIC_API_URL =
     : (import.meta as any).env.PUBLIC_API_URL;
 const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 
+import { UserTier, CrewRole } from '@/constants/user';
+
 interface Profile {
   userId: string;
   email: string;
@@ -137,7 +139,7 @@ interface Profile {
   imageUrl?: string;
   website?: string;
   backgroundUrl?: string;
-  role?: "member" | "master" | "admin";
+  role?: UserTier;
 }
 
 let currentProfile: Profile = {
@@ -148,7 +150,7 @@ let currentProfile: Profile = {
   imageUrl: "https://picsum.photos/seed/folks/200",
   website: "https://example.com",
   backgroundUrl: "https://picsum.photos/seed/folks-bg/1200/400",
-  role: "master",
+  role: UserTier.MASTER,
 };
 
 function randomProfile(id: string): Profile {
@@ -161,7 +163,7 @@ function randomProfile(id: string): Profile {
     imageUrl: `https://picsum.photos/seed/${rand}/200`,
     website: `https://example.com/${id}`,
     backgroundUrl: `https://picsum.photos/seed/${rand}-bg/1200/400`,
-    role: "member",
+    role: UserTier.USER,
   };
 }
 
@@ -269,7 +271,7 @@ interface Crew {
 
 let createdCrews: Crew[] = [];
 let crewSeq = 100;
-const masterCrewIds = new Set<string>(["2"]);
+const managerCrewIds = new Set<string>(["2"]);
 
 interface Comment {
   id: string;
@@ -743,12 +745,12 @@ export const handlers = [
     const { id } = params as { id: string };
     const found = createdCrews.find((c) => c.id === id);
     if (found && found.ownerId === currentProfile.userId) {
-      return HttpResponse.json({ role: "owner" });
+      return HttpResponse.json({ role: CrewRole.OWNER });
     }
-    if (masterCrewIds.has(id)) {
-      return HttpResponse.json({ role: "master" });
+    if (managerCrewIds.has(id)) {
+      return HttpResponse.json({ role: CrewRole.MANAGER });
     }
-    return HttpResponse.json({ role: "member" });
+    return HttpResponse.json({ role: CrewRole.MEMBER });
   }),
 
   http.delete(`${API_BASE}/crews/:id`, ({ params }) => {

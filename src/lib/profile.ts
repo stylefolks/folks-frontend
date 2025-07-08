@@ -1,3 +1,5 @@
+import { UserTier } from '@/constants/user';
+
 export interface Profile {
   userId: string;
   email: string;
@@ -6,7 +8,7 @@ export interface Profile {
   imageUrl?: string;
   website?: string;
   backgroundUrl?: string;
-  role?: 'member' | 'master' | 'admin';
+  role?: UserTier;
 }
 
 import { API_BASE, getToken } from './auth';
