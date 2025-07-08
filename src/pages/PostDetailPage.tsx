@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, HeartIcon, MessageSquare } from 'lucide-react';
 import Badge from '@/components/ui/badge';
@@ -36,7 +36,7 @@ export default function PostDetailPage() {
   const navigate = useNavigate();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [comments, setComments] = useState<PostComment[]>([]);
-  const [commentInput, setCommentInput] = useState('');
+  const commentRef = useRef<HTMLTextAreaElement>(null);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [myId, setMyId] = useState<string | null>(null);
@@ -99,10 +99,11 @@ export default function PostDetailPage() {
   };
 
   const handleAddComment = async () => {
-    if (!id || !commentInput.trim()) return;
+    const text = commentRef.current?.value ?? '';
+    if (!id || !text.trim()) return;
     try {
-      await addPostComment(id, commentInput);
-      setCommentInput('');
+      await addPostComment(id, text);
+      if (commentRef.current) commentRef.current.value = '';
       const updated = await fetchPostComments(id);
       setComments(updated);
       setTimeout(() => {
@@ -243,8 +244,7 @@ export default function PostDetailPage() {
             <div className="flex-1 space-y-2">
               <Textarea
                 placeholder="댓글을 입력하세요"
-                value={commentInput}
-                onChange={(e) => setCommentInput(e.target.value)}
+                ref={commentRef}
               />
               <Button className="ml-auto block" type="button" onClick={handleAddComment}>
                 등록
