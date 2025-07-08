@@ -1,4 +1,5 @@
 import { API_BASE, getToken } from "./auth";
+import { CrewRole } from "@/constants/user";
 import type { CrewMetaType, Post } from "./posts";
 import type { SimpleUser } from "./profile";
 
@@ -171,7 +172,6 @@ export async function updateCrew(
   return res.json();
 }
 
-export type CrewRole = "member" | "master" | "owner";
 
 export async function fetchMyCrewRole(id: string): Promise<CrewRole> {
   const token = getToken();

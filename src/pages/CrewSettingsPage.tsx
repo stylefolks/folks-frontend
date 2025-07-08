@@ -9,11 +9,11 @@ import {
   fetchCrewMembers,
   updateCrewMemberRole,
   removeCrewMember,
-  CrewRole,
 } from '@/lib/crew';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Badge from '@/components/ui/badge';
+import { CrewRole } from '@/constants/user';
 
 export default function CrewSettingsPage() {
   const { crewId } = useParams<{ crewId: string }>();
@@ -127,16 +127,16 @@ export default function CrewSettingsPage() {
           {filtered.map((m) => (
             <li key={m.userId} className="flex items-center gap-2">
               <span className="flex-1 text-sm">{m.nickname}</span>
-              <Badge>{m.role.toUpperCase()}</Badge>
-              {m.role !== 'owner' && (
+              <Badge>{m.role}</Badge>
+              {m.role !== CrewRole.OWNER && (
                 <>
                   <select
                     className="border rounded px-1 text-sm"
                     value={m.role}
                     onChange={(e) => changeRole(m.userId, e.target.value as CrewRole)}
                   >
-                    <option value="manager">manager</option>
-                    <option value="member">member</option>
+                    <option value={CrewRole.MANAGER}>manager</option>
+                    <option value={CrewRole.MEMBER}>member</option>
                   </select>
                   <Button variant="outline" size="sm" onClick={() => remove(m.userId)}>
                     Delete

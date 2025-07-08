@@ -12,6 +12,7 @@ import {
 import Avatar from "@/components/ui/avatar";
 import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
+import { UserTier } from '@/constants/user';
 
 interface CrewItem {
   id: string;
@@ -74,7 +75,7 @@ export default function UserProfilePage() {
       .then(([fwr, fwg, me]) => {
         setFollowers(fwr);
         setFollowing(fwg);
-        setIsMaster(me.role === "master" || me.role === "admin");
+        setIsMaster(me.role === UserTier.MASTER);
       })
       .catch(() => {
         setFollowers([]);

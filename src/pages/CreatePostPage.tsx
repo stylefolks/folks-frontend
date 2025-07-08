@@ -1,23 +1,33 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Editor } from '@/components/Editor';
 import { initialDoc } from '@/components/Editor/core/doc';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import Avatar from '@/components/ui/avatar';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { createPost, savePostDraft, PostType, CreatePostDto } from '@/lib/posts';
+import {
+  createPost,
+  savePostDraft,
+  PostType,
+  CreatePostDto,
+  BRAND_META_TYPES,
+  CREW_META_TYPES,
+  type BrandMetaType,
+  type CrewMetaType,
+} from '@/lib/posts';
 import { useMeta } from '@/lib/meta';
 import { extractFromDoc } from '@/lib/mentions';
 import { getToken } from '@/lib/auth';
+import { UserTier, CrewRole } from '@/constants/user';
+import { fetchMyCrewRole } from '@/lib/crew';
 
 const DRAFT_KEY = "write_draft";
 
 interface Me {
   id: string;
-  role: 'USER' | 'INFLUENCER' | 'BRAND' | 'MASTER';
+  role: UserTier;
   nickname: string;
   avatarUrl: string;
 }
@@ -25,9 +35,13 @@ interface Me {
 export default function CreatePostPage() {
   useMeta({ title: "Write - Stylefolks" });
   const navigate = useNavigate();
+  const location = useLocation();
   const [me, setMe] = useState<Me | null>(null);
+  const [crewRole, setCrewRole] = useState<CrewRole | null>(null);
   const [title, setTitle] = useState('');
   const [type, setType] = useState<PostType>('BASIC' as PostType);
+  const [brandMetaType, setBrandMetaType] = useState<BrandMetaType | ''>('');
+  const [crewMetaType, setCrewMetaType] = useState<CrewMetaType | ''>('');
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [view, setView] = useState<EditorView | null>(null);
 
@@ -38,7 +52,24 @@ export default function CreatePostPage() {
       .catch(() => setMe(null));
   }, []);
 
-  const canWriteColumn = me && ['INFLUENCER', 'BRAND', 'MASTER'].includes(me.role);
+  useEffect(() => {
+    const crewId = new URLSearchParams(location.search).get('crewId');
+    if (!crewId) return;
+    fetchMyCrewRole(crewId)
+      .then(setCrewRole)
+      .catch(() => setCrewRole(null));
+  }, [location.search]);
+
+  const canWriteColumn =
+    me &&
+    ([UserTier.BRAND, UserTier.MASTER].includes(me.role) ||
+      crewRole === CrewRole.OWNER ||
+      crewRole === CrewRole.MANAGER);
+
+  const canUseBrandMeta =
+    me && [UserTier.BRAND, UserTier.MASTER].includes(me.role);
+  const canUseCrewMeta =
+    crewRole === CrewRole.OWNER || crewRole === CrewRole.MANAGER;
 
   const handleSubmit = async () => {
       if (!view) return;
@@ -53,6 +84,13 @@ export default function CreatePostPage() {
         brandIds,
         content,
       };
+
+      if (canUseBrandMeta && brandMetaType) {
+        draft.brandMetaType = brandMetaType;
+      }
+      if (canUseCrewMeta && crewMetaType) {
+        draft.crewMetaType = crewMetaType;
+      }
 
       if (!getToken()) {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -73,7 +111,10 @@ export default function CreatePostPage() {
     if (!view) return;
     const content = view.state.doc.toJSON();
     try {
-      await savePostDraft({ title, type, content });
+      const data: CreatePostDto = { title, type, content };
+      if (canUseBrandMeta && brandMetaType) data.brandMetaType = brandMetaType;
+      if (canUseCrewMeta && crewMetaType) data.crewMetaType = crewMetaType;
+      await savePostDraft(data);
       alert('Draft saved');
     } catch (err) {
       alert('Failed to save draft');
@@ -120,6 +161,34 @@ export default function CreatePostPage() {
           onChange={(e) => setTitle(e.target.value)}
           className="mt-4 rounded-md border px-4 py-2 text-base"
         />
+        {canUseBrandMeta && (
+          <select
+            value={brandMetaType}
+            onChange={(e) => setBrandMetaType(e.target.value as BrandMetaType)}
+            className="w-full rounded border p-2 text-sm"
+          >
+            <option value="">Select brand meta type</option>
+            {BRAND_META_TYPES.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        )}
+        {canUseCrewMeta && (
+          <select
+            value={crewMetaType}
+            onChange={(e) => setCrewMetaType(e.target.value as CrewMetaType)}
+            className="w-full rounded border p-2 text-sm"
+          >
+            <option value="">Select crew meta type</option>
+            {CREW_META_TYPES.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        )}
         <div className="bg-white border min-h-[300px] p-1 rounded-lg">
           <Editor value={initialDoc} onChange={setEditorState} onReady={setView} />
         </div>
