@@ -16,10 +16,17 @@ export default function Modal({ open, onClose, children, className }: ModalProps
   };
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={handleClick}
     >
-      <div className={cn('bg-white rounded p-4 w-full max-w-md m-4', className)}>{children}</div>
+      <div
+        className={cn(
+          'bg-white/70 backdrop-blur-md rounded p-4 w-full max-w-md m-4',
+          className,
+        )}
+      >
+        {children}
+      </div>
     </div>,
     document.body,
   );
