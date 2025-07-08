@@ -5,7 +5,7 @@ export interface PostDetail {
   title: string;
   content: string;
   hashtags: string[];
-  author: { name: string; initials: string };
+  author: { userId: string; name: string; initials: string };
   createdAt: string;
   crewName: string;
   likes: number;
@@ -14,7 +14,7 @@ export interface PostDetail {
 
 export interface PostComment {
   id: string;
-  author: { name: string; initials: string };
+  author: { userId: string; name: string; initials: string };
   createdAt: string;
   content: string;
 }
@@ -52,4 +52,22 @@ export async function likePost(id: string): Promise<void> {
 export async function unlikePost(id: string): Promise<void> {
   const res = await fetch(`${API_BASE}/posts/${id}/unlike`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to unlike post');
+}
+
+export async function updatePostComment(
+  id: string,
+  content: string,
+): Promise<PostComment> {
+  const res = await fetch(`${API_BASE}/comment/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error('Failed to update comment');
+  return res.json();
+}
+
+export async function deletePostComment(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/comment/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete comment');
 }
