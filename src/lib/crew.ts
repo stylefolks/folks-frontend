@@ -23,6 +23,7 @@ export interface Notice {
   title: string;
   content: string;
   date: string;
+  location?: string;
   image?: string;
   commentCount?: number;
   likeCount?: number;
