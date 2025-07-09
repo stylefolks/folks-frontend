@@ -7,6 +7,7 @@ import EventCard from "@/components/EventCard";
 import { MapPin } from "lucide-react";
 import { CrewMetaType, Post } from "@/lib/posts";
 import type { Event, Notice } from "@/lib/crew";
+import type { SimpleUser } from "@/lib/profile";
 
 interface Crew {
   id: string;
@@ -15,6 +16,7 @@ interface Crew {
   memberCount: number;
   description: string;
   tags: string[];
+  followers?: SimpleUser[];
 }
 
 export interface TabItem {
@@ -88,6 +90,27 @@ export default function CrewDetailPage() {
           <p className="text-sm text-white/80">{crew.memberCount} members</p>
         </div>
       </section>
+      {crew.followers && crew.followers.length > 0 && (
+        <section className="mt-2 px-4">
+          <h2 className="mb-2 text-sm font-semibold">Members</h2>
+          <div className="flex -space-x-2">
+            {crew.followers.slice(0, 8).map((f) => (
+              <img
+                key={f.userId}
+                src={f.imageUrl}
+                alt={f.username}
+                className="h-8 w-8 rounded-full border border-white cursor-pointer"
+                onClick={() => navigate(`/profile/${f.userId}`)}
+              />
+            ))}
+            {crew.followers.length > 8 && (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border bg-gray-100 text-xs">
+                ...
+              </div>
+            )}
+          </div>
+        </section>
+      )}
       <div className="mt-2 flex flex-wrap gap-2 px-4">
         {crew.tags.map((tag) => (
           <Link
