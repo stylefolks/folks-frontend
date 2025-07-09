@@ -3,7 +3,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Tabs from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
+import EventCard from "@/components/EventCard";
+import { MapPin } from "lucide-react";
 import { CrewMetaType, Post } from "@/lib/posts";
+import type { Event, Notice } from "@/lib/crew";
 
 interface Crew {
   id: string;
@@ -19,50 +22,14 @@ export interface TabItem {
   label: string;
 }
 
-interface NoticeItem {
-  title: string;
-  isNew: boolean;
-  author: string;
-  time: string;
-  views: number;
-}
-
-const demoNotices: NoticeItem[] = [
-  {
-    title: "New Feature Released",
-    isNew: true,
-    author: "David",
-    time: "2 hours ago",
-    views: 150,
-  },
-  {
-    title: "Scheduled Maintenance",
-    isNew: false,
-    author: "Sarah",
-    time: "5 hours ago",
-    views: 112,
-  },
-  {
-    title: "Community Guidelines",
-    isNew: false,
-    author: "John",
-    time: "1 day ago",
-    views: 98,
-  },
-  {
-    title: "Welcome to the Community!",
-    isNew: false,
-    author: "Emma",
-    time: "2 days ago",
-    views: 205,
-  },
-];
 
 export default function CrewDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [notices, setNotices] = useState<Notice[]>([]);
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
 
@@ -82,6 +49,14 @@ export default function CrewDetailPage() {
     fetch(`/crews/${id}/posts`)
       .then((res) => res.json())
       .then(setPosts)
+      .catch(() => {});
+    fetch(`/crews/${id}/events`)
+      .then((res) => res.json())
+      .then(setEvents)
+      .catch(() => {});
+    fetch(`/crews/${id}/notices`)
+      .then((res) => res.json())
+      .then(setNotices)
       .catch(() => {});
   }, [id]);
 
@@ -154,26 +129,20 @@ export default function CrewDetailPage() {
       {tab === "NOTICE" && (
         <div className="flex justify-center p-4">
           <div className="w-full max-w-[400px] space-y-4">
-            {demoNotices.map((notice, idx) => (
-              <div key={idx}>
+            {notices.map((notice, idx) => (
+              <div key={notice.id} onClick={() => navigate(`/post/${notice.id}`)} className="cursor-pointer">
                 <div className="rounded-2xl bg-white p-6 shadow-md">
-                  <div className="flex items-center">
-                    <h3 className="flex-1 text-lg font-bold">{notice.title}</h3>
-                    {notice.isNew && (
-                      <span className="ml-2 rounded-full bg-red-500 px-2 text-xs font-bold text-white">
-                        N
-                      </span>
-                    )}
+                  <h3 className="text-lg font-bold">{notice.title}</h3>
+                  <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                    <MapPin size={12} />
+                    <span>{notice.location}</span>
                   </div>
                   <div className="mt-1 flex justify-between text-xs text-gray-500">
-                    <span>{notice.author}</span>
-                    <span>{notice.time}</span>
-                    <span>{notice.views} views</span>
+                    <span>{notice.date}</span>
+                    <span>{notice.commentCount ?? 0} comments</span>
                   </div>
                 </div>
-                {idx < demoNotices.length - 1 && (
-                  <div className="my-4 h-px bg-gray-200" />
-                )}
+                {idx < notices.length - 1 && <div className="my-4 h-px bg-gray-200" />}
               </div>
             ))}
           </div>
@@ -185,8 +154,14 @@ export default function CrewDetailPage() {
         </div>
       )}
       {tab === "EVENT" && (
-        <div>
-          <p className="p-4">이벤트는 준비중입니다.</p>
+        <div className="space-y-2 p-4">
+          {events.map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onClick={() => navigate(`/post/${event.id}`)}
+            />
+          ))}
         </div>
       )}
     </div>

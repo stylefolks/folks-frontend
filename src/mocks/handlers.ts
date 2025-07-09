@@ -594,6 +594,7 @@ export const handlers = [
       title: `Notice ${i + 1}`,
       content: `Notice content ${i + 1}`,
       date: new Date().toISOString().slice(0, 10),
+      location: `Location ${i + 1}`,
       image: `https://picsum.photos/seed/${id}-notice-${i}/200/200`,
       likeCount: (i + 1) * 4,
       commentCount: (i + 1) * 2,
