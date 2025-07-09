@@ -1,27 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import { Editor } from '@/components/Editor';
-import { initialDoc } from '@/components/Editor/core/doc';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Editor } from "@/components/Editor";
+import { initialDoc } from "@/components/Editor/core/doc";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { EditorState } from "prosemirror-state";
+import { EditorView } from "prosemirror-view";
 import {
-  createPost,
   savePostDraft,
   PostType,
   CreatePostDto,
   BRAND_META_TYPES,
-  CREW_META_TYPES,
   type BrandMetaType,
-  type CrewMetaType,
-} from '@/lib/posts';
-import { useMeta } from '@/lib/meta';
-import { extractFromDoc } from '@/lib/mentions';
-import { getToken } from '@/lib/auth';
-import { UserTier, CrewRole } from '@/constants/user';
-import { fetchMyCrewRole } from '@/lib/crew';
+} from "@/lib/posts";
+import { useMeta } from "@/lib/meta";
+import { extractFromDoc } from "@/lib/mentions";
+import { getToken } from "@/lib/auth";
+import { UserTier } from "@/constants/user";
+import { fetchMyCrewRole } from "@/lib/crew";
+import { CrewRole, CrewMetaType } from "@/types/crew";
+import { CREW_META_TYPES } from "@/constants/crew";
 
 const DRAFT_KEY = "write_draft";
 
@@ -38,22 +37,22 @@ export default function CreatePostPage() {
   const location = useLocation();
   const [me, setMe] = useState<Me | null>(null);
   const [crewRole, setCrewRole] = useState<CrewRole | null>(null);
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState<PostType>('BASIC' as PostType);
-  const [brandMetaType, setBrandMetaType] = useState<BrandMetaType | ''>('');
-  const [crewMetaType, setCrewMetaType] = useState<CrewMetaType | ''>('');
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState<PostType>("BASIC" as PostType);
+  const [brandMetaType, setBrandMetaType] = useState<BrandMetaType | "">("");
+  const [crewMetaType, setCrewMetaType] = useState<CrewMetaType | "">("");
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [view, setView] = useState<EditorView | null>(null);
 
   useEffect(() => {
-    fetch('/users/me')
+    fetch("/users/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setMe(data))
       .catch(() => setMe(null));
   }, []);
 
   useEffect(() => {
-    const crewId = new URLSearchParams(location.search).get('crewId');
+    const crewId = new URLSearchParams(location.search).get("crewId");
     if (!crewId) return;
     fetchMyCrewRole(crewId)
       .then(setCrewRole)
@@ -72,40 +71,40 @@ export default function CreatePostPage() {
     crewRole === CrewRole.OWNER || crewRole === CrewRole.MANAGER;
 
   const handleSubmit = async () => {
-      if (!view) return;
-      const content = view.state.doc.toJSON();
-      const extractResult = extractFromDoc(content, ["brand", "crew", "hashtag"]);
-      const { brandIds, crewIds, hashtags } = extractResult;
-      const draft: CreatePostDto = {
-        title,
-        type,
-        hashtags,
-        crewIds,
-        brandIds,
-        content,
-      };
-
-      if (canUseBrandMeta && brandMetaType) {
-        draft.brandMetaType = brandMetaType;
-      }
-      if (canUseCrewMeta && crewMetaType) {
-        draft.crewMetaType = crewMetaType;
-      }
-
-      if (!getToken()) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-        navigate("/login", { state: { from: location } });
-        return;
-      }
-      console.log(draft);
-      // try {
-      //   await createPost(draft);
-      //   clearDraft();
-      //   alert("Post submitted");
-      // } catch {
-      //   alert("Failed to submit");
-      // }
+    if (!view) return;
+    const content = view.state.doc.toJSON();
+    const extractResult = extractFromDoc(content, ["brand", "crew", "hashtag"]);
+    const { brandIds, crewIds, hashtags } = extractResult;
+    const draft: CreatePostDto = {
+      title,
+      type,
+      hashtags,
+      crewIds,
+      brandIds,
+      content,
     };
+
+    if (canUseBrandMeta && brandMetaType) {
+      draft.brandMetaType = brandMetaType;
+    }
+    if (canUseCrewMeta && crewMetaType) {
+      draft.crewMetaType = crewMetaType;
+    }
+
+    if (!getToken()) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      navigate("/login", { state: { from: location } });
+      return;
+    }
+    console.log(draft);
+    // try {
+    //   await createPost(draft);
+    //   clearDraft();
+    //   alert("Post submitted");
+    // } catch {
+    //   alert("Failed to submit");
+    // }
+  };
 
   const handleSaveDraft = async () => {
     if (!view) return;
@@ -115,29 +114,33 @@ export default function CreatePostPage() {
       if (canUseBrandMeta && brandMetaType) data.brandMetaType = brandMetaType;
       if (canUseCrewMeta && crewMetaType) data.crewMetaType = crewMetaType;
       await savePostDraft(data);
-      alert('Draft saved');
+      alert("Draft saved");
     } catch (err) {
-      alert('Failed to save draft');
+      alert("Failed to save draft");
     }
   };
 
   return (
     <div className="pb-6">
       <div className="sticky top-0 z-10 flex items-center justify-between bg-white px-4">
-        <button className='mr-2' onClick={() => navigate(-1)} aria-label="back">
+        <button className="mr-2" onClick={() => navigate(-1)} aria-label="back">
           <ArrowLeft />
         </button>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setType('BASIC')}
-            className={`rounded-full border px-4 py-1 text-sm ${type === 'BASIC' ? 'bg-black text-white' : ''}`}
+            onClick={() => setType("BASIC")}
+            className={`rounded-full border px-4 py-1 text-sm ${
+              type === "BASIC" ? "bg-black text-white" : ""
+            }`}
           >
             BASIC
           </button>
           {canWriteColumn ? (
             <button
-              onClick={() => setType('COLUMN')}
-              className={`rounded-full border px-4 py-1 text-sm ${type === 'COLUMN' ? 'bg-black text-white' : ''}`}
+              onClick={() => setType("COLUMN")}
+              className={`rounded-full border px-4 py-1 text-sm ${
+                type === "COLUMN" ? "bg-black text-white" : ""
+              }`}
             >
               COLUMN
             </button>
@@ -149,7 +152,9 @@ export default function CreatePostPage() {
               >
                 COLUMN
               </button>
-              <span className="text-xs text-gray-500">Requires special permissions</span>
+              <span className="text-xs text-gray-500">
+                Requires special permissions
+              </span>
             </div>
           )}
         </div>
@@ -190,7 +195,11 @@ export default function CreatePostPage() {
           </select>
         )}
         <div className="bg-white border min-h-[300px] p-1 rounded-lg">
-          <Editor value={initialDoc} onChange={setEditorState} onReady={setView} />
+          <Editor
+            value={initialDoc}
+            onChange={setEditorState}
+            onReady={setView}
+          />
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={handleSaveDraft}>

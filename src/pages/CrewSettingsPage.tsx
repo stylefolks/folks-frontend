@@ -1,66 +1,67 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useMeta } from '@/lib/meta';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMeta } from "@/lib/meta";
 import {
-  CrewTab,
   fetchCrewTabs,
   updateCrewTabs,
-  CrewMember,
   fetchCrewMembers,
   updateCrewMemberRole,
   removeCrewMember,
-} from '@/lib/crew';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import Badge from '@/components/ui/badge';
-import { CrewRole } from '@/constants/user';
+} from "@/lib/crew";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Badge from "@/components/ui/badge";
+import { CrewMember, CrewTab, CrewRole, CrewMetaType } from "@/types/crew";
+import { CREW_META_TYPES } from "@/constants/crew";
 
 export default function CrewSettingsPage() {
   const { crewId } = useParams<{ crewId: string }>();
   const navigate = useNavigate();
-  useMeta({ title: 'Crew Settings - Stylefolks' });
+  useMeta({ title: "Crew Settings - Stylefolks" });
   const [members, setMembers] = useState<CrewMember[]>([]);
   const [tabs, setTabs] = useState<CrewTab[]>([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
-  const TAB_OPTIONS = ['posts', 'overview', 'notice', 'event', 'topic'];
+  const TAB_OPTIONS = CREW_META_TYPES;
 
   const isOptionDisabled = (type: string, id: number) => {
-    if (type === 'topic') {
-      const count = tabs.filter((t) => t.type === 'topic' && t.id !== id).length;
-      return count >= 3 && tabs.find((t) => t.id === id)?.type !== 'topic';
+    if (type === "TOPIC") {
+      const count = tabs.filter(
+        (t) => t.type === "TOPIC" && t.id !== id
+      ).length;
+      return count >= 3 && tabs.find((t) => t.id === id)?.type !== "TOPIC";
     }
     return tabs.some((t) => t.type === type && t.id !== id);
   };
 
-  const changeType = (index: number, newType: string) => {
+  const changeType = (index: number, newType: CrewMetaType) => {
     setTabs((prev) =>
-      prev.map((t, i) => (i === index ? { ...t, type: newType } : t)),
+      prev.map((t, i) => (i === index ? { ...t, type: newType } : t))
     );
   };
 
   const canAddTab = () => {
-    const topicCount = tabs.filter((t) => t.type === 'topic').length;
+    const topicCount = tabs.filter((t) => t.type === "TOPIC").length;
     if (topicCount < 3) return true;
-    return ['posts', 'overview', 'notice', 'event'].some(
-      (t) => !tabs.some((tab) => tab.type === t),
+    return ["posts", "overview", "notice", "event"].some(
+      (t) => !tabs.some((tab) => tab.type === t)
     );
   };
 
   const addTab = () => {
-    const topicCount = tabs.filter((t) => t.type === 'topic').length;
-    const nonTopic = ['posts', 'overview', 'notice', 'event'].find(
-      (t) => !tabs.some((tab) => tab.type === t),
+    const topicCount = tabs.filter((t) => t.type === "TOPIC").length;
+    const nonTopic = CREW_META_TYPES.find(
+      (t) => !tabs.some((tab) => tab.type === t)
     );
-    const type = nonTopic ?? (topicCount < 3 ? 'topic' : undefined);
+    const type = nonTopic ?? (topicCount < 3 ? "TOPIC" : undefined);
     if (!type) return;
     setTabs([
       ...tabs,
       {
         id: Date.now(),
         crewId: Number(crewId),
-        title: '',
+        title: "",
         type,
         isVisible: true,
         order: tabs.length,
@@ -81,26 +82,32 @@ export default function CrewSettingsPage() {
 
   useEffect(() => {
     if (!crewId) return;
-    fetchCrewMembers(crewId).then(setMembers).catch(() => {});
-    fetchCrewTabs(crewId).then(setTabs).catch(() => {});
+    fetchCrewMembers(crewId)
+      .then(setMembers)
+      .catch(() => {});
+    fetchCrewTabs(crewId)
+      .then(setTabs)
+      .catch(() => {});
   }, [crewId]);
 
   const filtered = members.filter((m) =>
-    m.nickname.toLowerCase().includes(search.toLowerCase()),
+    m.nickname.toLowerCase().includes(search.toLowerCase())
   );
 
   const changeRole = (userId: string, role: CrewRole) => {
     if (!crewId) return;
     updateCrewMemberRole(crewId, userId, role)
       .then(() =>
-        setMembers((ms) => ms.map((m) => (m.userId === userId ? { ...m, role } : m))),
+        setMembers((ms) =>
+          ms.map((m) => (m.userId === userId ? { ...m, role } : m))
+        )
       )
       .catch(() => {});
   };
 
   const remove = (userId: string) => {
     if (!crewId) return;
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
     removeCrewMember(crewId, userId)
       .then(() => setMembers((ms) => ms.filter((m) => m.userId !== userId)))
       .catch(() => {});
@@ -133,12 +140,18 @@ export default function CrewSettingsPage() {
                   <select
                     className="border rounded px-1 text-sm"
                     value={m.role}
-                    onChange={(e) => changeRole(m.userId, e.target.value as CrewRole)}
+                    onChange={(e) =>
+                      changeRole(m.userId, e.target.value as CrewRole)
+                    }
                   >
                     <option value={CrewRole.MANAGER}>manager</option>
                     <option value={CrewRole.MEMBER}>member</option>
                   </select>
-                  <Button variant="outline" size="sm" onClick={() => remove(m.userId)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => remove(m.userId)}
+                  >
                     Delete
                   </Button>
                 </>
@@ -161,7 +174,10 @@ export default function CrewSettingsPage() {
             >
               <div className="flex items-center gap-2">
                 <div className="flex-1 space-y-1">
-                  <label htmlFor={`title-${t.id}`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`title-${t.id}`}
+                    className="block text-sm font-medium"
+                  >
                     exposed name
                   </label>
                   <Input
@@ -169,23 +185,36 @@ export default function CrewSettingsPage() {
                     value={t.title}
                     onChange={(e) =>
                       setTabs((tabs) =>
-                        tabs.map((tab) => (tab.id === t.id ? { ...tab, title: e.target.value } : tab)),
+                        tabs.map((tab) =>
+                          tab.id === t.id
+                            ? { ...tab, title: e.target.value }
+                            : tab
+                        )
                       )
                     }
                   />
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor={`type-${t.id}`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`type-${t.id}`}
+                    className="block text-sm font-medium"
+                  >
                     type
                   </label>
                   <select
                     id={`type-${t.id}`}
                     value={t.type}
-                    onChange={(e) => changeType(i, e.target.value)}
+                    onChange={(e) =>
+                      changeType(i, e.target.value as CrewMetaType)
+                    }
                     className="border rounded px-1 text-sm"
                   >
                     {TAB_OPTIONS.map((opt) => (
-                      <option key={opt} value={opt} disabled={isOptionDisabled(opt, t.id)}>
+                      <option
+                        key={opt}
+                        value={opt}
+                        disabled={isOptionDisabled(opt, t.id)}
+                      >
                         {opt}
                       </option>
                     ))}
@@ -194,19 +223,24 @@ export default function CrewSettingsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setTabs((tabs) => tabs.filter((tab) => tab.id !== t.id))}
+                  onClick={() =>
+                    setTabs((tabs) => tabs.filter((tab) => tab.id !== t.id))
+                  }
                 >
                   Delete
                 </Button>
               </div>
-              {t.type === 'topic' && (
+              {t.type === "TOPIC" && (
                 <div className="space-y-1">
-                  <label htmlFor={`hashtags-${t.id}`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`hashtags-${t.id}`}
+                    className="block text-sm font-medium"
+                  >
                     relavant hashtag
                   </label>
                   <Input
                     id={`hashtags-${t.id}`}
-                    value={t.hashtags?.join(', ') ?? ''}
+                    value={t.hashtags?.join(", ") ?? ""}
                     onChange={(e) =>
                       setTabs((tabs) =>
                         tabs.map((tab) =>
@@ -214,12 +248,12 @@ export default function CrewSettingsPage() {
                             ? {
                                 ...tab,
                                 hashtags: e.target.value
-                                  .split(',')
+                                  .split(",")
                                   .map((s) => s.trim())
                                   .filter(Boolean),
                               }
-                            : tab,
-                        ),
+                            : tab
+                        )
                       )
                     }
                     placeholder="Hashtags (comma separated)"
@@ -229,7 +263,12 @@ export default function CrewSettingsPage() {
             </li>
           ))}
         </ul>
-        <Button variant="outline" size="sm" onClick={addTab} disabled={!canAddTab()}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addTab}
+          disabled={!canAddTab()}
+        >
           Add Tab
         </Button>
       </section>

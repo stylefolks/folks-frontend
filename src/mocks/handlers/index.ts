@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { TAGS } from "./tags";
+import { TAGS } from "../tags";
 import { Post } from "@/lib/posts";
 
 const hotTags = [
@@ -128,8 +128,9 @@ const PUBLIC_API_URL =
     ? process.env.PUBLIC_API_URL
     : (import.meta as any).env.PUBLIC_API_URL;
 const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
-
-import { UserTier, CrewRole } from '@/constants/user';
+import { UserTier } from "@/constants/user";
+import { Crew } from "@/lib/profile";
+import { CrewMember, CrewSummary, CrewTab, CrewRole } from "@/types/crew";
 
 interface Profile {
   userId: string;
@@ -232,15 +233,6 @@ function randomPost(id: number) {
   };
 }
 
-interface CrewSummary {
-  id: string;
-  name: string;
-  coverImage: string;
-  tags: string[];
-  memberCount: number;
-  upcomingEvent?: { title: string; date: string };
-}
-
 function randomCrew(id: number): CrewSummary {
   const seed = Math.random().toString(36).slice(2, 8);
   const tags = [`tag${id}`, `tag${id + 1}`];
@@ -256,17 +248,6 @@ function randomCrew(id: number): CrewSummary {
     memberCount: 10 + id,
     upcomingEvent: event,
   };
-}
-
-interface Crew {
-  id: string;
-  name: string;
-  profileImage?: string;
-  coverImage: string;
-  description: string;
-  links: { title: string; url: string }[];
-  ownerId: string;
-  followers?: SimpleUser[];
 }
 
 let createdCrews: Crew[] = [];
@@ -320,22 +301,7 @@ const followingMap: Record<string, SimpleUser[]> = {};
 const blockedUsers = new Set<string>();
 const crewFollowersMap: Record<string, SimpleUser[]> = {};
 
-interface CrewTab {
-  id: number;
-  crewId: number;
-  title: string;
-  type: string;
-  isVisible: boolean;
-  order: number;
-  hashtags?: string[];
-}
-
 const crewTabsMap: Record<string, CrewTab[]> = {};
-interface CrewMember {
-  userId: string;
-  nickname: string;
-  role: "owner" | "manager" | "member";
-}
 
 const crewMembersMap: Record<string, CrewMember[]> = {};
 
@@ -550,14 +516,20 @@ export const handlers = [
     if (found) {
       return HttpResponse.json({ ...found, followers: crewFollowersMap[id] });
     }
-    return HttpResponse.json({
+
+    const res: Crew = {
       id: id,
       name: `Crew ${id}`,
-      avatarUrl: `https://picsum.photos/seed/crew-${id}/400/400`,
-      memberCount: 1000,
+      coverImage: `https://picsum.photos/seed/crew-${id}/400/400`,
       description: `This is crew ${id} description`,
+      members: Array.from({ length: 5 }, (_, i) => {
+        const p = randomProfile(`crew-${id}-member-${i}`);
+        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+      }),
       tags: ["테스트", "샘플"],
-    });
+    };
+
+    return HttpResponse.json(res);
   }),
 
   http.get(`${API_BASE}/crews/:id/description`, ({ params }) => {
@@ -572,7 +544,9 @@ export const handlers = [
       return HttpResponse.json({ description: found.description });
     }
     return HttpResponse.json({
-      description: `This is crew ${id} description`,
+      description: `This is crew ${id} description  \n 
+      lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+      \n lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
     });
   }),
 

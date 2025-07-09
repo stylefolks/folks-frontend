@@ -1,71 +1,16 @@
 import { API_BASE, getToken } from "./auth";
-import { CrewRole } from "@/constants/user";
+
 import type { CrewMetaType, Post } from "./posts";
-import type { SimpleUser } from "./profile";
-
-export interface CrewLink {
-  title: string;
-  url: string;
-}
-
-export interface Event {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  image?: string;
-  commentCount?: number;
-  likeCount?: number;
-}
-
-export interface Notice {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  location?: string;
-  image?: string;
-  commentCount?: number;
-  likeCount?: number;
-}
-
-export interface CrewTopic {
-  tag: string;
-  count: number;
-}
-
-export interface CrewTab {
-  id: number;
-  crewId: number;
-  title: string;
-  type: CrewMetaType;
-  isVisible: boolean;
-  order: number;
-  hashtags?: string[];
-}
-
-export interface Crew {
-  id: string;
-  name: string;
-  profileImage?: string;
-  coverImage: string;
-  description: string;
-  links: CrewLink[];
-  ownerId: string;
-  followers?: SimpleUser[];
-}
-
-export interface CrewSummary {
-  id: string;
-  name: string;
-  coverImage: string;
-  tags: string[];
-  memberCount: number;
-  upcomingEvent?: {
-    title: string;
-    date: string;
-  };
-}
+import type { Crew, SimpleUser } from "./profile";
+import {
+  Notice,
+  CrewTopic,
+  CrewTab,
+  CrewSummary,
+  CrewEvent,
+  CrewRole,
+  CrewMember,
+} from "@/types/crew";
 
 export async function fetchCrew(id: string): Promise<Crew> {
   const res = await fetch(`${API_BASE}/crews/${id}`, { cache: "no-store" });
@@ -94,7 +39,7 @@ export async function fetchCrewPosts(
   return res.json();
 }
 
-export async function fetchCrewEvents(id: string): Promise<Event[]> {
+export async function fetchCrewEvents(id: string): Promise<CrewEvent[]> {
   const res = await fetch(`${API_BASE}/crews/${id}/events`, {
     cache: "no-store",
   });
@@ -182,7 +127,6 @@ export async function updateCrew(
   return res.json();
 }
 
-
 export async function fetchMyCrewRole(id: string): Promise<CrewRole> {
   const token = getToken();
   const res = await fetch(`${API_BASE}/crews/${id}/my-role`, {
@@ -192,12 +136,6 @@ export async function fetchMyCrewRole(id: string): Promise<CrewRole> {
   if (!res.ok) throw new Error("Failed to load role");
   const data = await res.json();
   return data.role as CrewRole;
-}
-
-export interface CrewMember {
-  userId: string;
-  nickname: string;
-  role: CrewRole;
 }
 
 export async function fetchCrewMembers(id: string): Promise<CrewMember[]> {

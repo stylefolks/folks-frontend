@@ -6,18 +6,7 @@ import PostCard from "@/components/PostCard";
 import EventCard from "@/components/EventCard";
 import { MapPin } from "lucide-react";
 import { CrewMetaType, Post } from "@/lib/posts";
-import type { Event, Notice } from "@/lib/crew";
-import type { SimpleUser } from "@/lib/profile";
-
-interface Crew {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  memberCount: number;
-  description: string;
-  tags: string[];
-  followers?: SimpleUser[];
-}
+import { Crew, Notice, CrewEvent } from "@/types/crew";
 
 export interface TabItem {
   value: CrewMetaType;
@@ -29,7 +18,7 @@ export default function CrewDetailPage() {
   const navigate = useNavigate();
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<CrewEvent[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [description, setDescription] = useState<string>("");
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
@@ -81,20 +70,22 @@ export default function CrewDetailPage() {
     <div className="min-h-screen pb-16">
       <section className="relative px-4">
         <img
-          src={crew.avatarUrl}
+          src={crew.coverImage}
           alt={crew.name}
           className="aspect-[16/9] w-full rounded-lg object-cover"
         />
         <div className="absolute bottom-4 left-8 text-white drop-shadow">
           <h1 className="font-bold">{crew.name}</h1>
-          <p className="text-sm text-white/80">{crew.memberCount} members</p>
+          <p className="text-sm text-white/80">
+            {crew.members?.length || 0} members
+          </p>
         </div>
       </section>
-      {crew.followers && crew.followers.length > 0 && (
+      {crew.members && crew.members.length > 0 && (
         <section className="mt-2 px-4">
           <h2 className="mb-2 text-sm font-semibold">Members</h2>
           <div className="flex -space-x-2">
-            {crew.followers.slice(0, 8).map((f) => (
+            {crew.members.slice(0, 8).map((f) => (
               <img
                 key={f.userId}
                 src={f.imageUrl}
@@ -103,7 +94,7 @@ export default function CrewDetailPage() {
                 onClick={() => navigate(`/profile/${f.userId}`)}
               />
             ))}
-            {crew.followers.length > 8 && (
+            {crew.members.length > 8 && (
               <div className="flex h-8 w-8 items-center justify-center rounded-full border bg-gray-100 text-xs">
                 ...
               </div>
@@ -112,7 +103,7 @@ export default function CrewDetailPage() {
         </section>
       )}
       <div className="mt-2 flex flex-wrap gap-2 px-4">
-        {crew.tags.map((tag) => (
+        {crew?.tags?.map((tag) => (
           <Link
             to={`/search?tag=${tag}`}
             key={tag}

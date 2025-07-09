@@ -1,3 +1,4 @@
+import { CrewMetaType } from "@/types/crew";
 import { API_BASE } from "./auth";
 import type { SimpleUser } from "./profile";
 
@@ -75,15 +76,8 @@ export async function fetchPost(id: number): Promise<Post> {
   return res.json();
 }
 export const BRAND_META_TYPES = ["POSTS", "EVENT", "NOTICE"] as const;
-export const CREW_META_TYPES = [
-  "TOPIC",
-  "OVERVIEW",
-  "POSTS",
-  "EVENT",
-  "NOTICE",
-] as const;
+
 export type BrandMetaType = (typeof BRAND_META_TYPES)[number];
-export type CrewMetaType = (typeof CREW_META_TYPES)[number];
 
 export interface CreatePostDto {
   title: string;
