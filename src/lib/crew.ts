@@ -73,6 +73,15 @@ export async function fetchCrew(id: string): Promise<Crew> {
   return res.json();
 }
 
+export async function fetchCrewDescription(id: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/crews/${id}/description`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Failed to load description");
+  const data = await res.json();
+  return data.description as string;
+}
+
 export async function fetchCrewPosts(
   id: string,
   topics: string[] = []
