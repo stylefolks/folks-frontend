@@ -29,6 +29,7 @@ export default function CrewDetailPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
+  const [description, setDescription] = useState<string>("");
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
 
@@ -56,6 +57,10 @@ export default function CrewDetailPage() {
     fetch(`/crews/${id}/notices`)
       .then((res) => res.json())
       .then(setNotices)
+      .catch(() => {});
+    fetch(`/crews/${id}/description`)
+      .then((res) => res.json())
+      .then((data) => setDescription(data.description))
       .catch(() => {});
   }, [id]);
 
@@ -155,7 +160,7 @@ export default function CrewDetailPage() {
       )}
       {tab === "OVERVIEW" && (
         <div>
-          <p className="p-4">소개글입니다.</p>
+          <p className="p-4">{description}</p>
         </div>
       )}
       {tab === "EVENT" && (

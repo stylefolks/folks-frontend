@@ -560,6 +560,22 @@ export const handlers = [
     });
   }),
 
+  http.get(`${API_BASE}/crews/:id/description`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (id === "crew-1") {
+      return HttpResponse.json({
+        description: "Street fashion crew in Shinchon, Seoul.",
+      });
+    }
+    const found = createdCrews.find((c) => c.id === id);
+    if (found) {
+      return HttpResponse.json({ description: found.description });
+    }
+    return HttpResponse.json({
+      description: `This is crew ${id} description`,
+    });
+  }),
+
   http.get(`${API_BASE}/crews/:id/posts`, ({ params }) => {
     const { id } = params as { id: string };
     const posts = Array.from({ length: 4 }, (_, i) => {
