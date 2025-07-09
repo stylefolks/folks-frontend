@@ -22,7 +22,6 @@ export interface TabItem {
   label: string;
 }
 
-
 export default function CrewDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -130,7 +129,11 @@ export default function CrewDetailPage() {
         <div className="flex justify-center p-4">
           <div className="w-full max-w-[400px] space-y-4">
             {notices.map((notice, idx) => (
-              <div key={notice.id} onClick={() => navigate(`/post/${notice.id}`)} className="cursor-pointer">
+              <div
+                key={notice.id}
+                onClick={() => navigate(`/posts/${notice.id}`)}
+                className="cursor-pointer"
+              >
                 <div className="rounded-2xl bg-white p-6 shadow-md">
                   <h3 className="text-lg font-bold">{notice.title}</h3>
                   <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
@@ -142,7 +145,9 @@ export default function CrewDetailPage() {
                     <span>{notice.commentCount ?? 0} comments</span>
                   </div>
                 </div>
-                {idx < notices.length - 1 && <div className="my-4 h-px bg-gray-200" />}
+                {idx < notices.length - 1 && (
+                  <div className="my-4 h-px bg-gray-200" />
+                )}
               </div>
             ))}
           </div>
@@ -159,7 +164,7 @@ export default function CrewDetailPage() {
             <EventCard
               key={event.id}
               event={event}
-              onClick={() => navigate(`/post/${event.id}`)}
+              onClick={() => navigate(`/posts/${event.id}`)}
             />
           ))}
         </div>
