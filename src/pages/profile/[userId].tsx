@@ -10,6 +10,7 @@ import {
   type SimpleUser,
 } from "@/lib/profile";
 import Avatar from "@/components/ui/avatar";
+import FollowListModal from "@/components/users/FollowListModal";
 import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
 import { UserTier } from '@/constants/user';
@@ -94,13 +95,28 @@ export default function UserProfilePage() {
   const posts = profile.posts;
 
   return (
-    <div className="space-y-6 p-4">
-      <div className="relative flex flex-col items-center">
+    <>
+      <div className="space-y-6 p-4">
+        <div className="relative flex flex-col items-center">
         <Avatar src={profile.imageUrl} className="h-16 w-16" />
         <h2 className="mt-2 text-xl font-bold">{profile.username}</h2>
         <p className="text-sm text-gray-500">{profile.bio}</p>
         <p className="mt-1 text-sm">
-          {followers.length} followers · {following.length} following
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => setModal("followers")}
+          >
+            {followers.length} followers
+          </span>
+          {' '}
+          ·
+          {' '}
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => setModal("following")}
+          >
+            {following.length} following
+          </span>
         </p>
         <button
           aria-label="menu"
@@ -151,6 +167,21 @@ export default function UserProfilePage() {
           ))}
         </div>
       </div>
-    </div>
+      </div>
+      <FollowListModal
+        open={modal === "followers"}
+        onClose={() => setModal(null)}
+        users={followers}
+        type="followers"
+        isMaster={isMaster}
+      />
+      <FollowListModal
+        open={modal === "following"}
+        onClose={() => setModal(null)}
+        users={following}
+        type="following"
+        isMaster={isMaster}
+      />
+    </>
   );
 }
