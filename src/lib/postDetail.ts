@@ -75,3 +75,21 @@ export async function deletePostComment(id: string): Promise<void> {
   const res = await fetch(`${API_BASE}/comment/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete comment');
 }
+
+export async function updatePostComment(
+  id: string,
+  content: string,
+): Promise<PostComment> {
+  const res = await fetch(`${API_BASE}/comment/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error('Failed to update comment');
+  return res.json();
+}
+
+export async function deletePostComment(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/comment/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete comment');
+}
