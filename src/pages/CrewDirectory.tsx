@@ -13,7 +13,7 @@ import SearchInput from "@/components/crew-directory/SearchInput";
 import CrewEventBannerSlider from "@/components/crews/CrewEventBannerSlider";
 import { CrewSummary } from "@/types/crew";
 
-export default function CrewDirectoryPage() {
+export default function CrewDirectory() {
   useMeta({ title: "Crews Directory - Stylefolks" });
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = parseCrewSearchParams(searchParams);

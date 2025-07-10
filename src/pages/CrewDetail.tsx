@@ -14,7 +14,7 @@ export interface TabItem {
   label: string;
 }
 
-export default function CrewDetailPage() {
+export default function CrewDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [crew, setCrew] = useState<Crew | null>(null);

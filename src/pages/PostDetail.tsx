@@ -13,7 +13,7 @@ import {
   updatePostComment,
 } from "@/lib/postDetail";
 import { cn } from "@/lib/utils";
-import { PostComment, PostDetail } from "@/types/post";
+import { PostComment, type PostDetail } from "@/types/post";
 import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,7 +41,7 @@ function InitialAvatar({ initials }: { initials: string }) {
   );
 }
 
-export default function PostDetailPage() {
+export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState<PostDetail | null>(null);
