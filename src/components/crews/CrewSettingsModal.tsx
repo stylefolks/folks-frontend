@@ -3,7 +3,7 @@ import Modal from "../ui/Modal";
 import EditableImageUpload from "../EditableImageUpload";
 import EditableLinkList from "../EditableLinkList";
 import { Button } from "../ui/button";
-import type { Crew, CrewLink } from "@/lib/crew";
+import { Crew, CrewLink } from "@/types/crew";
 
 interface CrewSettingsModalProps {
   open: boolean;

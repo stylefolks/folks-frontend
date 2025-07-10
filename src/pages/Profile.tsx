@@ -1,282 +1,181 @@
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import {
-  getProfile,
-  updateMyProfile,
-  changeMyPassword,
-  getUserPosts,
-  getFollowers,
-  getFollowing,
-  getUserCrews,
-  getFollowedBrands,
-} from "@/lib/profile";
-import { getMyId } from "@/lib/auth";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useMeta } from "@/lib/meta";
-import { Profile, SimpleUser } from "@/types/user";
-import { PostSummary } from "@/types/post";
-import { Brand } from "@/types/brand";
-import { Crew } from "@/types/crew";
+import PostCard from "@/components/PostCard";
+import { getFollowers, getFollowing, getMyProfile } from "@/lib/profile";
+import Avatar from "@/components/ui/avatar";
+import FollowListModal from "@/components/users/FollowListModal";
+import { logout } from "@/lib/auth";
+import { Menu } from "lucide-react";
 
-export default function ProfilePage() {
+import { SimpleUser, UserTier } from "@/types/user";
+import { mockPost } from "@/lib/posts";
+import { Post } from "@/types/post";
+
+interface CrewItem {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
+
+interface ProfileData {
+  userId: string;
+  username: string;
+  bio: string;
+  imageUrl: string;
+  tags: string[];
+  posts: (Post & { category: "TALK" | "COLUMN" | "CREW" })[];
+  crews: CrewItem[];
+}
+
+function generateMockProfile(userId: string): ProfileData {
+  const base = parseInt(userId.replace(/\D/g, ""), 10) || 1;
+  const tags = Array.from({ length: 5 }, (_, i) => `tag${base + i}`);
+  const crews = Array.from({ length: 5 }, (_, i) => ({
+    id: `crew${base + i}`,
+    name: `Crew ${base + i}`,
+    imageUrl: `https://picsum.photos/seed/crew-${base + i}/80`,
+  }));
+  const posts = Array.from({ length: 12 }, (_, i) => {
+    const post = mockPost(base * 10 + i) as Post & {
+      category: "TALK" | "COLUMN" | "CREW";
+    };
+    post.category = i % 3 === 0 ? "TALK" : i % 3 === 1 ? "COLUMN" : "CREW";
+    return post;
+  });
+  return {
+    userId,
+    username: `User ${userId}`,
+    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet.",
+    imageUrl: `https://picsum.photos/seed/user-${userId}/100`,
+    tags,
+    posts,
+    crews,
+  };
+}
+
+export default function UserProfilePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const params = useParams();
+  const navigate = useNavigate();
   const userId = params.userId as string;
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [myId, setMyId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [website, setWebsite] = useState("");
-  const [backgroundUrl, setBackgroundUrl] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [crews, setCrews] = useState<Crew[]>([]);
   const [followers, setFollowers] = useState<SimpleUser[]>([]);
   const [following, setFollowing] = useState<SimpleUser[]>([]);
-  const [posts, setPosts] = useState<PostSummary[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-
-  useMeta({
-    title: profile
-      ? `${profile.username} - Stylefolks`
-      : "Profile - Stylefolks",
-  });
+  const [modal, setModal] = useState<"followers" | "following" | null>(null);
+  const [isMaster, setIsMaster] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const p = await getProfile(userId);
-        setProfile(p);
-        setUsername(p.username);
-        setBio(p.bio ?? "");
-        setImageUrl(p.imageUrl ?? "");
-        setWebsite(p.website ?? "");
-        setBackgroundUrl(p.backgroundUrl ?? "");
-        const [userPosts, fwr, fwg, cr, br] = await Promise.all([
-          getUserPosts(userId),
-          getFollowers(userId),
-          getFollowing(userId),
-          getUserCrews(userId),
-          getFollowedBrands(userId),
-        ]);
-        setPosts(userPosts);
+    if (!userId) return;
+    setProfile(generateMockProfile(userId));
+    Promise.all([getFollowers(userId), getFollowing(userId), getMyProfile()])
+      .then(([fwr, fwg, me]) => {
         setFollowers(fwr);
         setFollowing(fwg);
-        setCrews(cr);
-        setBrands(br);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load");
-      }
-      try {
-        const id = await getMyId();
-        setMyId(id);
-      } catch {
-        setMyId(null);
-      }
-      setLoading(false);
-    }
-    load();
+        setIsMaster(me.role === UserTier.MASTER);
+      })
+      .catch(() => {
+        setFollowers([]);
+        setFollowing([]);
+        setIsMaster(false);
+      });
   }, [userId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const updated = await updateMyProfile({
-        username,
-        bio,
-        imageUrl,
-        website,
-        backgroundUrl,
-      });
-      setProfile(updated);
-      if (newPassword) {
-        await changeMyPassword(oldPassword, newPassword);
-        setOldPassword("");
-        setNewPassword("");
-      }
-      setError("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update");
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
-  if (loading) {
-    return <p className="p-4">Loading...</p>;
-  }
-  if (!profile) {
-    return <p className="p-4 text-red-500">{error || "No profile"}</p>;
-  }
+  if (!profile) return <p className="p-4">Loading...</p>;
 
-  const isMe = myId === profile.userId;
+  const posts = profile.posts;
 
   return (
-    <div className="p-4 space-y-6 max-w-xl mx-auto">
-      <h1 className="text-xl font-bold">Profile</h1>
-      {isMe ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="username">
-              Username
-            </label>
-            <Input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="bio">
-              Bio
-            </label>
-            <Input
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="imageUrl">
-              Image URL
-            </label>
-            <Input
-              id="imageUrl"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="website">
-              Website
-            </label>
-            <Input
-              id="website"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label
-              className="block text-sm font-medium"
-              htmlFor="backgroundUrl"
+    <>
+      <div className="space-y-6 p-4">
+        <div className="relative flex flex-col items-center">
+          <Avatar src={profile.imageUrl} className="h-16 w-16" />
+          <h2 className="mt-2 text-xl font-bold">{profile.username}</h2>
+          <p className="text-sm text-gray-500">{profile.bio}</p>
+          <p className="mt-1 text-sm">
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => setModal("followers")}
             >
-              Background Image URL
-            </label>
-            <Input
-              id="backgroundUrl"
-              value={backgroundUrl}
-              onChange={(e) => setBackgroundUrl(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="oldPassword">
-              Current Password
-            </label>
-            <Input
-              id="oldPassword"
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="block text-sm font-medium" htmlFor="newPassword">
-              New Password
-            </label>
-            <Input
-              id="newPassword"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <Button type="submit">Save</Button>
-        </form>
-      ) : (
-        <div className="space-y-2">
-          {profile.imageUrl && (
-            <img
-              src={profile.imageUrl}
-              alt={profile.username}
-              className="w-32 h-32 object-cover rounded-full"
-            />
-          )}
-          <p className="font-semibold text-lg">{profile.username}</p>
-          {profile.bio && <p>{profile.bio}</p>}
-          {profile.website && (
-            <a href={profile.website} className="text-blue-600 underline">
-              {profile.website}
-            </a>
+              {followers.length} followers
+            </span>{" "}
+            ·{" "}
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => setModal("following")}
+            >
+              {following.length} following
+            </span>
+          </p>
+          <button
+            aria-label="menu"
+            className="absolute right-0 top-0"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <Menu />
+          </button>
+          {menuOpen && (
+            <div className="absolute right-0 top-8 w-32 rounded-md border bg-white shadow">
+              <div
+                className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+                onClick={handleLogout}
+              >
+                Logout
+              </div>
+              <div
+                className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+                onClick={() => navigate("/settings")}
+              >
+                Settings
+              </div>
+              <div className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100">
+                Help Center
+              </div>
+            </div>
           )}
         </div>
-      )}
-      <div className="space-y-4">
-        {crews.length > 0 && (
-          <div>
-            <h2 className="font-semibold">Crews</h2>
-            <ul className="list-disc pl-5">
-              {crews.map((c) => (
-                <li key={c.id}>
-                  <Link to={`/crew/${c.id}/posts`}>{c.name}</Link>
-                </li>
-              ))}
-            </ul>
+        <div>
+          <h3 className="mb-2 font-semibold">Joined Crews</h3>
+          <div className="flex space-x-2 overflow-x-auto pb-1">
+            {profile.crews.map((c) => (
+              <Avatar
+                key={c.id}
+                src={c.imageUrl}
+                size="sm"
+                className="cursor-pointer"
+                onClick={() => navigate(`/crew/${c.id}`)}
+              />
+            ))}
           </div>
-        )}
-        {following.length > 0 && (
-          <div>
-            <h2 className="font-semibold">Following</h2>
-            <ul className="list-disc pl-5">
-              {following.map((u) => (
-                <li key={u.userId}>
-                  <Link to={`/profile/${u.userId}`}>{u.username}</Link>
-                </li>
-              ))}
-            </ul>
+        </div>
+        <div>
+          <h3 className="mb-2 font-semibold">My Posts</h3>
+          <div className="columns-2 gap-3">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
           </div>
-        )}
-        {followers.length > 0 && (
-          <div>
-            <h2 className="font-semibold">Followers</h2>
-            <ul className="list-disc pl-5">
-              {followers.map((u) => (
-                <li key={u.userId}>
-                  <Link to={`/profile/${u.userId}`}>{u.username}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {brands.length > 0 && (
-          <div>
-            <h2 className="font-semibold">Brands</h2>
-            <ul className="list-disc pl-5">
-              {brands.map((b) => (
-                <li key={b.id}>
-                  <Link to={`/brand/${b.id}`}>{b.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {posts.length > 0 && (
-          <div>
-            <h2 className="font-semibold">Posts</h2>
-            <ul className="list-disc pl-5">
-              {posts.map((p) => (
-                <li key={p.id}>
-                  <Link to={`/post/${p.id}`}>{p.title}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+      <FollowListModal
+        open={modal === "followers"}
+        onClose={() => setModal(null)}
+        users={followers}
+        type="followers"
+        isMaster={isMaster}
+      />
+      <FollowListModal
+        open={modal === "following"}
+        onClose={() => setModal(null)}
+        users={following}
+        type="following"
+        isMaster={isMaster}
+      />
+    </>
   );
 }

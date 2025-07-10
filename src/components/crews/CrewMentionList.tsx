@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchCrews, type CrewSummary } from "@/lib/crew";
+import { fetchCrews } from "@/lib/crew";
+import { CrewSummary } from "@/types/crew";
 
 interface Props {
   query: string;

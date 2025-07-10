@@ -1,7 +1,7 @@
-import { Event } from "@/types/crew";
+import { CrewEvent } from "@/types/crew";
 
 interface Props {
-  event: Event;
+  event: CrewEvent;
   onClick?: () => void;
 }
 

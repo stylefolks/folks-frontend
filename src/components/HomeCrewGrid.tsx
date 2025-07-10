@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
-import type { CrewSummary } from "@/lib/crew";
+
 import { useNavigate } from "react-router-dom";
+import { CrewSummary } from "@/types/crew";
 
 export default function HomeCrewGrid() {
   const [crews, setCrews] = useState<CrewSummary[]>([]);
@@ -33,7 +34,9 @@ export default function HomeCrewGrid() {
             <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/80 to-transparent" />
             <div className="absolute bottom-1 left-1 right-1 text-white">
               <div className="text-sm font-bold leading-none">{crew.name}</div>
-              <div className="text-xs">{crew.memberCount.toLocaleString()} members</div>
+              <div className="text-xs">
+                {crew.memberCount.toLocaleString()} members
+              </div>
             </div>
           </div>
         ))}

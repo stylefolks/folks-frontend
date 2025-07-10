@@ -47,14 +47,6 @@ const directoryCrews = [
   },
 ];
 
-interface FeedPost {
-  id: string;
-  title: string;
-  imageUrl: string;
-  author: { nickname: string };
-  tags: string[];
-  likeCount: number;
-}
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
 
 export function mockPost(id: number): Post {
@@ -90,13 +82,31 @@ export function mockPost(id: number): Post {
   };
 }
 
-const feedPosts: FeedPost[] = Array.from({ length: 15 }, (_, i) => ({
-  id: String(i + 1),
+const feedPosts: Post[] = Array.from({ length: 15 }, (_, i) => ({
+  id: i + 1,
   title: `오늘의 OOTD ${i + 1}`,
-  imageUrl: `https://picsum.photos/seed/post-${i + 1}/400/300`,
-  author: { nickname: `user${i + 1}` },
+  image: `https://picsum.photos/seed/post-${i + 1}/400/300`,
+  date: new Date(BASE_TIME - i * 24 * 60 * 60 * 1000).toISOString(),
   tags: ["빈티지", "홍대"],
   likeCount: 10 * (i + 1),
+  views: 100 * (i + 1),
+  content: {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: `이것은 ${i + 1}번째 포스트의 내용입니다.` },
+        ],
+      },
+    ],
+  },
+  type: i % 2 === 0 ? "BASIC" : "COLUMN", // alternating types for mock data
+  author: {
+    userId: `user${i + 1}`,
+    username: `User ${i + 1}`,
+    imageUrl: `https://picsum.photos/seed/user${i + 1}/100`,
+  },
 }));
 
 const me = {
@@ -653,9 +663,9 @@ export const handlers = [
     const { id } = params as { id: string };
     if (!crewMembersMap[id]) {
       crewMembersMap[id] = [
-        { userId: "u1", nickname: "owner", role: "owner" },
-        { userId: "u2", nickname: "manager1", role: "manager" },
-        { userId: "u3", nickname: "member1", role: "member" },
+        { userId: "u1", nickname: "owner", role: CrewRole.OWNER },
+        { userId: "u2", nickname: "manager1", role: CrewRole.MANAGER },
+        { userId: "u3", nickname: "member1", role: CrewRole.MEMBER },
       ];
     }
     return HttpResponse.json(crewMembersMap[id]);

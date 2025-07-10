@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import CrewCard from './CrewCard';
-import useInfiniteScroll from '@/components/useInfiniteScroll';
-import { fetchCrews, type CrewSummary } from '@/lib/crew';
+import { useCallback, useEffect, useState } from "react";
+import CrewCard from "./CrewCard";
+import useInfiniteScroll from "@/components/useInfiniteScroll";
+import { CrewSummary } from "@/types/crew";
+import { fetchCrews } from "@/lib/crew";
 
 export default function CrewList({ tag }: { tag?: string | null }) {
   const [crews, setCrews] = useState<CrewSummary[]>([]);
@@ -13,10 +14,12 @@ export default function CrewList({ tag }: { tag?: string | null }) {
   }, [tag]);
 
   const loadMore = useCallback(() => {
-    fetchCrews({ page: String(page + 1), ...(tag ? { tag } : {}) }).then((c) => {
-      setCrews((prev) => [...prev, ...c]);
-      setPage((p) => p + 1);
-    });
+    fetchCrews({ page: String(page + 1), ...(tag ? { tag } : {}) }).then(
+      (c) => {
+        setCrews((prev) => [...prev, ...c]);
+        setPage((p) => p + 1);
+      }
+    );
   }, [page, tag]);
 
   const ref = useInfiniteScroll(loadMore);

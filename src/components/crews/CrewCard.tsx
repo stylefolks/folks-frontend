@@ -1,7 +1,7 @@
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
-import TagList from '@/components/TagList';
-import { useNavigate } from 'react-router-dom';
-import type { CrewSummary } from '@/lib/crew';
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import TagList from "@/components/TagList";
+import { CrewSummary } from "@/types/crew";
+import { useNavigate } from "react-router-dom";
 
 export default function CrewCard({ crew }: { crew: CrewSummary }) {
   const navigate = useNavigate();

@@ -1,22 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
 import Badge from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { getMyId } from "@/lib/auth";
 import {
-  fetchPostDetail,
-  fetchPostComments,
   addPostComment,
-  updatePostComment,
   deletePostComment,
+  fetchPostComments,
+  fetchPostDetail,
   likePost,
   unlikePost,
+  updatePostComment,
 } from "@/lib/postDetail";
 import { cn } from "@/lib/utils";
-import { getMyId } from "@/lib/auth";
 import { PostComment, PostDetail } from "@/types/post";
+import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const avatarColors = [
   "bg-blue-400",
@@ -49,8 +49,8 @@ export default function PostDetailPage() {
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
-  const [myId, setMyId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [myId, setMyId] = useState<null | string>(null);
+  const [editingId, setEditingId] = useState<null | string>(null);
   const [editText, setEditText] = useState("");
 
   useEffect(() => {
@@ -120,8 +120,8 @@ export default function PostDetailPage() {
       setComments(updated);
       setTimeout(() => {
         window.scrollTo({
-          top: document.body.scrollHeight,
           behavior: "smooth",
+          top: document.body.scrollHeight,
         });
       }, 0);
     } catch {
@@ -135,16 +135,16 @@ export default function PostDetailPage() {
     <div className="pb-16">
       <div className="px-4 pt-2">
         <div className="flex items-center justify-between">
-          <button onClick={() => navigate(-1)} aria-label="back">
+          <button aria-label="back" onClick={() => navigate(-1)}>
             <ArrowLeft />
           </button>
           <div className="flex flex-wrap gap-2">
             {post.hashtags.map((tag) => (
               <Badge
-                key={tag}
-                variant="outline"
                 className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-black"
+                key={tag}
                 onClick={() => navigate(`/search?tag=${tag.replace("#", "")}`)}
+                variant="outline"
               >
                 {tag}
               </Badge>
@@ -192,7 +192,7 @@ export default function PostDetailPage() {
             Comments ({comments.length})
           </h2>
           {comments.map((c) => (
-            <div key={c.id} className="flex items-start gap-3">
+            <div className="flex items-start gap-3" key={c.id}>
               <div
                 className="cursor-pointer"
                 onClick={() => navigate(`/profile/${c.author.userId}`)}
@@ -203,17 +203,17 @@ export default function PostDetailPage() {
                 {editingId === c.id ? (
                   <div className="space-y-2">
                     <Input
-                      value={editText}
                       onChange={(e) => setEditText(e.target.value)}
+                      value={editText}
                     />
                     <div className="space-x-2">
-                      <Button size="sm" onClick={() => handleUpdate(c.id)}>
+                      <Button onClick={() => handleUpdate(c.id)} size="sm">
                         Save
                       </Button>
                       <Button
+                        onClick={() => setEditingId(null)}
                         size="sm"
                         variant="outline"
-                        onClick={() => setEditingId(null)}
                       >
                         Cancel
                       </Button>
@@ -231,16 +231,16 @@ export default function PostDetailPage() {
                     {myId === c.author.userId && (
                       <div className="mt-1 space-x-2 text-sm">
                         <Button
+                          onClick={() => startEdit(c)}
                           size="sm"
                           variant="outline"
-                          onClick={() => startEdit(c)}
                         >
                           Edit
                         </Button>
                         <Button
+                          onClick={() => handleDelete(c.id)}
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(c.id)}
                         >
                           Delete
                         </Button>
@@ -261,8 +261,8 @@ export default function PostDetailPage() {
               <Textarea placeholder="댓글을 입력하세요" ref={commentRef} />
               <Button
                 className="ml-auto block"
-                type="button"
                 onClick={handleAddComment}
+                type="button"
               >
                 등록
               </Button>

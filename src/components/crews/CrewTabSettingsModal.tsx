@@ -2,7 +2,7 @@ import { useState } from "react";
 import Modal from "../ui/Modal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import type { CrewTab } from "@/lib/crew";
+import { CrewTab } from "@/types/crew";
 
 interface Props {
   open: boolean;
@@ -42,7 +42,7 @@ export default function CrewTabSettingsModal({
         id,
         crewId: tabs[0]?.crewId ?? 0,
         title: "",
-        type: "posts",
+        type: "POSTS",
         isVisible: true,
         order,
       },
@@ -109,7 +109,7 @@ export default function CrewTabSettingsModal({
                   Visible
                 </label>
               </div>
-              {tab.type === "topic" && (
+              {tab.type === "TOPIC" && (
                 <Input
                   value={tab.hashtags?.join(", ") ?? ""}
                   onChange={(e) =>

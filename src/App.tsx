@@ -9,7 +9,7 @@ import CrewDetailPage from "@/pages/CrewDetailPage";
 import CrewSettingsPage from "@/pages/CrewSettingsPage";
 import CrewDirectoryPage from "@/pages/CrewDirectoryPage";
 import CreateCrewPage from "@/pages/CreateCrew";
-import UserProfilePage from "@/pages/profile/[userId]";
+import UserProfilePage from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
 import CreatePostPage from "@/pages/CreatePostPage";
 import RequireAuth from "@/components/RequireAuth";
@@ -38,8 +38,6 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/crews/new" element={<CreateCrewPage />} />
           </Route>
-          {/* <Route path="/brands" element={<Brands />} />
-          <Route path="/brand/:id" element={<BrandDetailPage />} /> */}
         </Routes>
       </main>
     </AppBarTitleProvider>

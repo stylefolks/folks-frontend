@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
-import useDebounce from '@/hooks/useDebounce';
-import { Link, useSearchParams } from 'react-router-dom';
-import { fetchCrews, type CrewSummary } from '@/lib/crew';
-import { useMeta } from '@/lib/meta';
+import { useEffect, useState } from "react";
+import useDebounce from "@/hooks/useDebounce";
+import { Link, useSearchParams } from "react-router-dom";
+import { fetchCrews } from "@/lib/crew";
+import { useMeta } from "@/lib/meta";
 import {
   buildCrewSearchParams,
   parseCrewSearchParams,
-} from '@/lib/crewSearchParams';
-import { Button } from '@/components/ui/button';
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
-import HotHashtagChips from '@/components/crew-directory/HotHashtagChips';
-import SearchInput from '@/components/crew-directory/SearchInput';
-import CrewEventBannerSlider from '@/components/crews/CrewEventBannerSlider';
+} from "@/lib/crewSearchParams";
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import HotHashtagChips from "@/components/crew-directory/HotHashtagChips";
+import SearchInput from "@/components/crew-directory/SearchInput";
+import CrewEventBannerSlider from "@/components/crews/CrewEventBannerSlider";
+import { CrewSummary } from "@/types/crew";
 
 export default function CrewDirectoryPage() {
-  useMeta({ title: 'Crews Directory - Stylefolks' });
+  useMeta({ title: "Crews Directory - Stylefolks" });
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = parseCrewSearchParams(searchParams);
   const [tag, setTag] = useState<string | null>(initial.tag ?? null);
-  const [keyword, setKeyword] = useState(initial.keyword ?? '');
+  const [keyword, setKeyword] = useState(initial.keyword ?? "");
   // fetch crews only after the keyword settles
   const debouncedKeyword = useDebounce(keyword);
   const [crews, setCrews] = useState<CrewSummary[]>([]);
@@ -27,7 +27,7 @@ export default function CrewDirectoryPage() {
   useEffect(() => {
     fetchCrews()
       .then((data) =>
-        setEventCrews(data.filter((c) => c.upcomingEvent).slice(0, 5)),
+        setEventCrews(data.filter((c) => c.upcomingEvent).slice(0, 5))
       )
       .catch(() => setEventCrews([]));
   }, []);
@@ -35,14 +35,16 @@ export default function CrewDirectoryPage() {
   useEffect(() => {
     const parsed = parseCrewSearchParams(searchParams);
     setTag(parsed.tag ?? null);
-    setKeyword(parsed.keyword ?? '');
+    setKeyword(parsed.keyword ?? "");
   }, [searchParams]);
 
   useEffect(() => {
     const params: Record<string, string> = {};
     if (tag) params.tag = tag;
     else if (debouncedKeyword) params.keyword = debouncedKeyword;
-    fetchCrews(params).then(setCrews).catch(() => setCrews([]));
+    fetchCrews(params)
+      .then(setCrews)
+      .catch(() => setCrews([]));
   }, [tag, debouncedKeyword]);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function CrewDirectoryPage() {
 
   const handleTagSelect = (value: string | null) => {
     setTag(value);
-    setKeyword('');
+    setKeyword("");
   };
 
   return (
@@ -87,7 +89,8 @@ function CrewCard({ crew }: { crew: CrewSummary }) {
   return (
     <Link
       to={`/crew/${crew.id}`}
-      className="space-y-1 rounded-2xl transition-all hover:scale-[1.02]">
+      className="space-y-1 rounded-2xl transition-all hover:scale-[1.02]"
+    >
       <ImageWithSkeleton
         src={crew.coverImage}
         alt={crew.name}
@@ -101,10 +104,7 @@ function CrewCard({ crew }: { crew: CrewSummary }) {
         </div>
         <div className="flex flex-wrap gap-1">
           {crew.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full bg-muted px-2 py-0.5 text-xs"
-            >
+            <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-xs">
               #{t}
             </span>
           ))}
