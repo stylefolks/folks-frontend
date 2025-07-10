@@ -82,7 +82,7 @@
 - 타이틀 이미지 & 크루 이름 & 크루 멤버 수
   - [x] 크루 멤버 리스트로 보여주는 UI (최신 가입 순)
   - [x] 크루 Manager또는 Owner면 crew-settings로 넘어가는 UI보여주기
-- [ ] 미 가입인 경우 join버튼 가입인 경우 dismiss버튼 노출 (크루 description우측으로 이동 시키고 작은 아이콘으로 변경하기)
+- [x] 미 가입인 경우 join버튼 가입인 경우 dismiss버튼 노출 (크루 description우측으로 이동 시키고 작은 아이콘으로 변경하기)
 - [x] All Posts, Topic, Notice, Event 탭 UI 재 정립 필요
   - [x] All Posts : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
   - [x] Topic : 게시글은 Masonary UI + 좋아요 수 + 작성자 이름 + 게시글 타이틀 보여주기
@@ -134,7 +134,8 @@
 ## FE 개발 TODO
 
 - [x] 타입 단일 폴더하위로 정리
-- [ ] 사용하지 않는 libs, comps 정리
+- [x] 사용하지 않는 libs, comps 정리
+- [ ] msw handler 정리
 
 # 페이지별 API 연결 진행상황 MVP v1
 
