@@ -13,12 +13,12 @@ import {
   type Crew,
   type PostSummary,
   type Brand,
-  type SimpleUser,
 } from "@/lib/profile";
 import { getMyId } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMeta } from "@/lib/meta";
+import { SimpleUser } from "@/types/user";
 
 export default function ProfilePage() {
   const params = useParams();

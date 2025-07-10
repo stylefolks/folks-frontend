@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { searchUsers } from '@/lib/user';
-import type { SimpleUser } from '@/lib/profile';
+import { useEffect, useState } from "react";
+import { searchUsers } from "@/lib/user";
+import { SimpleUser } from "@/types/user";
 
 interface Props {
   query: string;
@@ -16,7 +16,7 @@ export default function UserMentionList({ query, position, onSelect }: Props) {
       setUsers([]);
       return;
     }
-    searchUsers({ search: query, limit: '10' })
+    searchUsers({ search: query, limit: "10" })
       .then(setUsers)
       .catch(() => setUsers([]));
   }, [query]);

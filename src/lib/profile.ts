@@ -1,4 +1,4 @@
-import { UserTier } from '@/constants/user';
+import { UserTier } from "@/constants/user";
 
 export interface Profile {
   userId: string;
@@ -11,12 +11,13 @@ export interface Profile {
   role?: UserTier;
 }
 
-import { API_BASE, getToken } from './auth';
+import { API_BASE, getToken } from "./auth";
+import { SimpleUser } from "@/types/user";
 
 export async function getProfile(userId: string): Promise<Profile> {
-  const res = await fetch(`${API_BASE}/user/${userId}`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/user/${userId}`, { cache: "no-store" });
   if (!res.ok) {
-    throw new Error('Failed to load profile');
+    throw new Error("Failed to load profile");
   }
   return res.json();
 }
@@ -24,56 +25,61 @@ export async function getProfile(userId: string): Promise<Profile> {
 export async function getMyProfile(): Promise<Profile> {
   const token = getToken();
   if (!token) {
-    throw new Error('Not logged in');
+    throw new Error("Not logged in");
   }
   const res = await fetch(`${API_BASE}/user/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    cache: 'no-store',
+    cache: "no-store",
   });
   if (!res.ok) {
-    throw new Error('Failed to load profile');
+    throw new Error("Failed to load profile");
   }
   return res.json();
 }
 
 export async function updateMyProfile(
-  profile: Partial<Pick<Profile, 'username' | 'bio' | 'imageUrl' | 'website' | 'backgroundUrl'>>,
+  profile: Partial<
+    Pick<Profile, "username" | "bio" | "imageUrl" | "website" | "backgroundUrl">
+  >
 ): Promise<Profile> {
   const token = getToken();
   if (!token) {
-    throw new Error('Not logged in');
+    throw new Error("Not logged in");
   }
   const res = await fetch(`${API_BASE}/user/me`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(profile),
   });
   if (!res.ok) {
-    throw new Error('Failed to update profile');
+    throw new Error("Failed to update profile");
   }
   return res.json();
 }
 
-export async function changeMyPassword(oldPassword: string, newPassword: string): Promise<void> {
+export async function changeMyPassword(
+  oldPassword: string,
+  newPassword: string
+): Promise<void> {
   const token = getToken();
   if (!token) {
-    throw new Error('Not logged in');
+    throw new Error("Not logged in");
   }
   const res = await fetch(`${API_BASE}/user/me/password`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ oldPassword, newPassword }),
   });
   if (!res.ok) {
-    throw new Error('Failed to change password');
+    throw new Error("Failed to change password");
   }
 }
 
@@ -87,16 +93,16 @@ export interface PostSummary {
 export async function getMyPosts(category?: string): Promise<PostSummary[]> {
   const token = getToken();
   if (!token) {
-    throw new Error('Not logged in');
+    throw new Error("Not logged in");
   }
   const url = new URL(`${API_BASE}/user/me/posts`);
-  if (category) url.searchParams.set('category', category);
+  if (category) url.searchParams.set("category", category);
   const res = await fetch(url.toString(), {
     headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
+    cache: "no-store",
   });
   if (!res.ok) {
-    throw new Error('Failed to load posts');
+    throw new Error("Failed to load posts");
   }
   return res.json();
 }
@@ -109,54 +115,57 @@ export interface Crew {
 export async function getFollowedCrews(): Promise<Crew[]> {
   const token = getToken();
   if (!token) {
-    throw new Error('Not logged in');
+    throw new Error("Not logged in");
   }
   const res = await fetch(`${API_BASE}/user/me/following`, {
     headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
+    cache: "no-store",
   });
   if (!res.ok) {
-    throw new Error('Failed to load followed crews');
+    throw new Error("Failed to load followed crews");
   }
   return res.json();
 }
 
-export async function getUserPosts(userId: string, category?: string): Promise<PostSummary[]> {
+export async function getUserPosts(
+  userId: string,
+  category?: string
+): Promise<PostSummary[]> {
   const url = new URL(`${API_BASE}/user/${userId}/posts`);
-  if (category) url.searchParams.set('category', category);
-  const res = await fetch(url.toString(), { cache: 'no-store' });
+  if (category) url.searchParams.set("category", category);
+  const res = await fetch(url.toString(), { cache: "no-store" });
   if (!res.ok) {
-    throw new Error('Failed to load posts');
+    throw new Error("Failed to load posts");
   }
   return res.json();
-}
-
-export interface SimpleUser {
-  userId: string;
-  username: string;
-  imageUrl?: string;
 }
 
 export async function getFollowers(userId: string): Promise<SimpleUser[]> {
-  const res = await fetch(`${API_BASE}/user/${userId}/followers`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/user/${userId}/followers`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
-    throw new Error('Failed to load followers');
+    throw new Error("Failed to load followers");
   }
   return res.json();
 }
 
 export async function getFollowing(userId: string): Promise<SimpleUser[]> {
-  const res = await fetch(`${API_BASE}/user/${userId}/following`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/user/${userId}/following`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
-    throw new Error('Failed to load following');
+    throw new Error("Failed to load following");
   }
   return res.json();
 }
 
 export async function getUserCrews(userId: string): Promise<Crew[]> {
-  const res = await fetch(`${API_BASE}/user/${userId}/crews`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/user/${userId}/crews`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
-    throw new Error('Failed to load crews');
+    throw new Error("Failed to load crews");
   }
   return res.json();
 }
@@ -167,23 +176,25 @@ export interface Brand {
 }
 
 export async function getFollowedBrands(userId: string): Promise<Brand[]> {
-  const res = await fetch(`${API_BASE}/user/${userId}/brands`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}/user/${userId}/brands`, {
+    cache: "no-store",
+  });
   if (!res.ok) {
-    throw new Error('Failed to load brands');
+    throw new Error("Failed to load brands");
   }
   return res.json();
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${API_BASE}/users/${id}`, { method: "DELETE" });
   if (!res.ok) {
-    throw new Error('Failed to delete user');
+    throw new Error("Failed to delete user");
   }
 }
 
 export async function blockUser(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/users/${id}/block`, { method: 'POST' });
+  const res = await fetch(`${API_BASE}/users/${id}/block`, { method: "POST" });
   if (!res.ok) {
-    throw new Error('Failed to block user');
+    throw new Error("Failed to block user");
   }
 }

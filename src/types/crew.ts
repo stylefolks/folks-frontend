@@ -1,5 +1,5 @@
 import { CREW_META_TYPES } from "@/constants/crew";
-import { SimpleUser } from "@/lib/profile";
+import { SimpleUser } from "./user";
 
 export interface CrewLink {
   title: string;

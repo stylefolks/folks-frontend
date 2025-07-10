@@ -1,9 +1,8 @@
 import Avatar from "../ui/avatar";
 import Modal from "../ui/Modal";
 import { Button } from "../ui/button";
-import type { SimpleUser } from "@/lib/profile";
-import { SunIcon, XCircleIcon, XIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { SimpleUser } from "@/types/user";
 
 interface Props {
   open: boolean;

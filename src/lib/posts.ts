@@ -1,6 +1,6 @@
 import { CrewMetaType } from "@/types/crew";
 import { API_BASE } from "./auth";
-import type { SimpleUser } from "./profile";
+import { SimpleUser } from "@/types/user";
 
 export interface Post {
   id: number;

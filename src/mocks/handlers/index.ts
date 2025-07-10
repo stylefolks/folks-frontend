@@ -131,6 +131,7 @@ const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 import { UserTier } from "@/constants/user";
 import { Crew } from "@/lib/profile";
 import { CrewMember, CrewSummary, CrewTab, CrewRole } from "@/types/crew";
+import { SimpleUser } from "@/types/user";
 
 interface Profile {
   userId: string;
@@ -295,7 +296,6 @@ const postDetailCommentsMap: Record<string, PostDetailComment[]> = {
 
 const postLikeMap: Record<string, number> = { abc123: 128 };
 
-type SimpleUser = { userId: string; username: string; imageUrl?: string };
 const followersMap: Record<string, SimpleUser[]> = {};
 const followingMap: Record<string, SimpleUser[]> = {};
 const blockedUsers = new Set<string>();
@@ -609,7 +609,7 @@ export const handlers = [
           id: 1,
           crewId: Number(id),
           title: "Posts",
-          type: "posts",
+          type: "POSTS",
           isVisible: true,
           order: 0,
         },
@@ -617,7 +617,7 @@ export const handlers = [
           id: 2,
           crewId: Number(id),
           title: "Overview",
-          type: "overview",
+          type: "OVERVIEW",
           isVisible: true,
           order: 1,
         },
@@ -625,7 +625,7 @@ export const handlers = [
           id: 3,
           crewId: Number(id),
           title: "Notice",
-          type: "notice",
+          type: "NOTICE",
           isVisible: true,
           order: 2,
         },
@@ -633,7 +633,7 @@ export const handlers = [
           id: 4,
           crewId: Number(id),
           title: "Event",
-          type: "event",
+          type: "EVENT",
           isVisible: true,
           order: 3,
         },
@@ -641,7 +641,7 @@ export const handlers = [
           id: 5,
           crewId: Number(id),
           title: "topic only for tag1",
-          type: "topic",
+          type: "TOPIC",
           isVisible: true,
           order: 4,
           hashtags: ["#tag1"],

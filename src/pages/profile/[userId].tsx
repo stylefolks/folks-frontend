@@ -3,17 +3,13 @@ import { useEffect, useState } from "react";
 import PostCard from "@/components/PostCard";
 import { mockPost, type Post } from "@/lib/posts";
 
-import {
-  getFollowers,
-  getFollowing,
-  getMyProfile,
-  type SimpleUser,
-} from "@/lib/profile";
+import { getFollowers, getFollowing, getMyProfile } from "@/lib/profile";
 import Avatar from "@/components/ui/avatar";
 import FollowListModal from "@/components/users/FollowListModal";
 import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
-import { UserTier } from '@/constants/user';
+import { UserTier } from "@/constants/user";
+import { SimpleUser } from "@/types/user";
 
 interface CrewItem {
   id: string;
@@ -98,75 +94,73 @@ export default function UserProfilePage() {
     <>
       <div className="space-y-6 p-4">
         <div className="relative flex flex-col items-center">
-        <Avatar src={profile.imageUrl} className="h-16 w-16" />
-        <h2 className="mt-2 text-xl font-bold">{profile.username}</h2>
-        <p className="text-sm text-gray-500">{profile.bio}</p>
-        <p className="mt-1 text-sm">
-          <span
-            className="cursor-pointer hover:underline"
-            onClick={() => setModal("followers")}
-          >
-            {followers.length} followers
-          </span>
-          {' '}
-          ·
-          {' '}
-          <span
-            className="cursor-pointer hover:underline"
-            onClick={() => setModal("following")}
-          >
-            {following.length} following
-          </span>
-        </p>
-        <button
-          aria-label="menu"
-          className="absolute right-0 top-0"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          <Menu />
-        </button>
-        {menuOpen && (
-          <div className="absolute right-0 top-8 w-32 rounded-md border bg-white shadow">
-            <div
-              className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
-              onClick={handleLogout}
+          <Avatar src={profile.imageUrl} className="h-16 w-16" />
+          <h2 className="mt-2 text-xl font-bold">{profile.username}</h2>
+          <p className="text-sm text-gray-500">{profile.bio}</p>
+          <p className="mt-1 text-sm">
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => setModal("followers")}
             >
-              Logout
-            </div>
-            <div
-              className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
-              onClick={() => navigate("/settings")}
+              {followers.length} followers
+            </span>{" "}
+            ·{" "}
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => setModal("following")}
             >
-              Settings
+              {following.length} following
+            </span>
+          </p>
+          <button
+            aria-label="menu"
+            className="absolute right-0 top-0"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <Menu />
+          </button>
+          {menuOpen && (
+            <div className="absolute right-0 top-8 w-32 rounded-md border bg-white shadow">
+              <div
+                className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+                onClick={handleLogout}
+              >
+                Logout
+              </div>
+              <div
+                className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100"
+                onClick={() => navigate("/settings")}
+              >
+                Settings
+              </div>
+              <div className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100">
+                Help Center
+              </div>
             </div>
-            <div className="cursor-pointer px-3 py-2 text-sm hover:bg-gray-100">
-              Help Center
-            </div>
+          )}
+        </div>
+        <div>
+          <h3 className="mb-2 font-semibold">Joined Crews</h3>
+          <div className="flex space-x-2 overflow-x-auto pb-1">
+            {profile.crews.map((c) => (
+              <Avatar
+                key={c.id}
+                src={c.imageUrl}
+                size="sm"
+                className="cursor-pointer"
+                onClick={() => navigate(`/crew/${c.id}`)}
+              />
+            ))}
           </div>
-        )}
-      </div>
-      <div>
-        <h3 className="mb-2 font-semibold">Joined Crews</h3>
-        <div className="flex space-x-2 overflow-x-auto pb-1">
-          {profile.crews.map((c) => (
-            <Avatar
-              key={c.id}
-              src={c.imageUrl}
-              size="sm"
-              className="cursor-pointer"
-              onClick={() => navigate(`/crew/${c.id}`)}
-            />
-          ))}
         </div>
-      </div>
-      <div>
-        <h3 className="mb-2 font-semibold">My Posts</h3>
-        <div className="columns-2 gap-3">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+        <div>
+          <h3 className="mb-2 font-semibold">My Posts</h3>
+          <div className="columns-2 gap-3">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
         </div>
-      </div>
       </div>
       <FollowListModal
         open={modal === "followers"}

@@ -1,0 +1,8 @@
+{
+  "plugins": ["simple-import-sort"],
+  "extends": ["plugin:simple-import-sort/recommended"],
+  "rules": {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  }
+}
