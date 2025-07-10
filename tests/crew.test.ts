@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import { fetchCrewTabs, updateCrewTabs } from "../src/lib/crew";
+import { fetchCrewTabs, updateCrewTabs, joinCrew, leaveCrew } from "../src/lib/crew";
 import { CrewTab } from "@/types/crew";
 
 describe("crew tab api", () => {
@@ -36,6 +36,24 @@ describe("crew tab api", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(tabs),
       })
+    );
+  });
+
+  it("joinCrew sends POST request", async () => {
+    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
+    await joinCrew("5");
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/crews/5/join"),
+      expect.objectContaining({ method: "POST" })
+    );
+  });
+
+  it("leaveCrew sends DELETE request", async () => {
+    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
+    await leaveCrew("5");
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/crews/5/join"),
+      expect.objectContaining({ method: "DELETE" })
     );
   });
 });
