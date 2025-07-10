@@ -176,3 +176,13 @@ export async function deleteCrew(id: string): Promise<void> {
   });
   if (!res.ok) throw new Error("Failed to delete crew");
 }
+
+export async function joinCrew(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/crews/${id}/join`, { method: "POST" });
+  if (!res.ok) throw new Error("Failed to join crew");
+}
+
+export async function leaveCrew(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/crews/${id}/join`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to leave crew");
+}

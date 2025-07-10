@@ -123,6 +123,7 @@ const myCrews = [
   { id: "crew-1", avatarUrl: "/mock/crew-1.jpg" },
   { id: "crew-2", avatarUrl: "/mock/crew-2.jpg" },
 ];
+const joinedCrewIds = new Set(myCrews.map((c) => c.id));
 
 const myPosts = [
   {
@@ -749,7 +750,27 @@ export const handlers = [
     if (managerCrewIds.has(id)) {
       return HttpResponse.json({ role: CrewRole.MANAGER });
     }
-    return HttpResponse.json({ role: CrewRole.MEMBER });
+    if (joinedCrewIds.has(id)) {
+      return HttpResponse.json({ role: CrewRole.MEMBER });
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.post(`${API_BASE}/crews/:id/join`, ({ params }) => {
+    const { id } = params as { id: string };
+    if (!joinedCrewIds.has(id)) {
+      joinedCrewIds.add(id);
+      myCrews.push({ id, avatarUrl: `/mock/${id}.jpg` });
+    }
+    return HttpResponse.json({ success: true });
+  }),
+
+  http.delete(`${API_BASE}/crews/:id/join`, ({ params }) => {
+    const { id } = params as { id: string };
+    joinedCrewIds.delete(id);
+    const idx = myCrews.findIndex((c) => c.id === id);
+    if (idx >= 0) myCrews.splice(idx, 1);
+    return new HttpResponse(null, { status: 204 });
   }),
 
   http.delete(`${API_BASE}/crews/:id`, ({ params }) => {

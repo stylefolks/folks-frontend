@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import Tabs from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import EventCard from "@/components/EventCard";
-import { MapPin } from "lucide-react";
+import { MapPin, UserPlus, X } from "lucide-react";
 
 import { Crew, Notice, CrewEvent, CrewMetaType, CrewRole } from "@/types/crew";
 import { Post } from "@/types/post";
-import { fetchMyCrewRole } from "@/lib/crew";
+import { fetchMyCrewRole, joinCrew, leaveCrew } from "@/lib/crew";
 
 export interface TabItem {
   value: CrewMetaType;
@@ -26,6 +26,7 @@ export default function CrewDetail() {
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
   const [role, setRole] = useState<CrewRole | null>(null);
+  const [joined, setJoined] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetch("/users/me")
@@ -58,8 +59,14 @@ export default function CrewDetail() {
       .catch(() => {});
 
     fetchMyCrewRole(id)
-      .then(setRole)
-      .catch(() => setRole(null));
+      .then((r) => {
+        setRole(r);
+        setJoined(true);
+      })
+      .catch(() => {
+        setRole(null);
+        setJoined(false);
+      });
   }, [id]);
 
   // TODO :나중에는 crew config를 호출해서 받아온걸 렌더해야한다.
@@ -130,16 +137,30 @@ export default function CrewDetail() {
           </Link>
         ))}
       </div>
-      <p className="px-4 py-2 text-sm text-muted leading-relaxed">
-        {crew.description}
-      </p>
-      <div className="px-4">
-        <Button
-          className="w-full bg-black text-white"
-          onClick={() => alert("Joined!")}
-        >
-          Join
-        </Button>
+      <div className="flex items-start justify-between px-4 py-2">
+        <p className="mr-2 flex-1 text-sm leading-relaxed text-muted">
+          {crew.description}
+        </p>
+        {joined !== null && (
+          <button
+            onClick={() => {
+              if (!id) return;
+              if (!joined) {
+                joinCrew(id)
+                  .then(() => setJoined(true))
+                  .catch(() => {});
+              } else if (window.confirm("크루를 탈퇴하시겠습니까?")) {
+                leaveCrew(id)
+                  .then(() => setJoined(false))
+                  .catch(() => {});
+              }
+            }}
+            className="rounded p-1 text-gray-500"
+            aria-label={joined ? "Dismiss" : "Join"}
+          >
+            {joined ? <X size={20} /> : <UserPlus size={20} />}
+          </button>
+        )}
       </div>
       <Tabs
         value={tab}
