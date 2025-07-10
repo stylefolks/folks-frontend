@@ -6,8 +6,9 @@ import PostCard from "@/components/PostCard";
 import EventCard from "@/components/EventCard";
 import { MapPin } from "lucide-react";
 
-import { Crew, Notice, CrewEvent, CrewMetaType } from "@/types/crew";
+import { Crew, Notice, CrewEvent, CrewMetaType, CrewRole } from "@/types/crew";
 import { Post } from "@/types/post";
+import { fetchMyCrewRole } from "@/lib/crew";
 
 export interface TabItem {
   value: CrewMetaType;
@@ -24,6 +25,7 @@ export default function CrewDetail() {
   const [description, setDescription] = useState<string>("");
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);
+  const [role, setRole] = useState<CrewRole | null>(null);
 
   useEffect(() => {
     fetch("/users/me")
@@ -54,6 +56,10 @@ export default function CrewDetail() {
       .then((res) => res.json())
       .then((data) => setDescription(data.description))
       .catch(() => {});
+
+    fetchMyCrewRole(id)
+      .then(setRole)
+      .catch(() => setRole(null));
   }, [id]);
 
   // TODO :나중에는 crew config를 호출해서 받아온걸 렌더해야한다.
@@ -75,6 +81,16 @@ export default function CrewDetail() {
           alt={crew.name}
           className="aspect-[16/9] w-full rounded-lg object-cover"
         />
+        {(role === CrewRole.OWNER || role === CrewRole.MANAGER) && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="absolute right-4 top-4 z-10 bg-white/80 backdrop-blur"
+            onClick={() => navigate(`/crew/${id}/settings`)}
+          >
+            Settings
+          </Button>
+        )}
         <div className="absolute bottom-4 left-8 text-white drop-shadow">
           <h1 className="font-bold">{crew.name}</h1>
           <p className="text-sm text-white/80">
