@@ -1,23 +1,6 @@
 import { Post } from "@/types/post";
 import { API_BASE } from "./auth";
-
-export interface Brand {
-  id: string;
-  name: string;
-  logo: string;
-  description: string;
-  links: { title: string; url: string }[];
-}
-
-export interface BrandSummary {
-  id: string;
-  name: string;
-  logo: string;
-  description: string;
-  tags?: string[];
-  crews?: { id: string; name: string; image: string }[];
-  upcomingEvent?: { title: string; date: string };
-}
+import { Brand, BrandSummary } from "@/types/brand";
 
 export async function fetchBrand(id: string): Promise<Brand> {
   const res = await fetch(`${API_BASE}/brands/${id}`, { cache: "no-store" });

@@ -1,25 +1,21 @@
-import Navbar from '@/components/Navbar';
-import { AppBarTitleProvider } from '@/lib/appBarTitle';
-import HomePage from '@/pages/HomePage';
-import Login from '@/pages/Login';
-import Signup from '@/pages/Signup';
-import ResetPasswordPage from '@/pages/ResetPassword';
-import Post from '@/pages/Post';
-import PostDetailPage from '@/pages/PostDetailPage';
-import CrewDetailPage from '@/pages/CrewDetailPage';
-import CrewSettingsPage from '@/pages/CrewSettingsPage';
-import CrewDirectoryPage from '@/pages/CrewDirectoryPage';
-import CreateCrewPage from '@/pages/CreateCrew';
-import UserProfilePage from '@/pages/profile/[userId]';
-
-import SettingsPage from '@/pages/Settings';
-import CreatePostPage from '@/pages/CreatePostPage';
-import RequireAuth from '@/components/RequireAuth';
-import { Routes, Route } from 'react-router-dom';
-import './styles/globals.css';
-import Search from './pages/Search';
-
-
+import Navbar from "@/components/Navbar";
+import { AppBarTitleProvider } from "@/lib/appBarTitle";
+import HomePage from "@/pages/HomePage";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import ResetPasswordPage from "@/pages/ResetPassword";
+import PostDetailPage from "@/pages/PostDetailPage";
+import CrewDetailPage from "@/pages/CrewDetailPage";
+import CrewSettingsPage from "@/pages/CrewSettingsPage";
+import CrewDirectoryPage from "@/pages/CrewDirectoryPage";
+import CreateCrewPage from "@/pages/CreateCrew";
+import UserProfilePage from "@/pages/profile/[userId]";
+import SettingsPage from "@/pages/Settings";
+import CreatePostPage from "@/pages/CreatePostPage";
+import RequireAuth from "@/components/RequireAuth";
+import { Routes, Route } from "react-router-dom";
+import "./styles/globals.css";
+import Search from "./pages/Search";
 
 export default function App() {
   return (
@@ -44,7 +40,7 @@ export default function App() {
           </Route>
           {/* <Route path="/brands" element={<Brands />} />
           <Route path="/brand/:id" element={<BrandDetailPage />} /> */}
-      </Routes>
+        </Routes>
       </main>
     </AppBarTitleProvider>
   );

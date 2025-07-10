@@ -1,19 +1,8 @@
-import { UserTier } from "@/constants/user";
-
-export interface Profile {
-  userId: string;
-  email: string;
-  username: string;
-  bio?: string;
-  imageUrl?: string;
-  website?: string;
-  backgroundUrl?: string;
-  role?: UserTier;
-}
-
 import { API_BASE, getToken } from "./auth";
-import { SimpleUser } from "@/types/user";
+import { Profile, SimpleUser } from "@/types/user";
 import { PostSummary } from "@/types/post";
+import { Crew } from "@/types/crew";
+import { Brand } from "@/types/brand";
 
 export async function getProfile(userId: string): Promise<Profile> {
   const res = await fetch(`${API_BASE}/user/${userId}`, { cache: "no-store" });
@@ -101,11 +90,6 @@ export async function getMyPosts(category?: string): Promise<PostSummary[]> {
   return res.json();
 }
 
-export interface Crew {
-  id: string;
-  name: string;
-}
-
 export async function getFollowedCrews(): Promise<Crew[]> {
   const token = getToken();
   if (!token) {
@@ -162,11 +146,6 @@ export async function getUserCrews(userId: string): Promise<Crew[]> {
     throw new Error("Failed to load crews");
   }
   return res.json();
-}
-
-export interface Brand {
-  id: string;
-  name: string;
 }
 
 export async function getFollowedBrands(userId: string): Promise<Brand[]> {

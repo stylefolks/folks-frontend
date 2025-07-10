@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import BrandCard from './BrandCard';
-import useInfiniteScroll from '@/components/useInfiniteScroll';
-import { fetchBrands, type BrandSummary } from '@/lib/brand';
+import { useCallback, useEffect, useState } from "react";
+import BrandCard from "./BrandCard";
+import useInfiniteScroll from "@/components/useInfiniteScroll";
+import { fetchBrands } from "@/lib/brand";
+import { BrandSummary } from "@/types/brand";
 
 export default function BrandList({ tag }: { tag?: string | null }) {
   const [brands, setBrands] = useState<BrandSummary[]>([]);
@@ -13,10 +14,12 @@ export default function BrandList({ tag }: { tag?: string | null }) {
   }, [tag]);
 
   const loadMore = useCallback(() => {
-    fetchBrands({ page: String(page + 1), ...(tag ? { tag } : {}) }).then((b) => {
-      setBrands((prev) => [...prev, ...b]);
-      setPage((p) => p + 1);
-    });
+    fetchBrands({ page: String(page + 1), ...(tag ? { tag } : {}) }).then(
+      (b) => {
+        setBrands((prev) => [...prev, ...b]);
+        setPage((p) => p + 1);
+      }
+    );
   }, [page, tag]);
 
   const ref = useInfiniteScroll(loadMore);

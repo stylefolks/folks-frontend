@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useMeta } from "@/lib/meta";
-import { fetchBrands, type BrandSummary } from "@/lib/brand";
+import { fetchBrands } from "@/lib/brand";
 import BrandEventBannerSlider from "@/components/brands/BrandEventBannerSlider";
 import BrandPostPreviewList from "@/components/brands/BrandPostPreviewList";
 import TagFilter from "@/components/brands/TagFilter";
 import BrandList from "@/components/brands/BrandList";
 import { TAGS } from "@/mocks/tags";
+import { BrandSummary } from "@/types/brand";
 
 export default function BrandsPage() {
   useMeta({ title: "Brands - Stylefolks" });

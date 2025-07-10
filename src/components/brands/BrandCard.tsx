@@ -1,6 +1,6 @@
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
-import { useNavigate } from 'react-router-dom';
-import type { BrandSummary } from '@/lib/brand';
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import { BrandSummary } from "@/types/brand";
+import { useNavigate } from "react-router-dom";
 
 export default function BrandCard({ brand }: { brand: BrandSummary }) {
   const navigate = useNavigate();

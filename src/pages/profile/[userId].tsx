@@ -6,8 +6,8 @@ import Avatar from "@/components/ui/avatar";
 import FollowListModal from "@/components/users/FollowListModal";
 import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
-import { UserTier } from "@/constants/user";
-import { SimpleUser } from "@/types/user";
+
+import { SimpleUser, UserTier } from "@/types/user";
 import { mockPost } from "@/lib/posts";
 import { Post } from "@/types/post";
 

@@ -1,5 +1,5 @@
-import BrandCard from './BrandCard';
-import type { BrandSummary } from '@/lib/brand';
+import { BrandSummary } from "@/types/brand";
+import BrandCard from "./BrandCard";
 
 export default function BrandEventBannerSlider({
   brands,

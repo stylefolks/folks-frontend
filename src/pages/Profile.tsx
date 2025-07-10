@@ -4,21 +4,20 @@ import {
   getProfile,
   updateMyProfile,
   changeMyPassword,
-  type Profile,
   getUserPosts,
   getFollowers,
   getFollowing,
   getUserCrews,
   getFollowedBrands,
-  type Crew,
-  type Brand,
 } from "@/lib/profile";
 import { getMyId } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMeta } from "@/lib/meta";
-import { SimpleUser } from "@/types/user";
+import { Profile, SimpleUser } from "@/types/user";
 import { PostSummary } from "@/types/post";
+import { Brand } from "@/types/brand";
+import { Crew } from "@/types/crew";
 
 export default function ProfilePage() {
   const params = useParams();

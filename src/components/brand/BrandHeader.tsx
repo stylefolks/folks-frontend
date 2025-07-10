@@ -1,5 +1,5 @@
-import { Brand } from '@/lib/brand';
-import ExternalLinkList from './ExternalLinkList';
+import { Brand } from "@/types/brand";
+import ExternalLinkList from "./ExternalLinkList";
 
 interface Props {
   brand: Brand;

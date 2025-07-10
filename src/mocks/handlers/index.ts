@@ -1,9 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "../tags";
-import { UserTier } from "@/constants/user";
-import { Crew } from "@/lib/profile";
-import { CrewMember, CrewSummary, CrewTab, CrewRole } from "@/types/crew";
-import { SimpleUser } from "@/types/user";
+import { CrewMember, CrewSummary, CrewTab, CrewRole, Crew } from "@/types/crew";
+import { SimpleUser, UserTier } from "@/types/user";
 import { Post } from "@/types/post";
 
 const hotTags = [

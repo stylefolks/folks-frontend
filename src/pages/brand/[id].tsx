@@ -1,10 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMeta } from "@/lib/meta";
-import { fetchBrand, fetchBrandPosts, Brand } from "@/lib/brand";
+import { fetchBrand, fetchBrandPosts } from "@/lib/brand";
 import BrandHeader from "@/components/brand/BrandHeader";
 import PostList from "@/components/brand/PostList";
 import { Post } from "@/types/post";
+import { Brand } from "@/types/brand";
 
 export default function BrandDetailPage() {
   const params = useParams();

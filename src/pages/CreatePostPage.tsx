@@ -10,7 +10,6 @@ import { EditorView } from "prosemirror-view";
 import { useMeta } from "@/lib/meta";
 import { extractFromDoc } from "@/lib/mentions";
 import { getToken } from "@/lib/auth";
-import { UserTier } from "@/constants/user";
 import { fetchMyCrewRole } from "@/lib/crew";
 import { CrewRole, CrewMetaType } from "@/types/crew";
 import { CREW_META_TYPES } from "@/constants/crew";
@@ -18,6 +17,7 @@ import { BRAND_META_TYPES } from "@/constants/brand";
 import { CreatePostDto, savePostDraft } from "@/lib/posts";
 import { BrandMetaType } from "@/types/brand";
 import { PostType } from "@/types/post";
+import { UserTier } from "@/types/user";
 
 const DRAFT_KEY = "write_draft";
 
