@@ -1,24 +1,8 @@
 import { CrewMetaType } from "@/types/crew";
 import { API_BASE } from "./auth";
 import { SimpleUser } from "@/types/user";
-
-export interface Post {
-  id: number;
-  title: string;
-  image: string;
-  date: string;
-  views: number;
-  author: SimpleUser;
-  tags?: string[];
-  crew?: { id: string; name: string };
-  brand?: { id: string; name: string };
-  content: any; // ProseMirror JSON
-  type: "BASIC" | "COLUMN"; // assuming these are the only types
-  brandMetaType?: "POSTS" | "EVENT" | "NOTICE"; // optional meta type
-  crewMetaType?: "TOPIC" | "OVERVIEW" | "POSTS" | "EVENT" | "NOTICE"; // optional meta type
-  likeCount?: number; // optional like count
-  commentCount?: number; // optional comment count
-}
+import { BrandMetaType } from "@/types/brand";
+import { Post, PostType, SearchPostType } from "@/types/post";
 
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
 
@@ -75,9 +59,6 @@ export async function fetchPost(id: number): Promise<Post> {
   }
   return res.json();
 }
-export const BRAND_META_TYPES = ["POSTS", "EVENT", "NOTICE"] as const;
-
-export type BrandMetaType = (typeof BRAND_META_TYPES)[number];
 
 export interface CreatePostDto {
   title: string;
@@ -138,8 +119,3 @@ export async function searchPosts({
   if (!res.ok) throw new Error("Failed to load posts");
   return res.json();
 }
-
-const TYPES = ["BASIC", "COLUMN"] as const;
-export const SEARCH_POST_TYPES = ["ALL", ...TYPES] as const;
-export type PostType = (typeof TYPES)[number];
-export type SearchPostType = "BASIC" | "COLUMN" | "ALL";

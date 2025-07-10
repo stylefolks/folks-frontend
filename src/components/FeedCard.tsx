@@ -1,8 +1,6 @@
 import React from "react";
 import { Heart } from "lucide-react";
-import { Post } from "@/lib/posts";
-
-
+import { Post } from "@/types/post";
 
 export default function FeedCard({ post }: { post: Post }) {
   return (

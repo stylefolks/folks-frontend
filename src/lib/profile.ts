@@ -13,6 +13,7 @@ export interface Profile {
 
 import { API_BASE, getToken } from "./auth";
 import { SimpleUser } from "@/types/user";
+import { PostSummary } from "@/types/post";
 
 export async function getProfile(userId: string): Promise<Profile> {
   const res = await fetch(`${API_BASE}/user/${userId}`, { cache: "no-store" });
@@ -81,13 +82,6 @@ export async function changeMyPassword(
   if (!res.ok) {
     throw new Error("Failed to change password");
   }
-}
-
-export interface PostSummary {
-  id: number;
-  title: string;
-  imageUrl?: string;
-  category: string;
 }
 
 export async function getMyPosts(category?: string): Promise<PostSummary[]> {

@@ -1,6 +1,6 @@
-import type { Post } from '@/lib/posts';
-import PostCard from '@/components/PostCard';
-import AdBadge from '@/components/AdBadge';
+import PostCard from "@/components/PostCard";
+import AdBadge from "@/components/AdBadge";
+import { Post } from "@/types/post";
 
 export default function BrandPostCard({ post }: { post: Post }) {
   return (

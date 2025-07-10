@@ -1,23 +1,5 @@
+import { PostDetail, PostComment } from "@/types/post";
 import { API_BASE } from "./auth";
-
-export interface PostDetail {
-  id: string;
-  title: string;
-  content: string;
-  hashtags: string[];
-  author: { userId: string; name: string; initials: string };
-  createdAt: string;
-  crewName: string;
-  likes: number;
-  comments: number;
-}
-
-export interface PostComment {
-  id: string;
-  author: { userId: string; name: string; initials: string };
-  createdAt: string;
-  content: string;
-}
 
 export async function fetchPostDetail(id: string): Promise<PostDetail> {
   const res = await fetch(`${API_BASE}/posts/${id}`, { cache: "no-store" });
@@ -60,18 +42,18 @@ export async function unlikePost(id: string): Promise<void> {
 
 export async function updatePostComment(
   id: string,
-  content: string,
+  content: string
 ): Promise<PostComment> {
   const res = await fetch(`${API_BASE}/comment/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content }),
   });
-  if (!res.ok) throw new Error('Failed to update comment');
+  if (!res.ok) throw new Error("Failed to update comment");
   return res.json();
 }
 
 export async function deletePostComment(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/comment/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Failed to delete comment');
+  const res = await fetch(`${API_BASE}/comment/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to delete comment");
 }

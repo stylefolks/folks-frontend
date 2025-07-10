@@ -1,35 +1,39 @@
-import { describe, it, beforeEach, expect, vi } from 'vitest';
-import { fetchCrewTabs, updateCrewTabs, type CrewTab } from '../src/lib/crew';
+import { describe, it, beforeEach, expect, vi } from "vitest";
+import { fetchCrewTabs, updateCrewTabs } from "../src/lib/crew";
+import { CrewTab } from "@/types/crew";
 
-declare global {
-  var fetch: any;
-}
-
-describe('crew tab api', () => {
+describe("crew tab api", () => {
   beforeEach(() => {
     global.fetch = vi.fn();
   });
 
-  it('fetchCrewTabs requests tabs', async () => {
+  it("fetchCrewTabs requests tabs", async () => {
     (global.fetch as any).mockResolvedValue({ ok: true, json: async () => [] });
-    await fetchCrewTabs('1');
+    await fetchCrewTabs("1");
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/crews/1/tabs'),
-      expect.objectContaining({ cache: 'no-store' })
+      expect.stringContaining("/crews/1/tabs"),
+      expect.objectContaining({ cache: "no-store" })
     );
   });
 
-  it('updateCrewTabs sends PUT with body', async () => {
+  it("updateCrewTabs sends PUT with body", async () => {
     (global.fetch as any).mockResolvedValue({ ok: true, json: async () => [] });
     const tabs: CrewTab[] = [
-      { id: 1, crewId: 1, title: 'Posts', type: 'posts', isVisible: true, order: 0 },
+      {
+        id: 1,
+        crewId: 1,
+        title: "Posts",
+        type: "POSTS",
+        isVisible: true,
+        order: 0,
+      },
     ];
-    await updateCrewTabs('2', tabs);
+    await updateCrewTabs("2", tabs);
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/crews/2/tabs'),
+      expect.stringContaining("/crews/2/tabs"),
       expect.objectContaining({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(tabs),
       })
     );

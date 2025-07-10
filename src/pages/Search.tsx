@@ -6,10 +6,11 @@ import PostTypeTabs from "@/components/search/PostTypeTabs";
 import TagFilterChips from "@/components/search/TagFilterChips";
 import EmptyState from "@/components/search/EmptyState";
 import PostCard from "@/components/PostCard";
-import { searchPosts, SearchPostType, type Post } from "@/lib/posts";
 import { buildSearchParams, parseSearchParams } from "@/lib/searchParams";
 import { useMeta } from "@/lib/meta";
 import { TAGS } from "@/mocks/tags";
+import { searchPosts } from "@/lib/posts";
+import { SearchPostType, Post } from "@/types/post";
 
 export default function SearchPage() {
   useMeta({ title: "Search - Stylefolks" });

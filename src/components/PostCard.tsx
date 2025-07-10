@@ -1,10 +1,8 @@
-import type { Post } from "@/lib/posts";
 import ImageWithSkeleton from "./ImageWithSkeleton";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
-import { cn } from "@/lib/utils";
 import { Heart, MessageCircleIcon } from "lucide-react";
-import Comments from "./Comments";
+import { Post } from "@/types/post";
 
 interface Props {
   post: Post;

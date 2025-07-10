@@ -1,10 +1,11 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useMeta } from '@/lib/meta';
-import { fetchCrew, fetchCrewPosts, type Crew } from '@/lib/crew';
-import type { Post } from '@/lib/posts';
-import PostCard from '@/components/PostCard';
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useMeta } from "@/lib/meta";
+import { fetchCrew, fetchCrewPosts } from "@/lib/crew";
+import PostCard from "@/components/PostCard";
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import { Crew } from "@/types/crew";
+import { Post } from "@/types/post";
 
 export default function CrewPage() {
   const params = useParams();
@@ -12,7 +13,7 @@ export default function CrewPage() {
   const [crew, setCrew] = useState<Crew | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  useMeta({ title: crew ? `${crew.name} - Stylefolks` : 'Crew - Stylefolks' });
+  useMeta({ title: crew ? `${crew.name} - Stylefolks` : "Crew - Stylefolks" });
 
   useEffect(() => {
     if (!crewId) return;

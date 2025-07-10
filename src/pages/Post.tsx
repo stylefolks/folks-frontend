@@ -1,14 +1,16 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchPost, type Post } from '@/lib/posts';
-import Viewer from '@/components/Viewer';
-import Comments from '@/components/Comments';
-import { useEffect, useState } from 'react';
-import { useMeta } from '@/lib/meta';
-import TagList from '@/components/TagList';
-import CrewBanner from '@/components/CrewBanner';
-import AdBadge from '@/components/AdBadge';
+import { useParams, useNavigate } from "react-router-dom";
 
-const PostTitlePart = ({ post }:{ post : Post   }) => {
+import Viewer from "@/components/Viewer";
+import Comments from "@/components/Comments";
+import { useEffect, useState } from "react";
+import { useMeta } from "@/lib/meta";
+import TagList from "@/components/TagList";
+import CrewBanner from "@/components/CrewBanner";
+import AdBadge from "@/components/AdBadge";
+import { Post } from "@/types/post";
+import { fetchPost } from "@/lib/posts";
+
+const PostTitlePart = ({ post }: { post: Post }) => {
   const navigate = useNavigate();
   if (!post) return null;
   if (!post.author) return null;
@@ -19,11 +21,11 @@ const PostTitlePart = ({ post }:{ post : Post   }) => {
   if (!post.views) return null;
   if (!post.title) return null;
   if (!post.content) return null;
-  if (!post.id) return null;  
+  if (!post.id) return null;
 
   return (
     <>
-     <button onClick={() => navigate(-1)} className="text-sm text-blue-500">
+      <button onClick={() => navigate(-1)} className="text-sm text-blue-500">
         &larr; Back
       </button>
       <div className="flex items-center justify-between">
@@ -32,17 +34,22 @@ const PostTitlePart = ({ post }:{ post : Post   }) => {
           <button
             onClick={() => {
               if (navigator.share) {
-                navigator.share({ title: post.title, url: window.location.href });
+                navigator.share({
+                  title: post.title,
+                  url: window.location.href,
+                });
               } else {
                 navigator.clipboard.writeText(window.location.href);
-                alert('Link copied');
+                alert("Link copied");
               }
-          }}
-          className="text-sm text-blue-500"
-        >
-          Share
-        </button>
-          <button className="text-sm" onClick={() => alert('Liked!')}>❤️</button>
+            }}
+            className="text-sm text-blue-500"
+          >
+            Share
+          </button>
+          <button className="text-sm" onClick={() => alert("Liked!")}>
+            ❤️
+          </button>
         </div>
       </div>
       <div className="flex items-center space-x-2">
@@ -64,10 +71,14 @@ const PostTitlePart = ({ post }:{ post : Post   }) => {
       </p>
       {post.tags && <TagList tags={post.tags} />}
       {post.crew && <CrewBanner crew={post.crew} />}
-      {post.brand && <div className="relative"><AdBadge /></div>}
-      </>
-  )
-}
+      {post.brand && (
+        <div className="relative">
+          <AdBadge />
+        </div>
+      )}
+    </>
+  );
+};
 
 export default function PostPage() {
   const navigate = useNavigate();
@@ -75,7 +86,7 @@ export default function PostPage() {
   const id = Number(params.postId ?? params.id);
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
-  useMeta({ title: post ? `${post.title} - Stylefolks` : 'Post - Stylefolks' });
+  useMeta({ title: post ? `${post.title} - Stylefolks` : "Post - Stylefolks" });
 
   useEffect(() => {
     setLoading(true);
@@ -90,7 +101,7 @@ export default function PostPage() {
 
   return (
     <div className="mx-auto max-w-[1440px] space-y-4 p-4">
-     <PostTitlePart post={post} />
+      <PostTitlePart post={post} />
       {/* <div style={{ viewTransitionName: `post-${post.id}` }}>
         <img src={post.image} alt={post.title} className="my-4 w-full rounded-md" />
       </div> */}

@@ -1,6 +1,6 @@
-import PostCard from './PostCard';
-import type { Post } from '@/lib/posts';
-import { useNavigate } from 'react-router-dom';
+import { Post } from "@/types/post";
+import PostCard from "./PostCard";
+import { useNavigate } from "react-router-dom";
 
 export default function PostList({ posts }: { posts: Post[] }) {
   const navigate = useNavigate();

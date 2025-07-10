@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import PostCard from '@/components/PostCard';
-import type { Post } from '@/lib/posts';
-import { fetchBrandPostPreviews } from '@/lib/brand';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PostCard from "@/components/PostCard";
+import { fetchBrandPostPreviews } from "@/lib/brand";
+import { Post } from "@/types/post";
 
 export default function BrandPostPreviewList() {
   const [posts, setPosts] = useState<Post[]>([]);

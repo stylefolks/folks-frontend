@@ -1,5 +1,5 @@
-import BrandPostCard from './BrandPostCard';
-import type { Post } from '@/lib/posts';
+import { Post } from "@/types/post";
+import BrandPostCard from "./BrandPostCard";
 
 export default function PostList({ posts }: { posts: Post[] }) {
   if (posts.length === 0) return <p>No posts</p>;

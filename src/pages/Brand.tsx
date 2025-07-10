@@ -1,11 +1,12 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useMeta } from '@/lib/meta';
-import { fetchBrand, fetchBrandPosts, type Brand } from '@/lib/brand';
-import type { Post } from '@/lib/posts';
-import PostCard from '@/components/PostCard';
-import AdBadge from '@/components/AdBadge';
-import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useMeta } from "@/lib/meta";
+import { fetchBrand, fetchBrandPosts, type Brand } from "@/lib/brand";
+
+import PostCard from "@/components/PostCard";
+import AdBadge from "@/components/AdBadge";
+import ImageWithSkeleton from "@/components/ImageWithSkeleton";
+import { Post } from "@/types/post";
 
 export default function BrandPage() {
   const params = useParams();
@@ -13,7 +14,9 @@ export default function BrandPage() {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  useMeta({ title: brand ? `${brand.name} - Stylefolks` : 'Brand - Stylefolks' });
+  useMeta({
+    title: brand ? `${brand.name} - Stylefolks` : "Brand - Stylefolks",
+  });
 
   useEffect(() => {
     if (!brandId) return;

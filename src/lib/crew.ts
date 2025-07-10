@@ -1,3 +1,4 @@
+import { Post } from "@/types/post";
 import { API_BASE, getToken } from "./auth";
 
 import {
@@ -10,7 +11,6 @@ import {
   CrewMember,
   Crew,
 } from "@/types/crew";
-import { Post } from "./posts";
 
 export async function fetchCrew(id: string): Promise<Crew> {
   const res = await fetch(`${API_BASE}/crews/${id}`, { cache: "no-store" });

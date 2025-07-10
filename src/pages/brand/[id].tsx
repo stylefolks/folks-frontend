@@ -1,10 +1,10 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useMeta } from '@/lib/meta';
-import { fetchBrand, fetchBrandPosts, Brand } from '@/lib/brand';
-import type { Post } from '@/lib/posts';
-import BrandHeader from '@/components/brand/BrandHeader';
-import PostList from '@/components/brand/PostList';
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useMeta } from "@/lib/meta";
+import { fetchBrand, fetchBrandPosts, Brand } from "@/lib/brand";
+import BrandHeader from "@/components/brand/BrandHeader";
+import PostList from "@/components/brand/PostList";
+import { Post } from "@/types/post";
 
 export default function BrandDetailPage() {
   const params = useParams();
@@ -12,7 +12,9 @@ export default function BrandDetailPage() {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
 
-  useMeta({ title: brand ? `${brand.name} - Stylefolks` : 'Brand - Stylefolks' });
+  useMeta({
+    title: brand ? `${brand.name} - Stylefolks` : "Brand - Stylefolks",
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -26,7 +28,7 @@ export default function BrandDetailPage() {
 
   if (!brand) return <p className="p-4">Loading...</p>;
 
-  const brandPosts = posts.filter((post: any) => post.type === 'BRAND');
+  const brandPosts = posts.filter((post: any) => post.type === "BRAND");
 
   // latest first
   brandPosts.sort((a, b) => {

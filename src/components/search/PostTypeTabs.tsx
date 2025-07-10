@@ -1,5 +1,6 @@
-import { PostType, SEARCH_POST_TYPES, SearchPostType } from "@/lib/posts";
+import { SEARCH_POST_TYPES } from "@/constants/post";
 import { cn } from "@/lib/utils";
+import { SearchPostType } from "@/types/post";
 
 interface Props {
   value: SearchPostType;

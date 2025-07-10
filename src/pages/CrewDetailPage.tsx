@@ -5,8 +5,9 @@ import Tabs from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import EventCard from "@/components/EventCard";
 import { MapPin } from "lucide-react";
-import { CrewMetaType, Post } from "@/lib/posts";
-import { Crew, Notice, CrewEvent } from "@/types/crew";
+
+import { Crew, Notice, CrewEvent, CrewMetaType } from "@/types/crew";
+import { Post } from "@/types/post";
 
 export interface TabItem {
   value: CrewMetaType;

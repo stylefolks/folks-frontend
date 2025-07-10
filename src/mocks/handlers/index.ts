@@ -1,6 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "../tags";
-import { Post } from "@/lib/posts";
+import { UserTier } from "@/constants/user";
+import { Crew } from "@/lib/profile";
+import { CrewMember, CrewSummary, CrewTab, CrewRole } from "@/types/crew";
+import { SimpleUser } from "@/types/user";
+import { Post } from "@/types/post";
 
 const hotTags = [
   { name: "비건카페", postCount: 32 },
@@ -128,10 +132,6 @@ const PUBLIC_API_URL =
     ? process.env.PUBLIC_API_URL
     : (import.meta as any).env.PUBLIC_API_URL;
 const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
-import { UserTier } from "@/constants/user";
-import { Crew } from "@/lib/profile";
-import { CrewMember, CrewSummary, CrewTab, CrewRole } from "@/types/crew";
-import { SimpleUser } from "@/types/user";
 
 interface Profile {
   userId: string;

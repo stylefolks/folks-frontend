@@ -13,11 +13,10 @@ import {
   deletePostComment,
   likePost,
   unlikePost,
-  type PostDetail,
-  type PostComment,
 } from "@/lib/postDetail";
 import { cn } from "@/lib/utils";
 import { getMyId } from "@/lib/auth";
+import { PostComment, PostDetail } from "@/types/post";
 
 const avatarColors = [
   "bg-blue-400",

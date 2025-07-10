@@ -1,8 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PostCard from "@/components/PostCard";
-import { mockPost, type Post } from "@/lib/posts";
-
 import { getFollowers, getFollowing, getMyProfile } from "@/lib/profile";
 import Avatar from "@/components/ui/avatar";
 import FollowListModal from "@/components/users/FollowListModal";
@@ -10,6 +8,8 @@ import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
 import { UserTier } from "@/constants/user";
 import { SimpleUser } from "@/types/user";
+import { mockPost } from "@/lib/posts";
+import { Post } from "@/types/post";
 
 interface CrewItem {
   id: string;
