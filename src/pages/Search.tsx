@@ -53,16 +53,21 @@ export default function SearchPage() {
       tags: selectedTags,
       tab,
     });
-    setSearchParams(params);
-  }, [debouncedQuery, selectedTags, tab, setSearchParams]);
+    // 현재 searchParams와 다를 때만 setSearchParams 호출
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params);
+    }
+    // setSearchParams는 의존성 배열에서 제거
+  }, [debouncedQuery, selectedTags, tab, searchParams]);
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
     const tag = params.get("tag");
     if (tag) {
       setSelectedTags([tag]);
     }
-  }, [location.search]);
+  }, []);
 
   return (
     <div className="p-4 space-y-4">
