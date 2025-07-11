@@ -10,7 +10,7 @@ import { buildSearchParams, parseSearchParams } from "@/lib/searchParams";
 import { useMeta } from "@/lib/meta";
 import { TAGS } from "@/mocks/tags";
 import { searchPosts } from "@/api/postsApi";
-import { SearchPostType } from "@/types/post";
+import { SearchPostType } from "@/dto/postDto";
 import { PostDto } from "@/dto/postDto";
 
 export default function SearchPage() {

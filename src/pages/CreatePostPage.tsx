@@ -11,14 +11,14 @@ import { useMeta } from "@/lib/meta";
 import { extractFromDoc } from "@/lib/mentions";
 import { getToken } from "@/lib/auth";
 import { fetchMyCrewRole } from "@/api/crewApi";
-import { CrewRole, CrewMetaType } from "@/types/crew";
+import { CrewRole, CrewMetaType } from "@/dto/crewDto";
 import { CREW_META_TYPES } from "@/constants/crew";
 import { BRAND_META_TYPES } from "@/constants/brand";
 import { savePostDraft } from "@/api/postsApi";
 import { CreatePostDto } from "@/dto/postDto";
-import { BrandMetaType } from "@/types/brand";
-import { PostType } from "@/types/post";
-import { UserTier } from "@/types/user";
+import { BrandMetaType } from "@/dto/brandDto";
+import { PostType } from "@/dto/postDto";
+import { UserTier } from "@/dto/userDto";
 
 const DRAFT_KEY = "write_draft";
 

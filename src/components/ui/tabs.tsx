@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { TabItem } from "@/pages/CrewDetailPage";
-import { CrewMetaType } from "@/types/crew";
+import { CrewMetaType } from "@/dto/crewDto";
 import React from "react";
+import { TabItem } from "@/pages/CrewDetail";
 
 interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;

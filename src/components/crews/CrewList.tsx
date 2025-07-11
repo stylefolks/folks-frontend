@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import CrewCard from "./CrewCard";
 import useInfiniteScroll from "@/components/useInfiniteScroll";
-import { CrewSummary } from "@/types/crew";
-import { fetchCrews } from "@/lib/crew";
+import { CrewDto } from "@/dto/crewDto";
+import { fetchCrews } from "@/api/crewApi";
 
 export default function CrewList({ tag }: { tag?: string | null }) {
-  const [crews, setCrews] = useState<CrewSummary[]>([]);
+  const [crews, setCrews] = useState<CrewDto[]>([]);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function CrewList({ tag }: { tag?: string | null }) {
 
   const loadMore = useCallback(() => {
     fetchCrews({ page: String(page + 1), ...(tag ? { tag } : {}) }).then(
-      (c) => {
+      (c: CrewDto[]) => {
         setCrews((prev) => [...prev, ...c]);
         setPage((p) => p + 1);
       }

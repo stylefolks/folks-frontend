@@ -8,7 +8,7 @@ import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
 import { getProfileApi } from "@/api/profileApi";
 import type { ProfileDto } from "@/dto/userDto";
-import { SimpleUser, UserTier } from "@/types/user";
+import { SimpleUserDto, UserTier } from "@/dto/userDto";
 
 export default function UserProfilePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,8 +17,8 @@ export default function UserProfilePage() {
   const userId = params.userId as string;
   const [profile, setProfile] = useState<ProfileDto | null>(null);
 
-  const [followers, setFollowers] = useState<SimpleUser[]>([]);
-  const [following, setFollowing] = useState<SimpleUser[]>([]);
+  const [followers, setFollowers] = useState<SimpleUserDto[]>([]);
+  const [following, setFollowing] = useState<SimpleUserDto[]>([]);
   const [modal, setModal] = useState<"followers" | "following" | null>(null);
   const [isMaster, setIsMaster] = useState(false);
 

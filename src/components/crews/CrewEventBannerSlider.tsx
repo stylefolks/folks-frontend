@@ -1,4 +1,4 @@
-import { CrewSummary } from "@/types/crew";
+import { CrewSummaryDto } from "@/dto/crewDto";
 import CrewCard from "./CrewCard";
 import { CrewDto } from "@/dto/crewDto";
 

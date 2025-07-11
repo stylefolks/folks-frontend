@@ -1,3 +1,5 @@
+export type PostType = string;
+export type SearchPostType = string;
 import { SimpleUserDto } from "./userDto";
 
 export interface PostDto {

@@ -1,4 +1,4 @@
-import { SimpleUser } from "@/types/user";
+import { SimpleUserDto } from "@/dto/userDto";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -6,7 +6,7 @@ export interface CrewPost {
   id: string;
   title: string;
   imageUrl: string;
-  author: SimpleUser;
+  author: SimpleUserDto;
   tags: string[];
   likeCount: number;
 }

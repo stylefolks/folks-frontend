@@ -2,12 +2,12 @@ import Avatar from "../ui/avatar";
 import Modal from "../ui/Modal";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
-import { SimpleUser } from "@/types/user";
+import { SimpleUserDto } from "@/dto/userDto";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  users: SimpleUser[];
+  users: SimpleUserDto[];
   type: "followers" | "following";
   isMaster?: boolean;
 }

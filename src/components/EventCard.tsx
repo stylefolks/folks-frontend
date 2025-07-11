@@ -1,7 +1,7 @@
-import { CrewEvent } from "@/types/crew";
+import { CrewEventDto } from "@/dto/crewDto";
 
 interface Props {
-  event: CrewEvent;
+  event: CrewEventDto;
   onClick?: () => void;
 }
 

@@ -1,3 +1,9 @@
+export enum UserTier {
+  USER = "USER",
+  INFLUENCER = "INFLUENCER",
+  BRAND = "BRAND",
+  MASTER = "MASTER",
+}
 import { PostDto } from "@/dto/postDto";
 
 export interface UserDto {

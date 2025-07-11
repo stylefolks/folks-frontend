@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Tag } from "@/types/tag";
+import { TagDto } from "@/dto/commonDto";
 
 interface Props {
   selected: string | null;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function HotHashtagChips({ selected, onSelect }: Props) {
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<TagDto[]>([]);
 
   useEffect(() => {
     fetch("/tags/hot")

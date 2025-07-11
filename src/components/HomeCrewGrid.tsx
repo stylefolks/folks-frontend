@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 
 import { useNavigate } from "react-router-dom";
-import { CrewSummary } from "@/types/crew";
+import { CrewSummaryDto } from "@/dto/crewDto";
 
 export default function HomeCrewGrid() {
-  const [crews, setCrews] = useState<CrewSummary[]>([]);
+  const [crews, setCrews] = useState<CrewSummaryDto[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/crews?sort=popular")
       .then((res) => res.json())
-      .then((data: CrewSummary[]) => setCrews(data.slice(0)))
+      .then((data: CrewSummaryDto[]) => setCrews(data.slice(0)))
       .catch(() => setCrews([]));
   }, []);
 

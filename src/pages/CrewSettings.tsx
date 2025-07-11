@@ -11,15 +11,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Badge from "@/components/ui/badge";
-import { CrewMember, CrewTab, CrewRole, CrewMetaType } from "@/types/crew";
+import {
+  CrewMemberDto,
+  CrewTabDto,
+  CrewRole,
+  CrewMetaType,
+} from "@/dto/crewDto";
 import { CREW_META_TYPES } from "@/constants/crew";
 
 export default function CrewSettingsPage() {
   const { crewId } = useParams<{ crewId: string }>();
   const navigate = useNavigate();
   useMeta({ title: "Crew Settings - Stylefolks" });
-  const [members, setMembers] = useState<CrewMember[]>([]);
-  const [tabs, setTabs] = useState<CrewTab[]>([]);
+  const [members, setMembers] = useState<CrewMemberDto[]>([]);
+  const [tabs, setTabs] = useState<CrewTabDto[]>([]);
   const [search, setSearch] = useState("");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 

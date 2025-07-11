@@ -1,6 +1,11 @@
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import { fetchCrewTabs, updateCrewTabs, joinCrew, leaveCrew } from "../src/lib/crew";
-import { CrewTab } from "@/types/crew";
+import {
+  fetchCrewTabs,
+  updateCrewTabs,
+  joinCrew,
+  leaveCrew,
+} from "@/api/crewApi";
+import { CrewTabDto } from "@/dto/crewDto";
 
 describe("crew tab api", () => {
   beforeEach(() => {
@@ -18,7 +23,7 @@ describe("crew tab api", () => {
 
   it("updateCrewTabs sends PUT with body", async () => {
     (global.fetch as any).mockResolvedValue({ ok: true, json: async () => [] });
-    const tabs: CrewTab[] = [
+    const tabs: CrewTabDto[] = [
       {
         id: 1,
         crewId: 1,
@@ -40,7 +45,10 @@ describe("crew tab api", () => {
   });
 
   it("joinCrew sends POST request", async () => {
-    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    });
     await joinCrew("5");
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining("/crews/5/join"),
@@ -49,7 +57,10 @@ describe("crew tab api", () => {
   });
 
   it("leaveCrew sends DELETE request", async () => {
-    (global.fetch as any).mockResolvedValue({ ok: true, json: async () => ({}) });
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    });
     await leaveCrew("5");
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining("/crews/5/join"),

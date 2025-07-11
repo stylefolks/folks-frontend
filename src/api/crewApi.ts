@@ -1,7 +1,7 @@
 import { API_BASE, getToken } from "../lib/auth";
 import { CrewDto, CrewEventDto, CrewNoticeDto } from "@/dto/crewDto";
 import { PostDto } from "@/dto/postDto";
-import { CrewRole } from "@/types/crew";
+import { CrewRole } from "@/dto/crewDto";
 
 export async function fetchCrew(id: string): Promise<CrewDto> {
   const res = await fetch(`${API_BASE}/crews/${id}`, { cache: "no-store" });

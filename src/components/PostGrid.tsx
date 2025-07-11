@@ -3,7 +3,7 @@ import PostCard from "./PostCard";
 import useInfiniteScroll from "./useInfiniteScroll";
 import { getPosts } from "@/api/postsApi";
 import { useNavigate } from "react-router-dom";
-import { Post } from "@/types/post";
+import { PostDto } from "@/dto/postDto";
 
 const PAGE_SIZE = 20;
 

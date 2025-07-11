@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { searchUsers } from "@/lib/user";
-import { SimpleUser } from "@/types/user";
+import { SimpleUserDto } from "@/dto/userDto";
 
 interface Props {
   query: string;
   position: { left: number; top: number } | null;
-  onSelect: (user: SimpleUser) => void;
+  onSelect: (user: SimpleUserDto) => void;
 }
 
 export default function UserMentionList({ query, position, onSelect }: Props) {
-  const [users, setUsers] = useState<SimpleUser[]>([]);
+  const [users, setUsers] = useState<SimpleUserDto[]>([]);
 
   useEffect(() => {
     if (!query) {

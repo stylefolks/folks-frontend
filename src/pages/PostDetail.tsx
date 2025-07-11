@@ -14,7 +14,6 @@ import {
 } from "@/api/postDetailApi";
 import { PostDetailCommentDto, PostDto } from "@/dto/postDto";
 import { cn } from "@/lib/utils";
-import { type PostDetail } from "@/types/post";
 import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

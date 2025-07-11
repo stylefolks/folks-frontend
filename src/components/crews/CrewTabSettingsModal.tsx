@@ -2,12 +2,12 @@ import { useState } from "react";
 import Modal from "../ui/Modal";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { CrewTab } from "@/types/crew";
+import { CrewTabDto } from "@/dto/crewDto";
 
 interface Props {
   open: boolean;
-  tabs: CrewTab[];
-  onSave: (tabs: CrewTab[]) => void;
+  tabs: CrewTabDto[];
+  onSave: (tabs: CrewTabDto[]) => void;
   onClose: () => void;
 }
 
@@ -25,9 +25,9 @@ export default function CrewTabSettingsModal({
   onSave,
   onClose,
 }: Props) {
-  const [localTabs, setLocalTabs] = useState<CrewTab[]>(tabs);
+  const [localTabs, setLocalTabs] = useState<CrewTabDto[]>(tabs);
 
-  const handleChange = (index: number, field: keyof CrewTab, value: any) => {
+  const handleChange = (index: number, field: keyof CrewTabDto, value: any) => {
     setLocalTabs((prev) =>
       prev.map((t, i) => (i === index ? { ...t, [field]: value } : t))
     );

@@ -5,8 +5,14 @@ import Tabs from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import EventCard from "@/components/EventCard";
 import { MapPin, UserPlus, X } from "lucide-react";
-import { Crew, Notice, CrewEvent, CrewMetaType, CrewRole } from "@/types/crew";
-import { Post } from "@/types/post";
+import {
+  CrewDto,
+  CrewNoticeDto,
+  CrewEventDto,
+  CrewMetaType,
+  CrewRole,
+} from "@/dto/crewDto";
+import { PostDto } from "@/dto/postDto";
 import { joinCrew, leaveCrew, fetchMyCrewRole } from "@/api/crewApi";
 
 export interface TabItem {
@@ -17,10 +23,10 @@ export interface TabItem {
 export default function CrewDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [crew, setCrew] = useState<Crew | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [events, setEvents] = useState<CrewEvent[]>([]);
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [crew, setCrew] = useState<CrewDto | null>(null);
+  const [posts, setPosts] = useState<PostDto[]>([]);
+  const [events, setEvents] = useState<CrewEventDto[]>([]);
+  const [notices, setNotices] = useState<CrewNoticeDto[]>([]);
   const [description, setDescription] = useState<string>("");
   const [tab, setTab] = useState<CrewMetaType>("POSTS");
   const [me, setMe] = useState<{ avatarUrl: string } | null>(null);

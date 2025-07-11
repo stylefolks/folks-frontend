@@ -1,3 +1,26 @@
+export enum CrewRole {
+  OWNER = "OWNER",
+  MANAGER = "MANAGER",
+  MEMBER = "MEMBER",
+}
+
+export type CrewMetaType = string;
+
+export interface CrewLinkDto {
+  title: string;
+  url: string;
+}
+
+export interface CrewSummaryDto {
+  id: string;
+  name: string;
+  coverImage: string;
+  tags: string[];
+  memberCount: number;
+  upcomingEvent?: { title: string; date: string };
+}
+
+// ...기존 CrewDto, CrewEventDto, CrewNoticeDto, CrewTopicDto, CrewTabDto, CrewMemberDto 유지...
 export interface CrewDto {
   id: string;
   name: string;

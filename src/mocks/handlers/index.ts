@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
 
 import { TAGS } from "../tags";
-import { CrewRole } from "@/types/crew";
-import { UserTier, Profile } from "@/types/user";
+import { CrewRole } from "@/dto/crewDto";
+import { UserTier } from "@/dto/userDto";
 import {
   CrewDto,
   CrewEventDto,

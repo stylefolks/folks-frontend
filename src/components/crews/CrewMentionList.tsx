@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { fetchCrews } from "@/lib/crew";
-import { CrewSummary } from "@/types/crew";
+import { fetchCrews } from "@/api/crewApi";
+import { CrewDto } from "@/dto/crewDto";
 
 interface Props {
   query: string;
   position: { left: number; top: number } | null;
-  onSelect: (crew: CrewSummary) => void;
+  onSelect: (crew: CrewDto) => void;
 }
 
 export default function CrewMentionList({ query, position, onSelect }: Props) {
-  const [crews, setCrews] = useState<CrewSummary[]>([]);
+  const [crews, setCrews] = useState<CrewDto[]>([]);
 
   useEffect(() => {
     if (!query) {

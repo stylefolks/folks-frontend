@@ -1,7 +1,7 @@
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import TagList from "@/components/TagList";
 import { CrewDto } from "@/dto/crewDto";
-import { CrewSummary } from "@/types/crew";
+import { CrewSummaryDto } from "@/dto/crewDto";
 import { useNavigate } from "react-router-dom";
 
 export default function CrewCard({ crew }: { crew: CrewDto }) {

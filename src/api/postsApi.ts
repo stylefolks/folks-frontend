@@ -21,7 +21,7 @@ export async function fetchPost(id: number): Promise<PostDto> {
 import { PostDto } from "@/dto/postDto";
 import { ApiResponseDto } from "@/dto/commonDto";
 import { API_BASE } from "@/lib/auth";
-import { SearchPostType } from "@/types/post";
+import { SearchPostType } from "@/dto/postDto";
 
 export function mockPost(id: number): PostDto {
   const author = {

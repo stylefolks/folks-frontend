@@ -1,4 +1,4 @@
-import { SearchPostType } from "@/types/post";
+import { SearchPostType } from "@/dto/postDto";
 
 // DTO 스타일로 json 키를 모두 따옴표로 감싸고 camelCase 유지
 export interface SearchOptions {

@@ -3,13 +3,13 @@ import Modal from "../ui/Modal";
 import EditableImageUpload from "../EditableImageUpload";
 import EditableLinkList from "../EditableLinkList";
 import { Button } from "../ui/button";
-import { Crew, CrewLink } from "@/types/crew";
+import { CrewDto, CrewLinkDto } from "@/dto/crewDto";
 
 interface CrewSettingsModalProps {
   open: boolean;
-  crew: Crew;
+  crew: CrewDto;
   onClose: () => void;
-  onSave: (data: Partial<Crew>) => void;
+  onSave: (data: Partial<CrewDto>) => void;
   onDelete: () => void;
 }
 
@@ -25,7 +25,7 @@ export default function CrewSettingsModal({
 }: CrewSettingsModalProps) {
   const [profileImage, setProfileImage] = useState(crew.profileImage || "");
   const [coverImage, setCoverImage] = useState(crew.coverImage);
-  const [links, setLinks] = useState<CrewLink[]>(crew.links);
+  const [links, setLinks] = useState<CrewLinkDto[]>(crew.links ?? []);
 
   const handleSave = () => {
     onSave({ profileImage, coverImage, links });
