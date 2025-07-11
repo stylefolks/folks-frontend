@@ -38,6 +38,46 @@ const followingMap: Record<string, SimpleUserDto[]> = {};
 const blockedUsers = new Set<string>();
 
 export const userHandlers = [
+  // /users/:id/profile 핸들러 추가
+  http.get(`${API_BASE}/users/:id/profile`, ({ params }) => {
+    const { id } = params as { id: string };
+    // ProfileDto 타입에 맞는 mock 데이터 반환
+    const profile: UserDto = {
+      userId: id,
+      username: `${id}-mockuser`,
+      bio: "이것은 mock 프로필입니다.",
+      imageUrl: `https://picsum.photos/seed/profile-${id}/200`,
+      website: `https://example.com/${id}`,
+      backgroundUrl: `https://picsum.photos/seed/profile-bg-${id}/1200/400`,
+      role: UserTier.USER,
+      posts: Array.from({ length: 3 }, (_, i) => ({
+        id: `${id}-post-${i}`,
+        title: `유저 ${id}의 게시글 ${i + 1}`,
+        content: `유저 ${id}의 게시글 내용입니다.`,
+        createdAt: new Date(Date.now() - i * 1000000).toISOString(),
+        tags: ["테스트", "샘플"],
+        imageUrls: [`https://picsum.photos/seed/${id}-post-${i}/400/400`],
+        likeCount: Math.floor(Math.random() * 100),
+        commentCount: Math.floor(Math.random() * 10),
+        author: {
+          userId: id,
+          username: `${id}-mockuser`,
+          imageUrl: `https://picsum.photos/seed/profile-${id}/200`,
+        },
+      })),
+      followers: Array.from({ length: 5 }, (_, i) => ({
+        userId: `follower-${id}-${i}`,
+        username: `팔로워${i}`,
+        imageUrl: `https://picsum.photos/seed/follower-${id}-${i}/100/100`,
+      })),
+      following: Array.from({ length: 5 }, (_, i) => ({
+        userId: `following-${id}-${i}`,
+        username: `팔로잉${i}`,
+        imageUrl: `https://picsum.photos/seed/following-${id}-${i}/100/100`,
+      })),
+    };
+    return HttpResponse.json(profile);
+  }),
   http.post(`${API_BASE}/auth/signup`, async ({ request }) => {
     const { email, password, nickname } = (await request.json()) as {
       email?: string;

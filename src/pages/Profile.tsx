@@ -101,10 +101,10 @@ export default function UserProfilePage() {
         <div>
           <h3 className="mb-2 font-semibold">Joined Crews</h3>
           <div className="flex space-x-2 overflow-x-auto pb-1">
-            {profile.crews.map((c) => (
+            {profile?.crews?.map((c) => (
               <Avatar
                 key={c.id}
-                src={c.imageUrl}
+                src={c.coverImage}
                 size="sm"
                 className="cursor-pointer"
                 onClick={() => navigate(`/crew/${c.id}`)}

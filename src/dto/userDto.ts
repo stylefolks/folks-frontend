@@ -5,6 +5,7 @@ export enum UserTier {
   MASTER = "MASTER",
 }
 import { PostDto } from "@/dto/postDto";
+import { CrewDto } from "./crewDto";
 
 export interface UserDto {
   id?: string;
@@ -35,5 +36,5 @@ export interface ProfileDto {
   imageUrl: string;
   tags: string[];
   posts: PostDto[];
-  crews: Array<{ id: string; name: string; imageUrl: string }>;
+  crews: Array<CrewDto>;
 }

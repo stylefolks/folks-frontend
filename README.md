@@ -136,6 +136,7 @@
 - [x] 타입 단일 폴더하위로 정리
 - [x] 사용하지 않는 libs, comps 정리
 - [ ] msw handler 정리
+  - [] profileDto, userDto 겹치는 부분 extends를 하던 정리 필요
 
 # 페이지별 API 연결 진행상황 MVP v1
 
