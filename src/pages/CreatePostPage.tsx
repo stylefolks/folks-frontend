@@ -10,11 +10,12 @@ import { EditorView } from "prosemirror-view";
 import { useMeta } from "@/lib/meta";
 import { extractFromDoc } from "@/lib/mentions";
 import { getToken } from "@/lib/auth";
-import { fetchMyCrewRole } from "@/lib/crew";
+import { fetchMyCrewRole } from "@/api/crewApi";
 import { CrewRole, CrewMetaType } from "@/types/crew";
 import { CREW_META_TYPES } from "@/constants/crew";
 import { BRAND_META_TYPES } from "@/constants/brand";
-import { CreatePostDto, savePostDraft } from "@/lib/posts";
+import { savePostDraft } from "@/api/postsApi";
+import { CreatePostDto } from "@/dto/postDto";
 import { BrandMetaType } from "@/types/brand";
 import { PostType } from "@/types/post";
 import { UserTier } from "@/types/user";
@@ -52,7 +53,7 @@ export default function CreatePostPage() {
     const crewId = new URLSearchParams(location.search).get("crewId");
     if (!crewId) return;
     fetchMyCrewRole(crewId)
-      .then(setCrewRole)
+      .then((role) => setCrewRole(role))
       .catch(() => setCrewRole(null));
   }, [location.search]);
 

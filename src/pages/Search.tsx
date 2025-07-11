@@ -9,19 +9,24 @@ import PostCard from "@/components/PostCard";
 import { buildSearchParams, parseSearchParams } from "@/lib/searchParams";
 import { useMeta } from "@/lib/meta";
 import { TAGS } from "@/mocks/tags";
-import { searchPosts } from "@/lib/posts";
-import { SearchPostType, Post } from "@/types/post";
+import { searchPosts } from "@/api/postsApi";
+import { SearchPostType } from "@/types/post";
+import { PostDto } from "@/dto/postDto";
 
 export default function SearchPage() {
   useMeta({ title: "Search - Stylefolks" });
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = parseSearchParams(searchParams);
   const [query, setQuery] = useState(initial.query ?? "");
-  const [tab, setTab] = useState<SearchPostType>(initial.tab ?? "ALL");
+  const [tab, setTab] = useState<SearchPostType>(
+    (["ALL", "BASIC", "COLUMN"].includes(initial.tab || "")
+      ? initial.tab
+      : "ALL") as SearchPostType
+  );
   const [selectedTags, setSelectedTags] = useState<string[]>(
     initial.tags ?? []
   );
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostDto[]>([]);
   // run search only after the query stops changing
   const debouncedQuery = useDebounce(query);
 
@@ -35,7 +40,11 @@ export default function SearchPage() {
     const parsed = parseSearchParams(searchParams);
     setQuery(parsed.query ?? "");
     setSelectedTags(parsed.tags ?? []);
-    setTab(parsed.tab ?? "ALL");
+    if (parsed.tab && ["ALL", "BASIC", "COLUMN"].includes(parsed.tab)) {
+      setTab(parsed.tab as SearchPostType);
+    } else {
+      setTab("ALL");
+    }
   }, [searchParams]);
 
   useEffect(() => {

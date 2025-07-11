@@ -1,29 +1,30 @@
-import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { login } from '@/lib/auth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useMeta } from '@/lib/meta';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { login } from "@/lib/auth";
+import { UserDto } from "@/dto/userDto";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useMeta } from "@/lib/meta";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  useMeta({ title: 'Login - Stylefolks' });
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  useMeta({ title: "Login - Stylefolks" });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const isValid = email.length > 0 && password.length >= 6;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      const from = (location.state as any)?.from?.pathname || '/';
+      const user: UserDto = await login(email, password);
+      const from = (location.state as any)?.from?.pathname || "/";
       navigate(from);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login failed';
+      const message = err instanceof Error ? err.message : "Login failed";
       setError(message);
     }
   };
@@ -52,8 +53,8 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={cn(
-              'rounded-lg border py-2 px-3',
-              error && 'border-red-500'
+              "rounded-lg border py-2 px-3",
+              error && "border-red-500"
             )}
             required
           />
@@ -75,7 +76,8 @@ export default function LoginPage() {
           <Link to="/reset-password">Forgot Password?</Link>
         </div>
         <p className="text-xs text-gray-400 text-center">
-          계속 진행하면 Folks의 서비스 이용약관과 개인정보처리방침에 동의하게 됩니다.
+          계속 진행하면 Folks의 서비스 이용약관과 개인정보처리방침에 동의하게
+          됩니다.
         </p>
       </div>
     </div>

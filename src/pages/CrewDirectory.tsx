@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchCrews } from "@/lib/crew";
+import { fetchCrews } from "@/api/crewApi";
 import { useMeta } from "@/lib/meta";
 import {
   buildCrewSearchParams,
@@ -11,7 +11,7 @@ import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import HotHashtagChips from "@/components/crew-directory/HotHashtagChips";
 import SearchInput from "@/components/crew-directory/SearchInput";
 import CrewEventBannerSlider from "@/components/crews/CrewEventBannerSlider";
-import { CrewSummary } from "@/types/crew";
+import { CrewDto } from "@/dto/crewDto";
 
 export default function CrewDirectory() {
   useMeta({ title: "Crews Directory - Stylefolks" });
@@ -21,8 +21,8 @@ export default function CrewDirectory() {
   const [keyword, setKeyword] = useState(initial.keyword ?? "");
   // fetch crews only after the keyword settles
   const debouncedKeyword = useDebounce(keyword);
-  const [crews, setCrews] = useState<CrewSummary[]>([]);
-  const [eventCrews, setEventCrews] = useState<CrewSummary[]>([]);
+  const [crews, setCrews] = useState<CrewDto[]>([]);
+  const [eventCrews, setEventCrews] = useState<CrewDto[]>([]);
 
   useEffect(() => {
     fetchCrews()
@@ -73,7 +73,7 @@ export default function CrewDirectory() {
         </section>
         <section className="space-y-2 px-4">
           <h2 className="text-md font-bold">Latest Events</h2>
-          <CrewEventBannerSlider crews={eventCrews} />
+          <CrewEventBannerSlider crews={eventCrews ?? []} />
         </section>
         <section className="grid grid-cols-2 gap-3 px-4">
           {crews.map((crew) => (
@@ -85,14 +85,14 @@ export default function CrewDirectory() {
   );
 }
 
-function CrewCard({ crew }: { crew: CrewSummary }) {
+function CrewCard({ crew }: { crew: CrewDto }) {
   return (
     <Link
       to={`/crew/${crew.id}`}
       className="space-y-1 rounded-2xl transition-all hover:scale-[1.02]"
     >
       <ImageWithSkeleton
-        src={crew.coverImage}
+        src={crew.coverImage || ""}
         alt={crew.name}
         className="aspect-square rounded-lg"
         skeletonClassName="rounded-lg"
@@ -100,10 +100,10 @@ function CrewCard({ crew }: { crew: CrewSummary }) {
       <div className="space-y-1 px-1">
         <div className="text-sm font-bold">{crew.name}</div>
         <div className="text-xs text-gray-500">
-          {crew.memberCount.toLocaleString()} members
+          {crew?.memberCount?.toLocaleString()} members
         </div>
         <div className="flex flex-wrap gap-1">
-          {crew.tags.map((t) => (
+          {crew?.tags?.map((t) => (
             <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-xs">
               #{t}
             </span>

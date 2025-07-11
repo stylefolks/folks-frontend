@@ -1,14 +1,14 @@
-import { Post } from "@/types/post";
-import { API_BASE } from "./auth";
-import { Brand, BrandSummary } from "@/types/brand";
+import { PostDto } from "@/dto/postDto";
+import { API_BASE } from "../lib/auth";
+import { BrandDto } from "@/dto/brandDto";
 
-export async function fetchBrand(id: string): Promise<Brand> {
+export async function fetchBrand(id: string): Promise<BrandDto> {
   const res = await fetch(`${API_BASE}/brands/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to load brand");
   return res.json();
 }
 
-export async function fetchBrandPosts(id: string): Promise<Post[]> {
+export async function fetchBrandPosts(id: string): Promise<PostDto[]> {
   const res = await fetch(`${API_BASE}/brands/${id}/posts`, {
     cache: "no-store",
   });
@@ -18,7 +18,7 @@ export async function fetchBrandPosts(id: string): Promise<Post[]> {
 
 export async function fetchBrands(
   params: Record<string, string> = {}
-): Promise<BrandSummary[]> {
+): Promise<BrandDto[]> {
   const search = new URLSearchParams(params).toString();
   const res = await fetch(`${API_BASE}/brands${search ? `?${search}` : ""}`, {
     cache: "no-store",
@@ -27,7 +27,7 @@ export async function fetchBrands(
   return res.json();
 }
 
-export async function fetchBrandPostPreviews(limit = 6): Promise<Post[]> {
+export async function fetchBrandPostPreviews(limit = 6): Promise<PostDto[]> {
   const search = new URLSearchParams({
     authorType: "BRAND",
     limit: String(limit),

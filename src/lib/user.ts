@@ -1,9 +1,9 @@
-import { SimpleUser } from "@/types/user";
+import { SimpleUserDto } from "@/dto/userDto";
 import { API_BASE } from "./auth";
 
 export async function searchUsers(
   params: Record<string, string> = {}
-): Promise<SimpleUser[]> {
+): Promise<SimpleUserDto[]> {
   const search = new URLSearchParams(params).toString();
   const res = await fetch(`${API_BASE}/users${search ? `?${search}` : ""}`, {
     cache: "no-store",

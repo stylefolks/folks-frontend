@@ -11,6 +11,7 @@ export interface CrewDto {
   ownerId?: string;
   followers?: any[];
   members?: any[];
+  upcomingEvent?: { title: string; date: string };
 }
 
 export interface CrewEventDto {

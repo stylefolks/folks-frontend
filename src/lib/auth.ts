@@ -1,71 +1,78 @@
-export const TOKEN_KEY = 'auth_token';
-export const USER_ID_KEY = 'user_id';
+import { UserDto } from "@/dto/userDto";
+
+export const TOKEN_KEY = "auth_token";
+export const USER_ID_KEY = "user_id";
 // Support both Node.js and browser environments for environment variables
 const PUBLIC_API_URL =
-  typeof window === 'undefined'
+  typeof window === "undefined"
     ? process.env.PUBLIC_API_URL
     : (import.meta as any).env.PUBLIC_API_URL;
-export const API_BASE = PUBLIC_API_URL ?? 'http://localhost:3000';
+export const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 
 export function setToken(token: string) {
-  if (typeof localStorage === 'undefined') return;
+  if (typeof localStorage === "undefined") return;
   localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function setUserId(id: string) {
-  if (typeof localStorage === 'undefined') return;
+  if (typeof localStorage === "undefined") return;
   localStorage.setItem(USER_ID_KEY, id);
 }
 
 export function getToken(): string | null {
-  if (typeof localStorage === 'undefined') return null;
+  if (typeof localStorage === "undefined") return null;
   return localStorage.getItem(TOKEN_KEY);
 }
 
 export function getUserId(): string | null {
-  if (typeof localStorage === 'undefined') return null;
+  if (typeof localStorage === "undefined") return null;
   return localStorage.getItem(USER_ID_KEY);
 }
 
 export function logout() {
-  if (typeof localStorage === 'undefined') return;
+  if (typeof localStorage === "undefined") return;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_ID_KEY);
 }
 
-export async function login(email: string, password: string) {
+export async function login(email: string, password: string): Promise<UserDto> {
   const res = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
   });
   if (!res.ok) {
-    throw new Error('Login failed');
+    throw new Error("Login failed");
   }
   const data = await res.json();
   const token = data.accessToken ?? data.token;
   if (!token) {
-    throw new Error('No token returned');
+    throw new Error("No token returned");
   }
   setToken(token);
   const userId = data.userId ?? data.user?.id;
   if (userId) {
     setUserId(userId);
   }
+  return data as UserDto;
 }
 
-export async function signup(email: string, username: string, password: string) {
+export async function signup(
+  email: string,
+  username: string,
+  password: string
+): Promise<UserDto> {
   const res = await fetch(`${API_BASE}/auth/signup`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, username, password }),
   });
   if (!res.ok) {
-    throw new Error('Sign up failed');
+    throw new Error("Sign up failed");
   }
   let data: any = {};
   try {
@@ -80,10 +87,10 @@ export async function signup(email: string, username: string, password: string) 
     if (userId) {
       setUserId(userId);
     }
-    return;
+    return data as UserDto;
   }
   // automatically log in after successful signup when no token is returned
-  await login(email, password);
+  return await login(email, password);
 }
 
 export async function getMyId(): Promise<string | null> {
@@ -93,10 +100,10 @@ export async function getMyId(): Promise<string | null> {
   if (!token) return null;
   const res = await fetch(`${API_BASE}/user/me`, {
     headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
+    cache: "no-store",
   });
   if (!res.ok) {
-    throw new Error('Failed to fetch id');
+    throw new Error("Failed to fetch id");
   }
   const data = await res.json();
   if (data.userId) {

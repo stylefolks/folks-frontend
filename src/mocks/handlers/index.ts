@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+
 import { TAGS } from "../tags";
 import { CrewRole } from "@/types/crew";
 import { UserTier, Profile } from "@/types/user";
@@ -254,19 +255,31 @@ const postDetailCommentsMap: Record<string, PostDetailCommentDto[]> = {
   abc123: [
     {
       id: "c1",
-      author: { name: "Alex Kim", initials: "AK" },
+      author: {
+        username: "Alex Kim",
+        userId: "user-1",
+        imageUrl: "https://i.pravatar.cc/150?img=1",
+      },
       createdAt: "2025-06-29",
       content: "Love these tips!",
     },
     {
       id: "c2",
-      author: { name: "Jessica Wong", initials: "JW" },
+      author: {
+        username: "Jessica Wong",
+        userId: "user-2",
+        imageUrl: "https://i.pravatar.cc/150?img=2",
+      },
       createdAt: "2025-06-29",
       content: "Effortless chic is my favorite!",
     },
     {
       id: "c3",
-      author: { name: "Mark Chen", initials: "MC" },
+      author: {
+        username: "Mark Chen",
+        userId: "user-3",
+        imageUrl: "https://i.pravatar.cc/150?img=3",
+      },
       createdAt: "2025-06-30",
       content: "Great post, Sophia!",
     },
@@ -805,7 +818,11 @@ export const handlers = [
       const { content } = (await request.json()) as { content?: string };
       const newComment: PostDetailCommentDto = {
         id: String(Date.now()),
-        author: { name: "ME", initials: "ME" },
+        author: {
+          username: "ME",
+          userId: "user-me",
+          imageUrl: "https://i.pravatar.cc/150?img=me",
+        },
         createdAt: "2025-07-03",
         content: content ?? "",
       };
@@ -913,5 +930,31 @@ export const handlers = [
   http.post(`${API_BASE}/posts/draft`, async ({ request }) => {
     await request.json();
     return HttpResponse.json({ success: true }, { status: 201 });
+  }),
+
+  http.get("/users/:userId/profile", ({ params }) => {
+    const { userId } = params as { userId: string };
+    const base = parseInt(userId.replace(/\D/g, ""), 10) || 1;
+    const tags = Array.from({ length: 5 }, (_, i) => `tag${base + i}`);
+    const crews = Array.from({ length: 5 }, (_, i) => ({
+      id: `crew${base + i}`,
+      name: `Crew ${base + i}`,
+      imageUrl: `https://picsum.photos/seed/crew-${base + i}/80`,
+    }));
+    const posts = Array.from({ length: 12 }, (_, i) => ({
+      id: `${base * 10 + i}`,
+      title: `Post ${base * 10 + i}`,
+      category: i % 3 === 0 ? "TALK" : i % 3 === 1 ? "COLUMN" : "CREW",
+      imageUrl: `https://picsum.photos/seed/post-${base * 10 + i}/100`,
+    }));
+    return HttpResponse.json({
+      userId: userId,
+      username: `User ${userId}`,
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet.",
+      imageUrl: `https://picsum.photos/seed/user-${userId}/100`,
+      tags: tags,
+      posts: posts,
+      crews: crews,
+    });
   }),
 ];

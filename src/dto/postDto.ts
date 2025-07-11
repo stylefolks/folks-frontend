@@ -1,3 +1,5 @@
+import { SimpleUserDto } from "./userDto";
+
 export interface PostDto {
   id: string | number;
   title: string;
@@ -25,7 +27,18 @@ export interface PostDto {
 
 export interface PostDetailCommentDto {
   id: string;
-  author: { name: string; initials: string };
+  author: SimpleUserDto;
   createdAt: string;
   content: string;
+}
+
+export interface CreatePostDto {
+  title: string;
+  type: string;
+  hashtags?: string[];
+  crewIds?: number[];
+  brandIds?: number[];
+  content?: any;
+  brandMetaType?: string;
+  crewMetaType?: string;
 }

@@ -2,12 +2,12 @@ import ImageWithSkeleton from "./ImageWithSkeleton";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
 import { Heart, MessageCircleIcon } from "lucide-react";
-import { Post } from "@/types/post";
+import type { PostDto } from "@/dto/postDto";
 
-interface Props {
-  post: Post;
+type Props = {
+  post: PostDto;
   withTitle?: boolean;
-}
+};
 
 export default function PostCard({ post, withTitle = true }: Props) {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function PostCard({ post, withTitle = true }: Props) {
         <div className="text-sm font-semibold text-black">{post.title}</div>
         <div className="flex items-center justify-between text-sm text-neutral-500 py-1">
           <div className="flex items-center gap-1">
-            {post.author.imageUrl && (
+            {post.author?.imageUrl && (
               <img
                 src={post.author.imageUrl}
                 alt={post.author.username}
@@ -49,7 +49,7 @@ export default function PostCard({ post, withTitle = true }: Props) {
               />
             )}
 
-            <span className="text-xs">{post.author.username}</span>
+            <span className="text-xs">{post.author?.username}</span>
           </div>
           <div className="flex items-center gap-1">
             <MessageCircleIcon size={12} />

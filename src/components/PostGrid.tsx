@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
 import PostCard from "./PostCard";
 import useInfiniteScroll from "./useInfiniteScroll";
-import { getPosts } from "@/lib/posts";
+import { getPosts } from "@/api/postsApi";
 import { useNavigate } from "react-router-dom";
 import { Post } from "@/types/post";
 
 const PAGE_SIZE = 20;
 
 export default function PostGrid() {
-  const [posts, setPosts] = useState<Post[]>(() => getPosts(0, PAGE_SIZE));
+  const [posts, setPosts] = useState(() => getPosts(0, PAGE_SIZE));
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
@@ -19,12 +19,6 @@ export default function PostGrid() {
   }, [page]);
 
   const ref = useInfiniteScroll(loadMore);
-
-  const handlePostClick = (id: string) => {
-    document.startViewTransition(() => {
-      navigate(`/posts/${id}`);
-    });
-  };
 
   return (
     <>

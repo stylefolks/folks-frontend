@@ -1,17 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMeta } from "@/lib/meta";
-import { fetchCrew, fetchCrewPosts } from "@/lib/crew";
+import { fetchCrew, fetchCrewPosts } from "@/api/crewApi";
 import PostCard from "@/components/PostCard";
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
-import { Crew } from "@/types/crew";
-import { Post } from "@/types/post";
+import { CrewDto } from "@/dto/crewDto";
+import { PostDto } from "@/dto/postDto";
 
 export default function CrewPage() {
   const params = useParams();
   const crewId = params.crewId as string;
-  const [crew, setCrew] = useState<Crew | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [crew, setCrew] = useState<CrewDto | null>(null);
+  const [posts, setPosts] = useState<PostDto[]>([]);
   const [loading, setLoading] = useState(true);
   useMeta({ title: crew ? `${crew.name} - Stylefolks` : "Crew - Stylefolks" });
 
@@ -32,7 +32,7 @@ export default function CrewPage() {
   return (
     <div className="mx-auto max-w-[720px] space-y-4 p-4">
       <ImageWithSkeleton
-        src={crew.coverImage}
+        src={crew.coverImage ?? ""}
         alt={crew.name}
         className="h-40 w-full rounded"
       />

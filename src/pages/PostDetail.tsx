@@ -11,9 +11,10 @@ import {
   likePost,
   unlikePost,
   updatePostComment,
-} from "@/lib/postDetail";
+} from "@/api/postDetailApi";
+import { PostDetailCommentDto, PostDto } from "@/dto/postDto";
 import { cn } from "@/lib/utils";
-import { PostComment, type PostDetail } from "@/types/post";
+import { type PostDetail } from "@/types/post";
 import { ArrowLeft, HeartIcon, MessageSquare } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -44,8 +45,8 @@ function InitialAvatar({ initials }: { initials: string }) {
 export default function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState<PostDetail | null>(null);
-  const [comments, setComments] = useState<PostComment[]>([]);
+  const [post, setPost] = useState<PostDto | null>(null);
+  const [comments, setComments] = useState<PostDetailCommentDto[]>([]);
   const commentRef = useRef<HTMLTextAreaElement>(null);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
@@ -58,7 +59,7 @@ export default function PostDetail() {
     fetchPostDetail(id)
       .then((data) => {
         setPost(data);
-        setLikeCount(data.likes);
+        setLikeCount(data?.likes || 0);
       })
       .catch(() => setPost(null));
     fetchPostComments(id)
@@ -86,9 +87,10 @@ export default function PostDetail() {
     }
   };
 
-  const startEdit = (c: PostComment) => {
-    setEditingId(c.id);
-    setEditText(c.content);
+  const startEdit = (c: string) => {
+    setEditingId(c);
+    const comment = comments.find((comment) => comment.id === c);
+    if (comment) setEditText(comment.content);
   };
 
   const handleUpdate = async (commentId: string) => {
@@ -139,7 +141,7 @@ export default function PostDetail() {
             <ArrowLeft />
           </button>
           <div className="flex flex-wrap gap-2">
-            {post.hashtags.map((tag) => (
+            {post?.hashtags?.map((tag) => (
               <Badge
                 className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-black"
                 key={tag}
@@ -197,7 +199,7 @@ export default function PostDetail() {
                 className="cursor-pointer"
                 onClick={() => navigate(`/profile/${c.author.userId}`)}
               >
-                <InitialAvatar initials={c.author.initials} />
+                <InitialAvatar initials={c.author.username} />
               </div>
               <div className="flex-1">
                 {editingId === c.id ? (
@@ -225,13 +227,13 @@ export default function PostDetail() {
                       className="text-sm font-semibold cursor-pointer"
                       onClick={() => navigate(`/profile/${c.author.userId}`)}
                     >
-                      {c.author.name} · {c.createdAt}
+                      {c.author.username} · {c.createdAt}
                     </div>
                     <div className="mt-1 text-sm">{c.content}</div>
                     {myId === c.author.userId && (
                       <div className="mt-1 space-x-2 text-sm">
                         <Button
-                          onClick={() => startEdit(c)}
+                          onClick={() => startEdit(c.id)}
                           size="sm"
                           variant="outline"
                         >

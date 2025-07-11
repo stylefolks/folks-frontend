@@ -6,59 +6,16 @@ import Avatar from "@/components/ui/avatar";
 import FollowListModal from "@/components/users/FollowListModal";
 import { logout } from "@/lib/auth";
 import { Menu } from "lucide-react";
-
+import { getProfileApi } from "@/api/profileApi";
+import type { ProfileDto } from "@/dto/userDto";
 import { SimpleUser, UserTier } from "@/types/user";
-import { mockPost } from "@/lib/posts";
-import { Post } from "@/types/post";
-
-interface CrewItem {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
-
-interface ProfileData {
-  userId: string;
-  username: string;
-  bio: string;
-  imageUrl: string;
-  tags: string[];
-  posts: (Post & { category: "TALK" | "COLUMN" | "CREW" })[];
-  crews: CrewItem[];
-}
-
-function generateMockProfile(userId: string): ProfileData {
-  const base = parseInt(userId.replace(/\D/g, ""), 10) || 1;
-  const tags = Array.from({ length: 5 }, (_, i) => `tag${base + i}`);
-  const crews = Array.from({ length: 5 }, (_, i) => ({
-    id: `crew${base + i}`,
-    name: `Crew ${base + i}`,
-    imageUrl: `https://picsum.photos/seed/crew-${base + i}/80`,
-  }));
-  const posts = Array.from({ length: 12 }, (_, i) => {
-    const post = mockPost(base * 10 + i) as Post & {
-      category: "TALK" | "COLUMN" | "CREW";
-    };
-    post.category = i % 3 === 0 ? "TALK" : i % 3 === 1 ? "COLUMN" : "CREW";
-    return post;
-  });
-  return {
-    userId,
-    username: `User ${userId}`,
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet.",
-    imageUrl: `https://picsum.photos/seed/user-${userId}/100`,
-    tags,
-    posts,
-    crews,
-  };
-}
 
 export default function UserProfilePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
   const userId = params.userId as string;
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<ProfileDto | null>(null);
 
   const [followers, setFollowers] = useState<SimpleUser[]>([]);
   const [following, setFollowing] = useState<SimpleUser[]>([]);
@@ -67,7 +24,9 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     if (!userId) return;
-    setProfile(generateMockProfile(userId));
+    getProfileApi(userId)
+      .then((data) => setProfile(data))
+      .catch(() => setProfile(null));
     Promise.all([getFollowers(userId), getFollowing(userId), getMyProfile()])
       .then(([fwr, fwg, me]) => {
         setFollowers(fwr);

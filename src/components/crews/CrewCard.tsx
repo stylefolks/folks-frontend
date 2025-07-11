@@ -1,9 +1,10 @@
 import ImageWithSkeleton from "@/components/ImageWithSkeleton";
 import TagList from "@/components/TagList";
+import { CrewDto } from "@/dto/crewDto";
 import { CrewSummary } from "@/types/crew";
 import { useNavigate } from "react-router-dom";
 
-export default function CrewCard({ crew }: { crew: CrewSummary }) {
+export default function CrewCard({ crew }: { crew: CrewDto }) {
   const navigate = useNavigate();
   return (
     <div
@@ -11,7 +12,7 @@ export default function CrewCard({ crew }: { crew: CrewSummary }) {
       className="cursor-pointer space-y-1"
     >
       <ImageWithSkeleton
-        src={crew.coverImage}
+        src={crew.coverImage || ""}
         alt={crew.name}
         className="h-32 w-full rounded"
       />

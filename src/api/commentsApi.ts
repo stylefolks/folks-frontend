@@ -1,9 +1,7 @@
 import { CommentDto } from "@/dto/commentDto";
-import { API_BASE } from "./auth";
+import { API_BASE } from "@/lib/auth";
 
-export type Comment = CommentDto;
-
-export async function fetchComments(postId: string): Promise<Comment[]> {
+export async function fetchComments(postId: string): Promise<CommentDto[]> {
   const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {
     cache: "no-store",
   });
@@ -14,7 +12,7 @@ export async function fetchComments(postId: string): Promise<Comment[]> {
 export async function addComment(
   postId: string,
   text: string
-): Promise<Comment> {
+): Promise<CommentDto> {
   const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -27,7 +25,7 @@ export async function addComment(
 export async function updateComment(
   id: string,
   text: string
-): Promise<Comment> {
+): Promise<CommentDto> {
   const res = await fetch(`${API_BASE}/comments/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

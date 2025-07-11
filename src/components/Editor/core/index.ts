@@ -11,7 +11,7 @@ import { buildMenuItems } from "./menu";
 import { buildKeymap } from "./keymap";
 import { buildInputRules } from "./inputrules";
 import { getFolksMentionPlugin } from "@/lib/plugins/mentionPlugin";
-import { searchCrew } from "@/lib/crew";
+import { fetchCrews } from "@/api/crewApi";
 
 export { buildMenuItems, buildKeymap, buildInputRules };
 
@@ -62,9 +62,13 @@ export function setup(options: {
 }) {
   let plugins = [
     getFolksMentionPlugin({
-      getSuggestions: async (_type, text, done) => {
+      getSuggestions: async (
+        _type: string,
+        text: string,
+        done: (items: Array<{ id: string; name: string; type: string }>) => void
+      ) => {
         try {
-          const crews = await searchCrew({ search: text, limit: "5" });
+          const crews = await fetchCrews({ search: text, limit: "5" });
           const crewItems = crews.map((c) => ({
             id: c.id,
             name: c.name,
@@ -75,7 +79,9 @@ export function setup(options: {
           done([]);
         }
       },
-      getSuggestionsHTML: (items) =>
+      getSuggestionsHTML: (
+        items: Array<{ id: string; name: string; type: string }>
+      ) =>
         `<div class="suggestion-item-list">${items
           .map((i) => `<div class="suggestion-item">${i.name}</div>`)
           .join("")}</div>`,

@@ -1,11 +1,8 @@
 import { CrewSummary } from "@/types/crew";
 import CrewCard from "./CrewCard";
+import { CrewDto } from "@/dto/crewDto";
 
-export default function CrewEventBannerSlider({
-  crews,
-}: {
-  crews: CrewSummary[];
-}) {
+export default function CrewEventBannerSlider({ crews }: { crews: CrewDto[] }) {
   if (crews.length === 0) return null;
   return (
     <div className="overflow-x-auto">

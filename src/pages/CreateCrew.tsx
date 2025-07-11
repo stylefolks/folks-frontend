@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createCrew } from '@/lib/crew';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useMeta } from '@/lib/meta';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createCrew } from "@/api/crewApi";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useMeta } from "@/lib/meta";
 
 export default function CreateCrewPage() {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [error, setError] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  useMeta({ title: 'Create Crew - Stylefolks' });
+  useMeta({ title: "Create Crew - Stylefolks" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ export default function CreateCrewPage() {
       const crew = await createCrew({ name, description });
       navigate(`/crew/${crew.id}/posts`);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to create crew';
+      const msg = err instanceof Error ? err.message : "Failed to create crew";
       setError(msg);
     }
   };

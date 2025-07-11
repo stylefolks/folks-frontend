@@ -1,9 +1,10 @@
 import { SearchPostType } from "@/types/post";
 
+// DTO 스타일로 json 키를 모두 따옴표로 감싸고 camelCase 유지
 export interface SearchOptions {
   query?: string;
   tags?: string[];
-  tab?: SearchPostType;
+  tab?: string;
 }
 
 export function buildSearchParams({
@@ -26,6 +27,6 @@ export function parseSearchParams(
   const query = params.get("query") ?? undefined;
   const tag = params.get("tag");
   const tags = tag ? tag.split(",").filter(Boolean) : [];
-  const tab = (params.get("tab") as SearchPostType) ?? "ALL";
-  return { query, tags, tab };
+  const tab = params.get("tab") ?? "ALL";
+  return { query: query, tags: tags, tab: tab };
 }

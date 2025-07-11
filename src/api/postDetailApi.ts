@@ -1,13 +1,15 @@
-import { PostDetail, PostComment } from "@/types/post";
-import { API_BASE } from "./auth";
+import { API_BASE } from "../lib/auth";
+import { PostDto, PostDetailCommentDto } from "@/dto/postDto";
 
-export async function fetchPostDetail(id: string): Promise<PostDetail> {
+export async function fetchPostDetail(id: string): Promise<PostDto> {
   const res = await fetch(`${API_BASE}/posts/${id}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to load post");
   return res.json();
 }
 
-export async function fetchPostComments(id: string): Promise<PostComment[]> {
+export async function fetchPostComments(
+  id: string
+): Promise<PostDetailCommentDto[]> {
   const res = await fetch(`${API_BASE}/posts/${id}/comments`, {
     cache: "no-store",
   });
@@ -18,7 +20,7 @@ export async function fetchPostComments(id: string): Promise<PostComment[]> {
 export async function addPostComment(
   id: string,
   content: string
-): Promise<PostComment> {
+): Promise<PostDetailCommentDto> {
   const res = await fetch(`${API_BASE}/posts/${id}/comments`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -43,7 +45,7 @@ export async function unlikePost(id: string): Promise<void> {
 export async function updatePostComment(
   id: string,
   content: string
-): Promise<PostComment> {
+): Promise<PostDetailCommentDto> {
   const res = await fetch(`${API_BASE}/comment/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },

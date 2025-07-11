@@ -7,10 +7,10 @@ import { useMeta } from "@/lib/meta";
 import TagList from "@/components/TagList";
 import CrewBanner from "@/components/CrewBanner";
 import AdBadge from "@/components/AdBadge";
-import { Post } from "@/types/post";
-import { fetchPost } from "@/lib/posts";
+import { PostDto } from "@/dto/postDto";
+import { fetchPost } from "@/api/postsApi";
 
-const PostTitlePart = ({ post }: { post: Post }) => {
+const PostTitlePart = ({ post }: { post: PostDto }) => {
   const navigate = useNavigate();
   if (!post) return null;
   if (!post.author) return null;
@@ -84,7 +84,7 @@ export default function PostPage() {
   const navigate = useNavigate();
   const params = useParams();
   const id = Number(params.postId ?? params.id);
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<PostDto | null>(null);
   const [loading, setLoading] = useState(true);
   useMeta({ title: post ? `${post.title} - Stylefolks` : "Post - Stylefolks" });
 
