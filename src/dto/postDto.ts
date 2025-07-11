@@ -1,0 +1,31 @@
+export interface PostDto {
+  id: string | number;
+  title: string;
+  content?: any;
+  hashtags?: string[];
+  author?: any;
+  createdAt?: string;
+  crewName?: string;
+  likes?: number;
+  comments?: number;
+  image?: string;
+  date?: string;
+  views?: number;
+  tags?: string[];
+  crew?: any;
+  brand?: any;
+  likeCount?: number;
+  commentCount?: number;
+  type?: string;
+  brandMetaType?: string;
+  crewMetaType?: string;
+  subtitle?: string;
+  imageUrl?: string;
+}
+
+export interface PostDetailCommentDto {
+  id: string;
+  author: { name: string; initials: string };
+  createdAt: string;
+  content: string;
+}

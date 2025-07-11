@@ -1,12 +1,7 @@
-import { SimpleUser } from "@/types/user";
+import { CommentDto } from "@/dto/commentDto";
 import { API_BASE } from "./auth";
 
-export interface Comment {
-  id: string;
-  postId: string;
-  text: string;
-  author: SimpleUser;
-}
+export type Comment = CommentDto;
 
 export async function fetchComments(postId: string): Promise<Comment[]> {
   const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {

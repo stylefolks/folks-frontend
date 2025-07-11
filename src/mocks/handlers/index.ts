@@ -1,16 +1,27 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "../tags";
-import { CrewMember, CrewSummary, CrewTab, CrewRole, Crew } from "@/types/crew";
-import { SimpleUser, UserTier, Profile } from "@/types/user";
-import { Post } from "@/types/post";
-import { BrandSummary } from "@/types/brand";
+import { CrewRole } from "@/types/crew";
+import { UserTier, Profile } from "@/types/user";
+import {
+  CrewDto,
+  CrewEventDto,
+  CrewNoticeDto,
+  CrewTopicDto,
+  CrewTabDto,
+  CrewMemberDto,
+} from "@/dto/crewDto";
+import { BrandDto } from "@/dto/brandDto";
+import { PostDto, PostDetailCommentDto } from "@/dto/postDto";
+import { UserDto, SimpleUserDto } from "@/dto/userDto";
+import { CommentDto } from "@/dto/commentDto";
+import { ApiResponseDto } from "@/dto/commonDto";
 
-const hotTags = [
+const hotTags: Array<{ name: string; postCount: number }> = [
   { name: "비건카페", postCount: 32 },
   { name: "90s", postCount: 12 },
   { name: "한남", postCount: 7 },
 ];
-const directoryCrews = [
+const directoryCrews: CrewDto[] = [
   {
     id: "1",
     name: "Shinchon Crew",
@@ -50,8 +61,8 @@ const directoryCrews = [
 
 const BASE_TIME = Date.UTC(2023, 0, 1); // fixed date for deterministic output
 
-export function mockPost(id: number): Post {
-  const author: SimpleUser = {
+export function mockPost(id: number): PostDto {
+  const author: SimpleUserDto = {
     userId: `user${id}`,
     username: `User ${id}`,
     imageUrl: `https://picsum.photos/seed/user${id}/100`,
@@ -59,7 +70,7 @@ export function mockPost(id: number): Post {
   return {
     id,
     title: `Post ${id}`,
-    type: id % 2 === 0 ? "BASIC" : "COLUMN", // alternating types for mock data
+    type: id % 2 === 0 ? "BASIC" : "COLUMN",
     brandMetaType: id % 3 === 0 ? "POSTS" : undefined,
     crewMetaType: id % 4 === 0 ? "TOPIC" : undefined,
     image: `https://picsum.photos/seed/${id}/600/400`,
@@ -83,7 +94,7 @@ export function mockPost(id: number): Post {
   };
 }
 
-const feedPosts: Post[] = Array.from({ length: 15 }, (_, i) => ({
+const feedPosts: PostDto[] = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   title: `오늘의 OOTD ${i + 1}`,
   image: `https://picsum.photos/seed/post-${i + 1}/400/300`,
@@ -102,7 +113,7 @@ const feedPosts: Post[] = Array.from({ length: 15 }, (_, i) => ({
       },
     ],
   },
-  type: i % 2 === 0 ? "BASIC" : "COLUMN", // alternating types for mock data
+  type: i % 2 === 0 ? "BASIC" : "COLUMN",
   author: {
     userId: `user${i + 1}`,
     username: `User ${i + 1}`,
@@ -110,7 +121,7 @@ const feedPosts: Post[] = Array.from({ length: 15 }, (_, i) => ({
   },
 }));
 
-const me = {
+const me: UserDto = {
   id: "me",
   role: "USER",
   nickname: "shane",
@@ -120,13 +131,13 @@ const me = {
   avatarUrl: "/mock/user.jpg",
 };
 
-const myCrews = [
+const myCrews: Array<{ id: string; avatarUrl: string }> = [
   { id: "crew-1", avatarUrl: "/mock/crew-1.jpg" },
   { id: "crew-2", avatarUrl: "/mock/crew-2.jpg" },
 ];
 const joinedCrewIds = new Set(myCrews.map((c) => c.id));
 
-const myPosts = [
+const myPosts: PostDto[] = [
   {
     id: "post-1",
     title: "My first post!",
@@ -143,8 +154,7 @@ const PUBLIC_API_URL =
     : (import.meta as any).env.PUBLIC_API_URL;
 const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 
-
-let currentProfile: Profile = {
+let currentProfile: UserDto = {
   userId: "folks",
   email: "folks@gmail.com",
   username: "folks",
@@ -155,7 +165,7 @@ let currentProfile: Profile = {
   role: UserTier.MASTER,
 };
 
-function randomProfile(id: string): Profile {
+function randomProfile(id: string): UserDto {
   const rand = Math.random().toString(36).slice(2, 8);
   return {
     userId: id,
@@ -169,7 +179,7 @@ function randomProfile(id: string): Profile {
   };
 }
 
-function randomPost(id: number) {
+function randomPost(id: number): PostDto {
   const seed = Math.random().toString(36).slice(2, 8);
   const author = randomProfile(`user${id}`);
   const content = {
@@ -234,44 +244,13 @@ function randomPost(id: number) {
   };
 }
 
-function randomCrew(id: number): CrewSummary {
-  const seed = Math.random().toString(36).slice(2, 8);
-  const tags = [`tag${id}`, `tag${id + 1}`];
-  const hasEvent = id % 2 === 0;
-  const event = hasEvent
-    ? { title: `Event ${id}`, date: new Date().toISOString().slice(0, 10) }
-    : undefined;
-  return {
-    id: `${id}`,
-    name: `Crew ${id}`,
-    coverImage: `https://picsum.photos/seed/crew-${seed}/400/200`,
-    tags,
-    memberCount: 10 + id,
-    upcomingEvent: event,
-  };
-}
-
-let createdCrews: Crew[] = [];
+let createdCrews: CrewDto[] = [];
 let crewSeq = 100;
 const managerCrewIds = new Set<string>(["2"]);
 
-interface Comment {
-  id: string;
-  postId: string;
-  text: string;
-  author: { userId: string; username: string; imageUrl?: string };
-}
+const commentsMap: Record<string, CommentDto[]> = {};
 
-const commentsMap: Record<string, Comment[]> = {};
-
-interface PostDetailComment {
-  id: string;
-  author: { name: string; initials: string };
-  createdAt: string;
-  content: string;
-}
-
-const postDetailCommentsMap: Record<string, PostDetailComment[]> = {
+const postDetailCommentsMap: Record<string, PostDetailCommentDto[]> = {
   abc123: [
     {
       id: "c1",
@@ -296,17 +275,16 @@ const postDetailCommentsMap: Record<string, PostDetailComment[]> = {
 
 const postLikeMap: Record<string, number> = { abc123: 128 };
 
-const followersMap: Record<string, SimpleUser[]> = {};
-const followingMap: Record<string, SimpleUser[]> = {};
+const followersMap: Record<string, SimpleUserDto[]> = {};
+const followingMap: Record<string, SimpleUserDto[]> = {};
 const blockedUsers = new Set<string>();
-const crewFollowersMap: Record<string, SimpleUser[]> = {};
+const crewFollowersMap: Record<string, SimpleUserDto[]> = {};
 
-const crewTabsMap: Record<string, CrewTab[]> = {};
+const crewTabsMap: Record<string, CrewTabDto[]> = {};
 
-const crewMembersMap: Record<string, CrewMember[]> = {};
+const crewMembersMap: Record<string, CrewMemberDto[]> = {};
 
-
-function randomBrand(id: number): BrandSummary {
+function randomBrand(id: number): BrandDto {
   const seed = Math.random().toString(36).slice(2, 8);
   const brandTags = [TAGS[id % TAGS.length], TAGS[(id + 1) % TAGS.length]];
   const hasEvent = id % 2 === 0;
@@ -331,7 +309,10 @@ function randomBrand(id: number): BrandSummary {
 
 export const handlers = [
   http.post(`${API_BASE}/auth/login`, async ({ request }) => {
-    const { email, password } = await request.json();
+    const { email, password } = (await request.json()) as {
+      email: string;
+      password: string;
+    };
     if (email === "folks@gmail.com" && password === "folks-password") {
       return HttpResponse.json({
         accessToken: "mock-token",
@@ -345,7 +326,11 @@ export const handlers = [
   }),
 
   http.post(`${API_BASE}/auth/signup`, async ({ request }) => {
-    const { email, password, nickname } = await request.json();
+    const { email, password, nickname } = (await request.json()) as {
+      email?: string;
+      password?: string;
+      nickname?: string;
+    };
     if (email && password && nickname) {
       return HttpResponse.json(
         { user: { id: "user-123", nickname } },
@@ -364,7 +349,7 @@ export const handlers = [
 
   http.patch(`${API_BASE}/user/me`, async ({ request }) => {
     const data = await request.json();
-    currentProfile = { ...currentProfile, ...data };
+    currentProfile = { ...currentProfile, ...(data as Partial<UserDto>) };
     return HttpResponse.json(currentProfile);
   }),
 
@@ -385,7 +370,11 @@ export const handlers = [
     if (!followersMap[id]) {
       followersMap[id] = Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`follower-${id}-${i}`);
-        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+        return {
+          userId: p.userId ?? "",
+          username: p.username ?? "",
+          imageUrl: p.imageUrl ?? "",
+        };
       });
     }
     const list = followersMap[id].filter((u) => !blockedUsers.has(u.userId));
@@ -397,7 +386,11 @@ export const handlers = [
     if (!followingMap[id]) {
       followingMap[id] = Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`following-${id}-${i}`);
-        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+        return {
+          userId: p.userId ?? "",
+          username: p.username ?? "",
+          imageUrl: p.imageUrl ?? "",
+        };
       });
     }
     const list = followingMap[id].filter((u) => !blockedUsers.has(u.userId));
@@ -463,7 +456,7 @@ export const handlers = [
       );
     }
     if (tag) {
-      crews = crews.filter((c) => c.tags.includes(tag));
+      crews = crews.filter((c) => c.tags?.includes(tag));
     }
     return HttpResponse.json(crews);
   }),
@@ -501,25 +494,32 @@ export const handlers = [
     if (!crewFollowersMap[id]) {
       crewFollowersMap[id] = Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`crew-${id}-follower-${i}`);
-        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+        return {
+          userId: p.userId ?? "",
+          username: p.username ?? "",
+          imageUrl: p.imageUrl ?? "",
+        };
       });
     }
     if (found) {
       return HttpResponse.json({ ...found, followers: crewFollowersMap[id] });
     }
 
-    const res: Crew = {
+    const res: CrewDto = {
       id: id,
       name: `Crew ${id}`,
       coverImage: `https://picsum.photos/seed/crew-${id}/400/400`,
       description: `This is crew ${id} description`,
       members: Array.from({ length: 5 }, (_, i) => {
         const p = randomProfile(`crew-${id}-member-${i}`);
-        return { userId: p.userId, username: p.username, imageUrl: p.imageUrl };
+        return {
+          userId: p.userId ?? "",
+          nickname: p.username ?? "",
+          role: CrewRole.MEMBER,
+        };
       }),
       tags: ["테스트", "샘플"],
     };
-
     return HttpResponse.json(res);
   }),
 
@@ -658,9 +658,9 @@ export const handlers = [
     `${API_BASE}/crews/:id/members/:userId`,
     async ({ params, request }) => {
       const { id, userId } = params as { id: string; userId: string };
-      const { role } = await request.json();
+      const { role } = (await request.json()) as { role?: string };
       crewMembersMap[id] = crewMembersMap[id].map((m) =>
-        m.userId === userId ? { ...m, role } : m
+        m.userId === userId ? { ...m, role: role ?? m.role } : m
       );
       return HttpResponse.json({});
     }
@@ -674,7 +674,7 @@ export const handlers = [
 
   http.put(`${API_BASE}/crews/:id/tabs`, async ({ params, request }) => {
     const { id } = params as { id: string };
-    const tabs = (await request.json()) as CrewTab[];
+    const tabs = (await request.json()) as CrewTabDto[];
     crewTabsMap[id] = tabs;
     return HttpResponse.json(crewTabsMap[id]);
   }),
@@ -682,14 +682,22 @@ export const handlers = [
   http.post(`${API_BASE}/crews`, async ({ request }) => {
     const body = await request.json();
     crewSeq += 1;
-    const newCrew: Crew = {
+    const { name, profileImage, coverImage, description, links } = body as {
+      name?: string;
+      profileImage?: string;
+      coverImage?: string;
+      description?: string;
+      links?: Array<{ title: string; url: string }>;
+    };
+    const newCrew: CrewDto = {
       id: String(crewSeq),
-      name: body.name,
+      name: name ?? "",
       profileImage:
-        body.profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
-      coverImage: `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
-      description: body.description ?? "",
-      links: body.links ?? [],
+        profileImage ?? `https://picsum.photos/seed/crew-${crewSeq}/80/80`,
+      coverImage:
+        coverImage ?? `https://picsum.photos/seed/crew-${crewSeq}/400/200`,
+      description: description ?? "",
+      links: links ?? [],
       ownerId: currentProfile.userId,
       followers: [],
     };
@@ -702,23 +710,30 @@ export const handlers = [
     const { id } = params as { id: string };
     const body = await request.json();
     let crew = createdCrews.find((c) => c.id === id);
+    const { name, profileImage, coverImage, description, links } = body as {
+      name?: string;
+      profileImage?: string;
+      coverImage?: string;
+      description?: string;
+      links?: Array<{ title: string; url: string }>;
+    };
     if (!crew) {
       crew = {
         id,
-        name: body.name ?? `Crew ${id}`,
-        coverImage: `https://picsum.photos/seed/crew-${id}/400/200`,
-        description: body.description ?? "",
-        links: body.links ?? [],
+        name: name ?? `Crew ${id}`,
+        coverImage:
+          coverImage ?? `https://picsum.photos/seed/crew-${id}/400/200`,
+        description: description ?? "",
+        links: links ?? [],
         ownerId: currentProfile.userId,
       };
       createdCrews.push(crew);
     } else {
-      if (body.name !== undefined) crew.name = body.name;
-      if (body.description !== undefined) crew.description = body.description;
-      if (body.profileImage !== undefined)
-        crew.profileImage = body.profileImage;
-      if (body.coverImage !== undefined) crew.coverImage = body.coverImage;
-      if (body.links !== undefined) crew.links = body.links;
+      if (name !== undefined) crew.name = name;
+      if (description !== undefined) crew.description = description;
+      if (profileImage !== undefined) crew.profileImage = profileImage;
+      if (coverImage !== undefined) crew.coverImage = coverImage;
+      if (links !== undefined) crew.links = links;
     }
     return HttpResponse.json(crew);
   }),
@@ -787,12 +802,12 @@ export const handlers = [
     `${API_BASE}/posts/:postId/comments`,
     async ({ params, request }) => {
       const { postId } = params as { postId: string };
-      const { content } = await request.json();
-      const newComment: PostDetailComment = {
+      const { content } = (await request.json()) as { content?: string };
+      const newComment: PostDetailCommentDto = {
         id: String(Date.now()),
         author: { name: "ME", initials: "ME" },
         createdAt: "2025-07-03",
-        content,
+        content: content ?? "",
       };
       const list = postDetailCommentsMap[postId] ?? [];
       postDetailCommentsMap[postId] = [...list, newComment];
@@ -816,11 +831,11 @@ export const handlers = [
 
   http.put(`${API_BASE}/comments/:id`, async ({ params, request }) => {
     const { id } = params as { id: string };
-    const { text } = await request.json();
+    const { text } = (await request.json()) as { text?: string };
     for (const postId of Object.keys(commentsMap)) {
       const idx = commentsMap[postId].findIndex((c) => c.id === id);
       if (idx >= 0) {
-        commentsMap[postId][idx].text = text;
+        commentsMap[postId][idx].text = text ?? commentsMap[postId][idx].text;
         return HttpResponse.json(commentsMap[postId][idx]);
       }
     }
