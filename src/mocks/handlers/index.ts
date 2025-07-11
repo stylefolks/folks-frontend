@@ -1,8 +1,9 @@
 import { http, HttpResponse } from "msw";
 import { TAGS } from "../tags";
 import { CrewMember, CrewSummary, CrewTab, CrewRole, Crew } from "@/types/crew";
-import { SimpleUser, UserTier } from "@/types/user";
+import { SimpleUser, UserTier, Profile } from "@/types/user";
 import { Post } from "@/types/post";
+import { BrandSummary } from "@/types/brand";
 
 const hotTags = [
   { name: "비건카페", postCount: 32 },
@@ -142,16 +143,6 @@ const PUBLIC_API_URL =
     : (import.meta as any).env.PUBLIC_API_URL;
 const API_BASE = PUBLIC_API_URL ?? "http://localhost:3000";
 
-interface Profile {
-  userId: string;
-  email: string;
-  username: string;
-  bio?: string;
-  imageUrl?: string;
-  website?: string;
-  backgroundUrl?: string;
-  role?: UserTier;
-}
 
 let currentProfile: Profile = {
   userId: "folks",
@@ -314,15 +305,6 @@ const crewTabsMap: Record<string, CrewTab[]> = {};
 
 const crewMembersMap: Record<string, CrewMember[]> = {};
 
-interface BrandSummary {
-  id: string;
-  name: string;
-  logo: string;
-  description: string;
-  tags: string[];
-  crews: { id: string; name: string; image: string }[];
-  upcomingEvent?: { title: string; date: string };
-}
 
 function randomBrand(id: number): BrandSummary {
   const seed = Math.random().toString(36).slice(2, 8);
@@ -903,9 +885,6 @@ export const handlers = [
   }),
   http.get("/users/me", () => {
     return HttpResponse.json(me);
-  }),
-  http.get("/users/me/crews", () => {
-    return HttpResponse.json(myCrews);
   }),
 
   http.post(`${API_BASE}/posts`, async ({ request }) => {
